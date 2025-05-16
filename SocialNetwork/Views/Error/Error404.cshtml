@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404 - Elomoas</title>
+
+    <link rel="stylesheet" href="~/css/themify-icons.css" asp-append-version="true">
+
+    <link rel="stylesheet" href="~/css/feather.css" asp-append-version="true">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon.png" asp-append-version="true">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+
+</head>
+
+<body class="color-theme-blue">
+
+    <div class="preloader"></div>
+
+
+
+    <div class="main-wrap">
+        <!-- header wrapper -->
+        <div class="header-wrapper shadow-xss pt-3 pb-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9 navbar pt-0 pb-0">
+                        <a asp-controller="Home" asp-action="Feed"><h1 class="fredoka-font ls-3 fw-700 text-current font-xxl">Elomoas <span class="d-block font-xsssss ls-1 text-grey-500 open-font ">Online Learning Course</span></h1></a>
+                        
+                    </div>
+                    <div class="col-lg-3 text-right d-none d-lg-block">
+                        <a href="login.html" class="header-btn bg-dark fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl mt-1">Login</a>
+                        <a href="register.html" class="header-btn bg-current fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl mt-1">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- header wrapper -->
+
+        <div class="vertical-wrapper pt-lg--10 pt-5 pb-lg--10 pb-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-md-8 text-center default-page">
+                        <div class="card border-0 text-center d-block">
+                            <img src="~/images/bg-43.png" alt="icon" class="w200 mb-4 ml-auto mr-auto ">
+                            <h1 class="fw-700 text-grey-900 display4-size display4-md-size">Oops! It looks like you're lost.</h1>
+                            <p class="text-grey-500 font-xss">The page you're looking for isn't available. Try to search again or use the go to.</p>
+                            <a asp-controller="Home" asp-action="Feed" class="p-3 w175 bg-current text-white d-inline-block text-center fw-600 font-xssss rounded-lg text-uppercase ls-3">Home Page</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
+        <!-- footer wrapper -->
+
+    </div>
+
+
+    <script src="~/js/plugin.js"></script>
+    <script src="~/js/scripts.js"></script>
+
+</body>
+
+</html>
