@@ -43,7 +43,11 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Feed}/{id?}");
+        app.MapControllerRoute(
+             name: "Admin",
+             pattern: "Admin/{controller=Dashboard}/{action=Dashboard}/{id?}"
+);
 
         app.Run();
-    }
+    }   
 }
