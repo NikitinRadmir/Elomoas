@@ -1,93 +1,28 @@
-﻿@{
+﻿@using Elomoas.mvc.Models.Users;
+@model UserVM;
+
+@{
     ViewData["Title"] = "Users";
 }
 
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
         <div class="row">
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-23.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">Aliqa Macale <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-21.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">John Steere <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-22.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">Mohannad Zitoun <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-24.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">Stephen Grider <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-23.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">Hendrix Stamp <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                    <a href="default-follower.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                    <a href="default-follower.html#" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
-                        <img src="~/images/user-25.png" alt="icon" class="p-0 w100 shadow-xss">
-                    </a>
-                    <h4 class="fw-700 font-xs mt-3 mb-1">Kimberley Kelly <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">support@gmail.com</p>
-                    <div class="clearfix"></div>
-                    
-                    <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">Profile</a>
-                </div>
-            </div>
+            
+                @foreach (var user in Model.Users) {
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
+                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
+                            <a asp-controller="Users" asp-action="UserPage" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
+                                <img src="@user.Img" alt="icon" class="p-0 w100 shadow-xss">
+                            </a>
+                            <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
+                            <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                            <div class="clearfix"></div>
+                            <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">PROFILE</a>
+                        </div>
+                    </div> 
+                }
+            
         </div>
     </div>
-</div>   
+</div> 

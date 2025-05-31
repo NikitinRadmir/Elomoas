@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Elomoas.mvc.Models.Auth;
+@model RegisterVM;
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -34,8 +36,8 @@
 
                     </div>
                     <div class="col-lg-3 text-right d-none d-lg-block">
-                        <a href="login.html" class="header-btn bg-dark fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl">Login</a>
-                        <a href="register.html" class="header-btn bg-current fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl">Register</a>
+                        <a asp-controller="Auth" asp-action="Login" class="header-btn bg-dark fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl">Login</a>
+                        <a asp-controller="Auth" asp-action="Register" class="header-btn bg-current fw-500 text-white font-xsss p-2 lh-32 w100 text-center d-inline-block rounded-xl">Register</a>
                     </div>
                 </div>
             </div>
@@ -47,36 +49,39 @@
                 <div class="card shadow-none border-0 ml-auto mr-auto login-card">
                     <div class="card-body rounded-0 text-left">
                         <h2 class="fw-700 display1-size display2-md-size mb-4">Create <br>your account</h2>
-                        <form>
-
+                        <form method="post" asp-controller="Auth" asp-action="Register">
+                            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4"></div>
                             <div class="form-group icon-input mb-3">
                                 <i class="font-sm ti-user text-grey-500 pr-0"></i>
-                                <input type="text" class="style2-input pl-5 form-control text-grey-900 font-xsss fw-600" placeholder="Your Name">
+                                <input name="@nameof(Model.Name)" type="text" class="style2-input pl-5 form-control text-grey-900 font-xsss fw-600" placeholder="Your Name">
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-red-500 text-sm mt-1" })
                             </div>
                             <div class="form-group icon-input mb-3">
                                 <i class="font-sm ti-email text-grey-500 pr-0"></i>
-                                <input type="text" class="style2-input pl-5 form-control text-grey-900 font-xsss fw-600" placeholder="Your Email Address">
+                                <input name="@nameof(Model.Email)" type="text" class="style2-input pl-5 form-control text-grey-900 font-xsss fw-600" placeholder="Your Email Address">
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-red-500 text-sm mt-1" })
                             </div>
                             <div class="form-group icon-input mb-3">
-                                <input type="Password" class="style2-input pl-5 form-control text-grey-900 font-xss ls-3" placeholder="Password">
+                                <input name="@nameof(Model.Password)" type="Password" class="style2-input pl-5 form-control text-grey-900 font-xss ls-3" placeholder="Password">
                                 <i class="font-sm ti-lock text-grey-500 pr-0"></i>
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-red-500 text-sm mt-1" })
                             </div>
                             <div class="form-group icon-input mb-1">
-                                <input type="Password" class="style2-input pl-5 form-control text-grey-900 font-xss ls-3" placeholder="Confirm Password">
+                                <input name="@nameof(Model.ConfirmPassword)" type="Password" class="style2-input pl-5 form-control text-grey-900 font-xss ls-3" placeholder="Confirm Password">
                                 <i class="font-sm ti-lock text-grey-500 pr-0"></i>
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-red-500 text-sm mt-1" })
                             </div>
                             <div class="form-check text-left mb-3">
                                 <input type="checkbox" class="form-check-input mt-2" id="exampleCheck1">
                                 <label class="form-check-label font-xsss text-grey-500" for="exampleCheck1">Accept Term and Conditions</label>
-                                <!-- <a href="#" class="fw-600 font-xsss text-grey-700 mt-1 float-right">Forgot your Password?</a> -->
+                            </div>
+                            <div class="col-sm-12 p-0 text-left">
+                                <div class="form-group mb-1">
+                                    <button type="submit" class="form-control text-center style2-input text-white fw-600 bg-dark border-0 p-0">Register</button>
+                                </div>
+                                <h6 class="text-grey-500 font-xsss fw-500 mt-0 mb-0 lh-32">Already have account <a asp-controller="Auth" asp-action="Login" class="fw-700 ml-1">Login</a></h6>
                             </div>
                         </form>
-
-                        <div class="col-sm-12 p-0 text-left">
-                            <div class="form-group mb-1"><a href="register.html#" class="form-control text-center style2-input text-white fw-600 bg-dark border-0 p-0 ">Register</a></div>
-                            <h6 class="text-grey-500 font-xsss fw-500 mt-0 mb-0 lh-32">Already have account <a href="login.html" class="fw-700 ml-1">Login</a></h6>
-                        </div>
-
                     </div>
                 </div>
             </div>

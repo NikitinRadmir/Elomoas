@@ -38,41 +38,47 @@
                 </li>
             </ul>
         </div>
+
+        @*ТАБ КОНТЕКНТЫ*@
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="navtabs0">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">  <b>About Me</b> <a href="default-user-profile.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2></div>
+                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">  <b>About Me</b> </h2></div>
                     <div class="card-body pb-0">
                         <div class="row">
                             <div class="col-xl-12">
                                 <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">I have a Business Management degree from Bangalore University and a long time Excel expert. I create professional Excel reports/dashboards for clients and conduct Excel workshops for business professionals. Currently am a freelance motion graphics artist and a Music producer. I like to be productive and creative at work. I like to continuously increase my skills and stay in tuned with the technology industry.</p>
-                                <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">I have a Business Management degree from Bangalore University and a long time Excel expert. I create professional Excel reports/dashboards for clients and conduct Excel workshops for business professionals. Currently am a freelance motion graphics artist and a Music producer. I like to be productive and creative at work. I like to continuously increase my skills and stay in tuned with the technology industry.</p>
                                 <ul class="d-flex align-items-center mt-2 mb-3 float-left">
-                                    <li class="mr-2"><a href="default-user-profile.html#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
-                                    <li class="mr-2"><a href="default-user-profile.html#" class="btn-round-md bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
-                                    <li class="mr-2"><a href="default-user-profile.html#" class="btn-round-md bg-linkedin"><i class="font-xs ti-linkedin text-white"></i></a></li>
-                                    <li class="mr-2"><a href="default-user-profile.html#" class="btn-round-md bg-instagram"><i class="font-xs ti-instagram text-white"></i></a></li>
-                                    <li class="mr-2"><a href="default-user-profile.html#" class="btn-round-md bg-pinterest"><i class="font-xs ti-pinterest text-white"></i></a></li>
+                                    @*соц сети*@
+                                    <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
+                                    <li class="mr-2"><a href="#" class="btn-round-md bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
+                                    <li class="mr-2"><a href="#" class="btn-round-md bg-linkedin"><i class="font-xs ti-linkedin text-white"></i></a></li>
+                                    <li class="mr-2"><a href="#" class="btn-round-md bg-instagram"><i class="font-xs ti-instagram text-white"></i></a></li>
+                                    <li class="mr-2"><a href="#" class="btn-round-md bg-pinterest"><i class="font-xs ti-pinterest text-white"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
             <div class="tab-pane fade" id="navtabs1">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">My  <b>Courses</b> <a href="default-user-profile.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2></div>
+                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">My  <b>Courses</b> </h2></div>
                     <div class="card-body pb-0">
                         <div class="row">
+
+
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-1.png" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-1.png" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 240</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
                                     </div>
                                 </div>
                             </div>
@@ -80,12 +86,12 @@
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-4.jpg" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-4.jpg" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 670</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">Fundamentals for Scrum Master and Agile Projects </a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Fundamentals for Scrum Master and Agile Projects </a></h4>
                                         
                                     </div>
                                 </div>
@@ -94,12 +100,12 @@
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-6.jpg" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-6.jpg" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 450</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
                                         
                                     </div>
                                 </div>
@@ -108,12 +114,12 @@
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-5.jpg" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-5.jpg" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
                                         
                                     </div>
                                 </div>
@@ -122,12 +128,12 @@
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-3.png" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-3.png" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mr-1">Bootstrap</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 60</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">Java Programming Masterclass for Developers</a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Java Programming Masterclass for Developers</a></h4>
                                         
                                     </div>
                                 </div>
@@ -136,12 +142,12 @@
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
                                 <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
                                     <div class="card-image w-100 mb-3">
-                                        <a href="home-3.html" class="video-bttn position-relative d-block"><img src="~/images/v-2.png" alt="image" class="w-100"></a>
+                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-2.png" alt="image" class="w-100"></a>
                                     </div>
                                     <div class="card-body pt-0">
                                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
                                         <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 40</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="home-3.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
+                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
                                         
                                     </div>
                                 </div>
@@ -150,15 +156,18 @@
                     </div>
                 </div>
             </div>
+
+
+
             <div class="tab-pane fade" id="navtabs2">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block"><b>Group</b> <a href="default-user-profile.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2></div>
+                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block"><b>Group</b> </h2></div>
                     <div class="card-body pb-0">
                         <div class="row">
+
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
                                         <img src="~/images/download1.png" alt="icon" class="p-1">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">Mobile Product Design</h4>
@@ -169,15 +178,14 @@
                                     <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
                                     <div class="clearfix"></div>
                                    
-
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                                    @*КНОПКА ОТПИСКИ*@
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg alert-danger ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg alert-danger ml-auto mr-auto">
                                         <img src="~/images/download2.png" alt="icon" class="p-2">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">HTML Developer</h4>
@@ -189,14 +197,13 @@
                                     <div class="clearfix"></div>
                                     
 
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg alert-secondary ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg alert-secondary ml-auto mr-auto">
                                         <img src="~/images/download4.png" alt="icon" class="p-1 w-100">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">Advanced CSS and Sass</h4>
@@ -208,14 +215,13 @@
                                     <div class="clearfix"></div>
                                    
 
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
                                         <img src="~/images/download5.png" alt="icon" class="p-1 w-100">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">Modern React with Redux</h4>
@@ -227,14 +233,13 @@
                                     <div class="clearfix"></div>
                                     
 
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
                                         <img src="~/images/download6.png" alt="icon" class="p-1 w-100">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">Node JS</h4>
@@ -246,14 +251,13 @@
                                     <div class="clearfix"></div>
                                     
 
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 
                             <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="default-user-profile.html#" class="position-absolute right-0 mr-4 top-0 mt-3"><i class="ti-more text-grey-500 font-xs"></i></a>
-                                    <a href="default-user-profile.html#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
+                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
                                         <img src="~/images/download7.png" alt="icon" class="p-1 w-100">
                                     </a>
                                     <h4 class="fw-700 font-xs mt-4">Mobile Product Design</h4>
@@ -263,7 +267,9 @@
                                     <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
                                     <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
                                     <div class="clearfix"></div>
-                                    <a href="default-user-profile.html#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+
+
+                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
                                 </div>
                             </div>
 

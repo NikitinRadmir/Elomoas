@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Elomoas.Models;
+using Elomoas.Application.Features.Groups.Query.GetAll;
+using Elomoas.mvc.Models.Groups;
 
 
 namespace Elomoas.Controllers
@@ -19,8 +21,12 @@ namespace Elomoas.Controllers
 
         public async Task<IActionResult> Groups()
         {
-
-            return View();
+            var query = new GetAllQuery();
+            var viewModel = new GroupVM
+            {
+                Groups = await _mediator.Send(query)
+            };
+            return View(viewModel);
         }
 
 

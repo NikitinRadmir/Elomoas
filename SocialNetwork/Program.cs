@@ -3,6 +3,9 @@ using Elomoas.Persistence.Extensions;
 using Elomoas.Application.Extensions;
 using Elomoas.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Elomoas.Infrastructure.Settings;
+using Elomoas.mvc.Hubs;
 
 namespace Elomoas;
 
@@ -11,13 +14,23 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        // Add DbContext
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        // Add services
         builder.Services.AddApplicationLayer();
         builder.Services.AddInfrastructureLayer();
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddPersistenceLayer(builder.Configuration);
-        // Add services to the container.
+
         builder.Services.AddControllersWithViews();
         builder.Services.AddControllers().AddJsonOptions(options =>
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())); 
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+        // Add SignalR
+        builder.Services.AddSignalR();
 
         var app = builder.Build();
 
@@ -38,6 +51,7 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(
@@ -46,7 +60,10 @@ public class Program
         app.MapControllerRoute(
              name: "Admin",
              pattern: "Admin/{controller=Dashboard}/{action=Dashboard}/{id?}"
-);
+        );
+
+        // Map SignalR hub
+        app.MapHub<FriendshipHub>("/friendshipHub");
 
         app.Run();
     }   

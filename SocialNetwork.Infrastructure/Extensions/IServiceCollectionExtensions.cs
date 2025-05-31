@@ -1,5 +1,12 @@
-﻿using MediatR;
+﻿using Elomoas.Application.Interfaces.Services;
+using Elomoas.Application.Interfaces.Repositories;
+using Elomoas.Infrastructure.Services;
+using Elomoas.Persistence.Contexts;
+using Elomoas.Persistence.Repositories;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using Elomoas.Domain.Entities;
 
 namespace Elomoas.Infrastructure.Extensions
 {
@@ -13,7 +20,16 @@ namespace Elomoas.Infrastructure.Extensions
         private static void AddServices(this IServiceCollection services)
         {
             services
-                .AddTransient<IMediator, Mediator>();
+                .AddTransient<IMediator, Mediator>()
+                .AddTransient<IFriendshipService, FriendshipService>()
+                //.AddTransient<IMessageService, MessageService>()
+                .AddTransient<ICurrentUserService, CurrentUserService>()
+                .AddHttpContextAccessor()
+                .AddTransient<IEmailService, EmailService>()
+                .AddTransient<IAuthService, AuthService>()
+                .AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
         }
     }
 }

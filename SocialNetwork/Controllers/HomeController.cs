@@ -2,34 +2,42 @@ using System.Diagnostics;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Elomoas.Models;
+using Elomoas.mvc.Models.Courses;
+using Elomoas.Application.Features.Courses.Query.GetAllCourses;
+using Elomoas.Application.Features.Courses.Query.GetLatestCourses;
 
+namespace Elomoas.Controllers;
 
-namespace Elomoas.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+    private readonly IMediator _mediator;
+
+    public HomeController(ILogger<HomeController> logger, IMediator mediator)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IMediator _mediator;
+        _logger = logger;
+        _mediator = mediator;
+    }
 
-        public HomeController(ILogger<HomeController> logger, IMediator mediator)
+    public async Task<IActionResult> Feed()
+    {
+        var viewModel = new CourseVM
         {
-            _logger = logger;
-            _mediator = mediator;
-        }
+            PopularCourses = await _mediator.Send(new GetAllCoursesQuery()),
+            LatestCourses = await _mediator.Send(new GetLatestCoursesQuery())
+        };
 
-        public async Task<IActionResult> Feed()
-        {
-            
-            return View();
-        }
+        return View(viewModel);
+    }
 
-       
+    public IActionResult Privacy()
+    {
+        return View();
+    }
 
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

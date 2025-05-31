@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Elomoas.mvc.Models.Courses.CourseVM
+
+@{
     ViewData["Title"] = "Main";
 }
 
@@ -15,6 +17,7 @@
                         <h4 class="text-grey-500 font-xssss fw-500 ml-1 lh-24">For only course you need to learn web development</h4>
                         <div class="form-group mt-lg-4 p-3 border-light border p-2 bg-white rounded-lg ">
                             <div class="row">
+                                @*ФИЛЬТР И ПОИСК*@
                                 <div class="col-md-5">
                                     <div class="form-group icon-input mb-0">
                                         <i class="ti-search font-xs text-grey-400"></i>
@@ -48,14 +51,16 @@
                 </div>
             </div>
             <div class="col-lg-12 pt-2">
-                <h2 class="fw-400 font-lg">Explore <b>Categories</b> <a href="default.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2>
+                <h2 class="fw-400 font-lg">Explore <b>Categories</b> </h2>
             </div>
 
             <div class="col-lg-12 mt-3">
                 <div class="owl-carousel category-card owl-theme overflow-hidden overflow-visible-xl nav-none">
+
+                    @*Категории*@
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download1.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Bootstrap <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -66,7 +71,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download2.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">HTML <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -77,7 +82,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #e5f4fb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download3.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Jquery <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -88,7 +93,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #dcf4f8;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download4.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Sass <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -100,7 +105,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download5.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">React <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -111,7 +116,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download6.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">JAVA <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -122,7 +127,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #e5f4fb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download7.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Python<span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -133,7 +138,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/mongodb.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Mongodb <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -144,7 +149,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download1.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Desinger <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -155,7 +160,7 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a href="default-channel.html">
+                            <a asp-controller="Search" asp-action="Search">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download2.png" alt="icon" class="p-2"></span>
                                     <h4 class="fw-600 font-xsss mt-3 mb-0">Desinger <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
@@ -169,159 +174,54 @@
             </div>
 
             <div class="col-lg-12 pt-4 mb-3">
-                <h2 class="fw-400 font-lg d-block">Popular <b> Classes</b> <a href="default.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2>
+                <h2 class="fw-400 font-lg d-block">Popular <b>Classes</b></h2>
             </div>
 
             <div class="col-lg-12 pt-2">
                 <div class="owl-carousel category-card owl-theme overflow-hidden overflow-visible-xl nav-none">
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-1.png" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 240</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-2.png" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 40</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                                   
+                    @foreach (var course in Model.PopularCourses)
+                    {
+                        <div class="item">
+                            <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
+                                <div class="card-image w-100 mb-3">
+                                    <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="video-bttn position-relative d-block"><img src="@course.Img" alt="image" class="w-100"></a>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">@course.PL</span>
+                                    <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> @course.Price</span>
+                                    <h4 class="fw-700 font-xss mt-3 lh-28 mt-0">
+                                        <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="text-dark text-grey-900">@course.Name</a>
+                                    </h4>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-3.png" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mr-1">Bootstrap</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 60</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Java Programming Masterclass for Developers</a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-5.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
-                                   
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-9.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
 
-
             <div class="col-lg-12 pt-0 mb-3">
-                <h2 class="fw-400 font-lg d-block">Latest <b> Classes</b> <a href="default.html#" class="float-right"><i class="feather-edit text-grey-500 font-xs"></i></a></h2>
+                <h2 class="fw-400 font-lg d-block">Latest <b>Classes</b></h2>
             </div>
-
 
             <div class="col-lg-12 pt-2">
                 <div class="owl-carousel category-card owl-theme overflow-hidden overflow-visible-xl nav-none">
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-6.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 450</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-4.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 670</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Fundamentals for Scrum Master and Agile Projects </a></h4>
-                                   
+                    @foreach (var course in Model.LatestCourses)
+                    {
+                        <div class="item">
+                            <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
+                                <div class="card-image w-100 mb-3">
+                                    <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="video-bttn position-relative d-block"><img src="@course.Img" alt="image" class="w-100"></a>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">@course.PL</span>
+                                    <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> @course.Price</span>
+                                    <h4 class="fw-700 font-xss mt-3 lh-28 mt-0">
+                                        <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="text-dark text-grey-900">@course.Name</a>
+                                    </h4>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-7.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-primary d-inline-block text-primary mr-1">Bootstrap</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 760</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">Automate the Boring Stuff with Python Programming</a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-8.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="card course-card w300 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1 mb-4">
-                            <div class="card-image w-100 mb-3">
-                                <a href="default-course-details.html" class="video-bttn position-relative d-block"><img src="~/images/v-10.jpg" alt="image" class="w-100"></a>
-                            </div>
-                            <div class="card-body pt-0">
-                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
-                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a href="default-course-details.html" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
-                                    
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>  
         </div>

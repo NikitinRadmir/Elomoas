@@ -2,7 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Elomoas.Models;
-
+using Elomoas.mvc.Models.Courses;
+using Elomoas.Application.Features.Courses.Query.GetCourseById;
 
 namespace Elomoas.Controllers
 {
@@ -17,14 +18,20 @@ namespace Elomoas.Controllers
             _mediator = mediator;
         }
 
-        public async Task<IActionResult> Course()
+        public async Task<IActionResult> Course(int id)
         {
+            var course = await _mediator.Send(new GetCourseByIdQuery(id));
+            
+            if (course == null)
+                return NotFound();
 
-            return View();
+            var viewModel = new CourseDetailsVM
+            {
+                Course = course
+            };
+
+            return View(viewModel);
         }
-
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
