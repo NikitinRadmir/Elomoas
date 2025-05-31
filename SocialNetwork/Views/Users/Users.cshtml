@@ -5,20 +5,71 @@
     ViewData["Title"] = "Users";
 }
 
+<style>
+    .user-card {
+        transition: all 0.3s ease;
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1),
+                   0 0 15px rgba(0,0,0,0.05) !important;
+        padding: 25px !important;
+        background: white;
+    }
+
+    .user-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 25px rgba(0,0,0,0.15),
+                   0 0 20px rgba(0,0,0,0.08) !important;
+    }
+
+    .user-image {
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: none;
+        box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    }
+
+    .user-image img {
+        transition: all 0.3s ease;
+        border-radius: 18px;
+    }
+
+    .user-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .btn-profile {
+        transition: all 0.3s ease;
+        margin: 0 5px;
+        border-radius: 15px !important;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-profile:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+</style>
+
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
         <div class="row">
             
                 @foreach (var user in Model.Users) {
                     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
-                            <a asp-controller="Users" asp-action="UserPage" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
+                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
+                            <a asp-controller="Users" asp-action="UserPage" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
                                 <img src="@user.Img" alt="icon" class="p-0 w100 shadow-xss">
                             </a>
-                            <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
+                            <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
                             <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
                             <div class="clearfix"></div>
-                            <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">PROFILE</a>
+                            <div class="d-flex justify-content-center">
+                                <a asp-controller="Users" asp-action="UserPage" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
+                                <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">ADD FRIEND</a>
+                            </div>
                         </div>
                     </div> 
                 }
