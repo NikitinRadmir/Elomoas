@@ -5,64 +5,12 @@
     ViewData["Title"] = "Groups";
 }
 
-<style>
-    .search-card {
-        border: 3px solid #d1d1d1;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        background: #fff;
-    }
-
-    .search-card:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        border-color: #b8b8b8;
-    }
-
-    .search-input {
-        border: 2px solid #d1d1d1;
-        padding: 15px 25px;
-        font-size: 16px;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        background-color: #f8f9fa;
-    }
-
-    .search-input:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        outline: none;
-        background-color: #fff;
-    }
-
-    .search-input::placeholder {
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    .card-body.search-padding {
-        padding: 15px 20px;
-    }
-</style>
-
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
-        <div class="card mb-4 search-card">
-            <div class="card-body search-padding">
-                <div class="form-group mb-0">
-                    <input type="text" 
-                           id="groupSearch" 
-                           class="form-control search-input" 
-                           placeholder="🔍 Поиск групп по названию..."
-                           autocomplete="off">
-                </div>
-            </div>
-        </div>
-        
-        <div id="groupsContainer" class="row">
+        <div class="row">
             @foreach (var group in Model.Groups)
             {
-                <div class="col-xl-4 col-lg-6 col-md-6 group-item" data-group-name="@group.Name.ToLower()">
+                <div class="col-xl-4 col-lg-6 col-md-6">
                     <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
                         <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
                             <img src="@group.Img" alt="@group.Name" class="p-1">
@@ -94,31 +42,6 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Функционал поиска
-            const searchInput = document.getElementById('groupSearch');
-            const groupItems = document.querySelectorAll('.group-item');
-
-            searchInput.addEventListener('input', function(e) {
-                const searchText = e.target.value.toLowerCase();
-
-                groupItems.forEach(item => {
-                    const groupName = item.getAttribute('data-group-name');
-                    if (groupName.includes(searchText)) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-
-            // Анимация фокуса на поле поиска
-            $('#groupSearch').focus(function() {
-                $('.search-card').css('transform', 'translateY(-2px)');
-            }).blur(function() {
-                $('.search-card').css('transform', 'translateY(0)');
-            });
-
-            // Функционал подписки/отписки
             function handleSubscriptionError() {
                 alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
             }
@@ -127,8 +50,8 @@
                 e.preventDefault();
                 var groupId = $(this).data('group-id');
                 var btn = $(this);
-                btn.prop('disabled', true);
-
+                btn.prop('disabled', true); // Отключаем кнопку на время запроса
+                
                 $.post('/Groups/Subscribe', { groupId: groupId })
                     .done(function(response) {
                         if (response.success) {
@@ -146,13 +69,13 @@
                     })
                     .fail(handleSubscriptionError)
                     .always(function() {
-                        btn.prop('disabled', false);
+                        btn.prop('disabled', false); // Включаем кнопку обратно
                     });
             });
 
             function handleUnsubscribe(btn) {
                 var groupId = btn.data('group-id');
-                btn.prop('disabled', true);
+                btn.prop('disabled', true); // Отключаем кнопку на время запроса
 
                 $.post('/Groups/Unsubscribe', { groupId: groupId })
                     .done(function(response) {
@@ -171,7 +94,7 @@
                     })
                     .fail(handleSubscriptionError)
                     .always(function() {
-                        btn.prop('disabled', false);
+                        btn.prop('disabled', false); // Включаем кнопку обратно
                     });
             }
 
