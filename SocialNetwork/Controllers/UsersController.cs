@@ -12,6 +12,10 @@ using Elomoas.Application.Features.AppUsers.Query.GetUserById;
 
 using System.Linq;
 using Elomoas.Application.Interfaces.Repositories;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System;
+using Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups;
 
 namespace Elomoas.Controllers
 {
@@ -92,11 +96,18 @@ namespace Elomoas.Controllers
                 return NotFound();
             }
 
-            var query = new GetUserByIdQuery(currentAppUser.Id);
+            var userQuery = new GetUserByIdQuery(currentAppUser.Id);
+            var user = await _mediator.Send(userQuery);
+
+            var subscribedGroupsQuery = new GetSubscribedGroupsQuery(currentAppUser.Id);
+            var subscribedGroups = await _mediator.Send(subscribedGroupsQuery);
+
             var viewModel = new UserVM
             {
-                User = await _mediator.Send(query),
+                User = user,
+                SubscribedGroups = subscribedGroups
             };
+
             return View(viewModel);
         }
     

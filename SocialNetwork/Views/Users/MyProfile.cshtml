@@ -34,7 +34,7 @@
                     <a class="nav-link" data-bs-toggle="tab" href="#navtabs1">My Courses</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs2">Group</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs2">Groups</a>
                 </li>
             </ul>
         </div>
@@ -160,119 +160,38 @@
 
 
             <div class="tab-pane fade" id="navtabs2">
-                <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block"><b>Group</b> </h2></div>
+                <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
+                    <div class="card-body mb-3 pb-0">
+                        <h2 class="fw-400 font-lg d-block"><b>My Groups</b></h2>
+                    </div>
                     <div class="card-body pb-0">
                         <div class="row">
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
-                                        <img src="~/images/download1.png" alt="icon" class="p-1">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">Mobile Product Design</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-                                   
-                                    @*КНОПКА ОТПИСКИ*@
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
+                            @if (Model.SubscribedGroups != null && Model.SubscribedGroups.Any())
+                            {
+                                @foreach (var group in Model.SubscribedGroups)
+                                {
+                                    <div class="col-xl-4 col-lg-6 col-md-6">
+                                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
+                                            <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
+                                                <img src="@group.Img" alt="@group.Name" class="p-1">
+                                            </a>
+                                            <h4 class="fw-700 font-xs mt-4">@group.Name</h4>
+                                            <p class="fw-500 font-xssss text-grey-500 mt-3">@group.Description</p>
+                                            <div class="clearfix"></div>
+                                            <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
+                                            <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@group.PL</span>
+                                            <div class="clearfix"></div>
+                                            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">ОТПИСАТЬСЯ</a>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <p class="text-center text-grey-500">You haven't subscribed to any groups yet.</p>
                                 </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg alert-danger ml-auto mr-auto">
-                                        <img src="~/images/download2.png" alt="icon" class="p-2">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">HTML Developer</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-                                    
-
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg alert-secondary ml-auto mr-auto">
-                                        <img src="~/images/download4.png" alt="icon" class="p-1 w-100">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">Advanced CSS and Sass</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-                                   
-
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
-                                        <img src="~/images/download5.png" alt="icon" class="p-1 w-100">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">Modern React with Redux</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-                                    
-
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
-                                        <img src="~/images/download6.png" alt="icon" class="p-1 w-100">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">Node JS</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-                                    
-
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6">
-                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
-                                    <a href="#" class="btn-round-xxxl rounded-lg bg-lightblue ml-auto mr-auto">
-                                        <img src="~/images/download7.png" alt="icon" class="p-1 w-100">
-                                    </a>
-                                    <h4 class="fw-700 font-xs mt-4">Mobile Product Design</h4>
-                                    <p class="fw-500 font-xssss text-grey-500 mt-3">Learn new secrets to creating awesome.</p>
-                                    <div class="clearfix"></div>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 bg-lightblue d-inline-block text-grey-800 mb-1 mr-1">Desiner</span>
-                                    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
-                                    <div class="clearfix"></div>
-
-
-                                    <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">unsubscribe</a>
-                                </div>
-                            </div>
-
+                            }
                         </div>
                     </div>
                 </div>
@@ -292,3 +211,41 @@
         });
     });
 </script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function handleSubscriptionError() {
+                alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+            }
+
+            function handleUnsubscribe(btn) {
+                var groupId = btn.data('group-id');
+                btn.prop('disabled', true);
+
+                $.post('/Groups/Unsubscribe', { groupId: groupId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.closest('.col-xl-4').fadeOut(300, function() {
+                                $(this).remove();
+                                if ($('.unsubscribe-btn').length === 0) {
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false);
+                    });
+            }
+
+            $('.unsubscribe-btn').click(function(e) {
+                e.preventDefault();
+                handleUnsubscribe($(this));
+            });
+        });
+    </script>
+}
