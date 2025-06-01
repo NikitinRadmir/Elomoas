@@ -6,6 +6,44 @@
 }
 
 <style>
+    .search-card {
+        border: 3px solid #d1d1d1;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+
+    .search-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        border-color: #b8b8b8;
+    }
+
+    .search-input {
+        border: 2px solid #d1d1d1;
+        padding: 15px 25px;
+        font-size: 16px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+    .search-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        background-color: #fff;
+    }
+
+    .search-input::placeholder {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .card-body.search-padding {
+        padding: 15px 20px;
+    }
+
     .user-card {
         transition: all 0.3s ease;
         border: none !important;
@@ -55,25 +93,66 @@
 
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
-        <div class="row">
-            
-                @foreach (var user in Model.Users) {
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
-                            <a asp-controller="Users" asp-action="UserPage" asp-route-id="@user.Id" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
-                                <img src="@user.Img" alt="icon" class="p-0 w100 shadow-xss">
-                            </a>
-                            <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
-                            <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
-                            <div class="clearfix"></div>
-                            <div class="d-flex justify-content-center">
-                                <a asp-controller="Users" asp-action="UserPage" asp-route-id="@user.Id" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                                <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">ADD FRIEND</a>
-                            </div>
+        <div class="card mb-4 search-card">
+            <div class="card-body search-padding">
+                <div class="form-group mb-0">
+                    <input type="text" 
+                           id="userSearch" 
+                           class="form-control search-input" 
+                           placeholder="🔍 Поиск пользователей по имени..."
+                           autocomplete="off">
+                </div>
+            </div>
+        </div>
+        
+        <div id="usersContainer" class="row">
+            @foreach (var user in Model.Users)
+            {
+                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" data-user-name="@user.Name.ToLower()">
+                    <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
+                        <a asp-controller="Users" asp-action="UserPage" asp-route-id="@user.Id" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
+                            <img src="@user.Img" alt="icon" class="p-0 w100 shadow-xss">
+                        </a>
+                        <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
+                        <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                        <div class="clearfix"></div>
+                        <div class="d-flex justify-content-center">
+                            <a asp-controller="Users" asp-action="UserPage" asp-route-id="@user.Id" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
+                            <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">ADD FRIEND</a>
                         </div>
-                    </div> 
-                }
-            
+                    </div>
+                </div>
+            }
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Функционал поиска
+            const searchInput = document.getElementById('userSearch');
+            const userItems = document.querySelectorAll('.user-item');
+
+            searchInput.addEventListener('input', function(e) {
+                const searchText = e.target.value.toLowerCase();
+
+                userItems.forEach(item => {
+                    const userName = item.getAttribute('data-user-name');
+                    if (userName.includes(searchText)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Анимация фокуса на поле поиска
+            $('#userSearch').focus(function() {
+                $('.search-card').css('transform', 'translateY(-2px)');
+            }).blur(function() {
+                $('.search-card').css('transform', 'translateY(0)');
+            });
+        });
+    </script>
+} 
