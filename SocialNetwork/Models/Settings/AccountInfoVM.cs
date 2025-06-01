@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Elomoas.mvc.Models.Settings
 {
@@ -12,5 +13,8 @@ namespace Elomoas.mvc.Models.Settings
 
         public string? Description { get; set; }
         public string? Img { get; set; }
+
+        [Display(Name = "Фото профиля")]
+        public IFormFile? ImageFile { get; set; }
     }
 } 

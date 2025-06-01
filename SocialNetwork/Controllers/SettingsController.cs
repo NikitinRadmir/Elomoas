@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Elomoas.Controllers
 {
@@ -15,11 +16,16 @@ namespace Elomoas.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public SettingsController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
+        public SettingsController(
+            UserManager<IdentityUser> userManager, 
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Settings()
@@ -108,6 +114,60 @@ namespace Elomoas.Controllers
                 if (model.Description != null) // Позволяем сохранять пустое описание
                 {
                     appUser.Description = model.Description;
+                }
+
+                // Обработка загруженного изображения
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    // Проверяем тип файла
+                    var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+                    if (!allowedTypes.Contains(model.ImageFile.ContentType.ToLower()))
+                    {
+                        ModelState.AddModelError("ImageFile", "Разрешены только изображения в форматах JPEG и PNG");
+                        return View(model);
+                    }
+
+                    // Проверяем размер файла (например, максимум 5MB)
+                    if (model.ImageFile.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ImageFile", "Размер файла не должен превышать 5MB");
+                        return View(model);
+                    }
+
+                    try
+                    {
+                        // Создаем путь для сохранения
+                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
+                        Directory.CreateDirectory(uploadsFolder); // Создаем папку, если её нет
+
+                        // Генерируем уникальное имя файла
+                        var uniqueFileName = $"{Guid.NewGuid()}_{model.ImageFile.FileName}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        // Удаляем старый файл, если он существует
+                        if (!string.IsNullOrEmpty(appUser.Img))
+                        {
+                            var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, appUser.Img.TrimStart('/'));
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        // Сохраняем новый файл
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        // Обновляем путь к изображению в базе данных
+                        appUser.Img = $"/uploads/profiles/{uniqueFileName}";
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("ImageFile", "Ошибка при загрузке изображения. Пожалуйста, попробуйте снова.");
+                        return View(model);
+                    }
                 }
 
                 await _context.SaveChangesAsync();
