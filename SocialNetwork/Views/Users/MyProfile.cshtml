@@ -1,5 +1,9 @@
-﻿@{
+﻿@using Elomoas.mvc.Models.Users;
+@model UserVM;
+
+@{
     ViewData["Title"] = "My Profile";
+    var user = Model.User;
 }
 
 
@@ -10,19 +14,15 @@
                 <div class="clearfix"></div>
                 <div class="row">
                     <div class="col-lg-12 pl-xl-5 pt-xl-5">
-                        <figure class="avatar ml-0 mb-4 position-relative w100 z-index-1"><img src="~/images/user-12.png" alt="image" class="float-right p-1 bg-white rounded-circle w-100"></figure>
+                        <figure class="avatar ml-0 mb-4 position-relative w100 z-index-1">
+                            <img src="@(user?.Img ?? "/images/user-12.png")" alt="image" class="float-right p-1 bg-white rounded-circle w-100">
+                        </figure>
                     </div>
                     <div class="col-xl-4 col-lg-6 pl-xl-5 pb-xl-5 pb-3">
-
-                        <h4 class="fw-700 font-md text-white mt-3 mb-1">Hendrix Stamp <i class="ti-check font-xssss btn-round-xs bg-success text-white ml-1"></i></h4>
-                        <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">support@gmail.com</span>
-                        
+                        <h4 class="fw-700 font-md text-white mt-3 mb-1">@(user?.Name ?? "Пользователь")</h4>
+                        <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">@(user?.Email ?? "email@example.com")</span>
                     </div>
-                    
                 </div>
-
-
-
             </div>
         </div>
         <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden mb-4">
@@ -47,7 +47,7 @@
                     <div class="card-body pb-0">
                         <div class="row">
                             <div class="col-xl-12">
-                                <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">I have a Business Management degree from Bangalore University and a long time Excel expert. I create professional Excel reports/dashboards for clients and conduct Excel workshops for business professionals. Currently am a freelance motion graphics artist and a Music producer. I like to be productive and creative at work. I like to continuously increase my skills and stay in tuned with the technology industry.</p>
+                                <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">@(string.IsNullOrEmpty(user?.Description) ? "The user has no description" : user.Description)</p>
                                 <ul class="d-flex align-items-center mt-2 mb-3 float-left">
                                     @*соц сети*@
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>

@@ -11,5 +11,6 @@ namespace Elomoas.Application.Interfaces.Repositories
     {
         Task<IEnumerable<AppUser>> GetAllUsersAsync();
         Task<AppUser> GetUserByIdAsync(int id);
+        Task<AppUser> GetCurrentUserAsync();
     }
 }

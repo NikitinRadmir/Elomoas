@@ -10,12 +10,12 @@
         <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden mb-3">
             <div class="card-body position-relative h200 bg-gradiant-bottom bg-image-cover bg-image-center" style="background-image: url(/images/bb-16.png);"></div>
             <div class="card-body d-block w-100 pl-lg-5 pl-4 pr-4">
-                <figure class="avatar ml-0 mb-0 mt--6 position-relative w90 z-index-1"><img src="~/images/user-12.png" alt="image" class="float-right p-1 bg-white rounded-circle w-100"></figure>
+                <figure class="avatar ml-0 mb-0 mt--6 position-relative w90 z-index-1"><img src="@Model.User.Img" alt="image" class="float-right p-1 bg-white rounded-circle w-100"></figure>
                 <div class="clearfix"></div>
                 <div class="row">
                     <div class="col-xl-6 md-mb-2">
-                        <h4 class="fw-700 font-xs mt-3 mb-1">Aliqa Macale</h4>
-                        <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">support@gmail.com</span>
+                        <h4 class="fw-700 font-xs mt-3 mb-1">@Model.User.Name</h4>
+                        <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">@Model.User.Email</span>
                         <span class="dot ml-2 mr-2 d-inline-block btn-round-xss bg-grey"></span>
                         
                     </div>
@@ -37,12 +37,12 @@
                     
                     <div class="col-11">
                         <h4 class="text-grey-800 font-xsss mt-4 fw-700">About me</h4>
-                        <p class="font-xssss fw-600 lh-28 text-grey-500 mb-0 pl-0">I have a Business Management degree from Bangalore University and a long time Excel expert. I create professional Excel reports/dashboards for clients and conduct Excel workshops for business professionals. Currently am a freelance motion graphics artist and a Music producer. I like to be productive and creative at work. I like to continuously increase my skills and stay in tuned with the technology industry.</p>
+                        <p class="font-xssss fw-600 lh-28 text-grey-500 mb-0 pl-0">@(string.IsNullOrEmpty(Model.User?.Description) ? "The user has no description" : Model.User.Description)</p>
                     </div>
                 </div>
 
             </div>
         </div>
-        
     </div>
 </div>     
+  

@@ -22,18 +22,20 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetUserById
         public async Task<AppUserDto> Handle(GetUserByIdQuery query, CancellationToken ct)
         {
             var data = await _userRepository.GetUserByIdAsync(query.id);
-            var result = new AppUserDto
+            
+            if (data == null)
+                return null;
+
+            return new AppUserDto
             {
+                Id = data.Id,
                 IdentityId = data.IdentityId,
                 Name = data.Name,
                 Description = data.Description,
-                Img = data.Img,
+                Img = data.Img ?? "/images/user-12.png",
                 Email = data.Email,
-                Password = data.Password,
-
+                Password = data.Password
             };
-
-            return result ?? new AppUserDto() { };
         }
     }
 }

@@ -34,10 +34,8 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
             var users = await _userRepository.GetAllUsersAsync();
             var currentUser = await _userManager.GetUserAsync(_currentUserService.User);
 
-            //if (currentUser == null)
-            //    return users.Select(user => MapToDto(user
-            //        //, null, false
-            //        ));
+            if (currentUser == null)
+                return new List<AppUserDto>();
 
             var dtos = new List<AppUserDto>();
 
@@ -46,34 +44,22 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
                 if (user.IdentityId == currentUser.Id)
                     continue; // Skip current user
 
-               /* var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
-                var isOutgoingRequest = friendship != null &&
-                                      friendship.Status == FriendshipStatus.Pending &&
-                                      friendship.UserId == currentUser.Id;*/
-
-                dtos.Add(MapToDto(user
-                    //, friendship?.Status, isOutgoingRequest
-                    ));
+                dtos.Add(MapToDto(user));
             }
 
-            return dtos ?? new List<AppUserDto>() { };
+            return dtos;
         }
 
-        private AppUserDto MapToDto(AppUser user
-            //, FriendshipStatus? friendshipStatus, bool isOutgoingRequest
-            )
+        private AppUserDto MapToDto(AppUser user)
         {
             return new AppUserDto
             {
+                Id = user.Id,
                 IdentityId = user.IdentityId,
                 Name = user.Name,
                 Email = user.Email,
-                Img = user.Img,
-                Description = user.Description,
-                
-                //FriendshipStatus = friendshipStatus,
-                
-                //IsOutgoingRequest = isOutgoingRequest
+                Img = user.Img ?? "/images/user-12.png",
+                Description = user.Description
             };
         }
     }

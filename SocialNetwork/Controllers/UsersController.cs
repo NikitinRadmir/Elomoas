@@ -8,6 +8,10 @@ using System.Security.Claims;
 using Elomoas.mvc.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Elomoas.Application.Interfaces.Services;
+using Elomoas.Application.Features.AppUsers.Query.GetUserById;
+
+using System.Linq;
+using Elomoas.Application.Interfaces.Repositories;
 
 namespace Elomoas.Controllers
 {
@@ -17,17 +21,23 @@ namespace Elomoas.Controllers
         private readonly IMediator _mediator;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IFriendshipService _friendshipService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IAppUserRepository _userRepository;
 
         public UsersController(
             ILogger<UsersController> logger, 
             IMediator mediator, 
             UserManager<IdentityUser> userManager, 
-            IFriendshipService friendshipService)
+            IFriendshipService friendshipService,
+            ICurrentUserService currentUserService,
+            IAppUserRepository userRepository)
         {
             _logger = logger;
             _mediator = mediator;
             _userManager = userManager;
             _friendshipService = friendshipService;
+            _currentUserService = currentUserService;
+            _userRepository = userRepository;
         }
 
         public async Task<IActionResult> Users()
@@ -39,15 +49,57 @@ namespace Elomoas.Controllers
             };
             return View(viewModel);
         }
-        public async Task<IActionResult> UserPage()
+
+        public async Task<IActionResult> UserPage(int id)
         {
-            return View();
+            try
+            {
+                var query = new GetUserByIdQuery(id);
+                var user = await _mediator.Send(query);
+
+                if (user == null)
+                {
+                    _logger.LogWarning($"User with ID {id} not found");
+                    return NotFound();
+                }
+
+                var viewModel = new UserVM
+                {
+                    User = user
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error while getting user with ID {id}");
+                return RedirectToAction(nameof(Users));
+            }
         }
 
+        [Authorize]
         public async Task<IActionResult> MyProfile()
         {
-            return View();
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            var appUser = await _userRepository.GetAllUsersAsync();
+            var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == identityUser.Id);
+            if (currentAppUser == null)
+            {
+                return NotFound();
+            }
+
+            var query = new GetUserByIdQuery(currentAppUser.Id);
+            var viewModel = new UserVM
+            {
+                User = await _mediator.Send(query),
+            };
+            return View(viewModel);
         }
+    
 
         [Authorize]
         [HttpPost]
@@ -84,7 +136,7 @@ namespace Elomoas.Controllers
             {
                 switch (action.ToLower())
                 {
-                    case "send":
+                    case "add":
                         success = await _friendshipService.SendFriendRequestAsync(currentUser.Id, targetUserId);
                         break;
                     case "accept":
@@ -93,50 +145,29 @@ namespace Elomoas.Controllers
                     case "reject":
                         success = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, targetUserId);
                         break;
-                    case "remove":
-                        success = await _friendshipService.RemoveFriendAsync(currentUser.Id, targetUserId);
-                        break;
                     default:
-                        _logger.LogWarning("HandleFriendRequest: Unknown action: {Action}", action);
+                        _logger.LogWarning($"HandleFriendRequest: Unknown action {action}");
                         TempData["Error"] = "Неизвестное действие";
                         return RedirectToAction(nameof(Users));
-                }
-
-                if (!success)
-                {
-                    _logger.LogWarning(
-                        "HandleFriendRequest: Action {Action} failed. CurrentUser: {CurrentUserId}, TargetUser: {TargetUserId}",
-                        action, currentUser.Id, targetUserId);
-                    //TempData["Error"] = GetErrorMessage(action);
-                }
-                else
-                {
-                    _logger.LogInformation(
-                        "HandleFriendRequest: Action {Action} succeeded. CurrentUser: {CurrentUserId}, TargetUser: {TargetUserId}",
-                        action, currentUser.Id, targetUserId);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "HandleFriendRequest: Exception during {Action}. CurrentUser: {CurrentUserId}, TargetUser: {TargetUserId}",
-                    action, currentUser.Id, targetUserId);
-                TempData["Error"] = "Произошла ошибка при выполнении действия";
+                _logger.LogError(ex, "HandleFriendRequest: Error processing friend request");
+                success = false;
+            }
+
+            if (success)
+            {
+                TempData["Success"] = "Действие выполнено успешно";
+            }
+            else
+            {
+                TempData["Error"] = "Не удалось выполнить действие";
             }
 
             return RedirectToAction(nameof(Users));
         }
-
-        //private void GetErrorMessage(string action) => action.ToLower() switch
-        //{
-        //    //"send" => "Не удалось отправить заявку в друзья. Возможно, заявка уже существует.",
-        //    //"accept" => "Не удалось принять заявку в друзья. Возможно, заявка была отменена.",
-        //    //"reject" => "Не удалось отклонить заявку в друзья.",
-        //    //"remove" => "Не удалось удалить из друзей.",
-        //    //_ => "Не удалось выполнить действие. Пожалуйста, попробуйте снова."
-
-        //};
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

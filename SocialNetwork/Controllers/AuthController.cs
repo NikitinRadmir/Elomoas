@@ -23,7 +23,6 @@ namespace Elomoas.Controllers
 
         public async Task<IActionResult> Login()
         {
-
             return View();
         }
 
@@ -73,12 +72,15 @@ namespace Elomoas.Controllers
 
             var isSuccess = await _mediator.Send(command);
             if (isSuccess)
-                return RedirectToAction("Index", "Home");
+            {
+                return RedirectToAction("Feed", "Home");
+            }
 
-            ModelState.AddModelError(string.Empty, "Wrong email or password");
+            ModelState.AddModelError(string.Empty, "Неверный email или пароль");
             return View(model);
         }
 
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
