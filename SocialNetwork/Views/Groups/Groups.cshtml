@@ -19,14 +19,89 @@
                         <p class="fw-500 font-xssss text-grey-500 mt-3">@group.Description</p>
                         <div class="clearfix"></div>
                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
-                        
                         <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@group.PL</span>
-                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-info d-inline-block text-info mb-1">30 Min</span>
                         <div class="clearfix"></div>
-                        <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current">APPLY NOW</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (group.IsCurrentUserSubscribed)
+                            {
+                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">ОТПИСАТЬСЯ</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current subscribe-btn" data-group-id="@group.Id">ПОДПИСАТЬСЯ</a>
+                            }
+                        }
                     </div>
                 </div>
             }
         </div>
     </div>
-</div>    
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function handleSubscriptionError() {
+                alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+            }
+
+            $('.subscribe-btn').click(function(e) {
+                e.preventDefault();
+                var groupId = $(this).data('group-id');
+                var btn = $(this);
+                btn.prop('disabled', true); // Отключаем кнопку на время запроса
+                
+                $.post('/Groups/Subscribe', { groupId: groupId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.removeClass('bg-current subscribe-btn')
+                               .addClass('bg-danger unsubscribe-btn')
+                               .text('ОТПИСАТЬСЯ')
+                               .off('click')
+                               .on('click', function(e) {
+                                    e.preventDefault();
+                                    handleUnsubscribe($(this));
+                               });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false); // Включаем кнопку обратно
+                    });
+            });
+
+            function handleUnsubscribe(btn) {
+                var groupId = btn.data('group-id');
+                btn.prop('disabled', true); // Отключаем кнопку на время запроса
+
+                $.post('/Groups/Unsubscribe', { groupId: groupId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.removeClass('bg-danger unsubscribe-btn')
+                               .addClass('bg-current subscribe-btn')
+                               .text('ПОДПИСАТЬСЯ')
+                               .off('click')
+                               .on('click', function(e) {
+                                    e.preventDefault();
+                                    $('.subscribe-btn').click();
+                               });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false); // Включаем кнопку обратно
+                    });
+            }
+
+            $('.unsubscribe-btn').click(function(e) {
+                e.preventDefault();
+                handleUnsubscribe($(this));
+            });
+        });
+    </script>
+}    

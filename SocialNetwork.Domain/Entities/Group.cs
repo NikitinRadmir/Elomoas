@@ -11,10 +11,8 @@ namespace Elomoas.Domain.Entities;
 
 public class Group : BaseAuditableEntity
 {
-
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? Img { get; set; }
     public ProgramLanguage PL { get; set; }
-
 }

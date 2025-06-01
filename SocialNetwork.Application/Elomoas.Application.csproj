@@ -18,7 +18,6 @@
     <Folder Include="Common\" />
     <Folder Include="Features\AppUsers\Command\" />
     <Folder Include="Features\Courses\Command\" />
-    <Folder Include="Features\Groups\Command\" />
   </ItemGroup>
 
   <ItemGroup>

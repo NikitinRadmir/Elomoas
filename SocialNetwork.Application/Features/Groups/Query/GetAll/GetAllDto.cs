@@ -14,5 +14,6 @@ namespace Elomoas.Application.Features.Groups.Query.GetAll
         public string Description { get; set; }
         public string Img { get; set; }
         public ProgramLanguage PL { get; set; }
+        public bool IsCurrentUserSubscribed { get; set; }
     }
 }

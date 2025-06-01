@@ -18,6 +18,7 @@ namespace Elomoas.Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private int? _cachedUserId;
 
         public CurrentUserService(
             IHttpContextAccessor httpContextAccessor, 
@@ -31,7 +32,25 @@ namespace Elomoas.Infrastructure.Services
 
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
-        public string UserId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        public string IdentityUserId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        public int? UserId
+        {
+            get
+            {
+                if (_cachedUserId.HasValue)
+                    return _cachedUserId;
+
+                if (string.IsNullOrEmpty(IdentityUserId))
+                    return null;
+
+                var appUser = _context.AppUsers
+                    .FirstOrDefault(u => u.IdentityId == IdentityUserId);
+
+                _cachedUserId = appUser?.Id;
+                return _cachedUserId;
+            }
+        }
 
         public async Task<AppUser> GetCurrentAppUserAsync()
         {
