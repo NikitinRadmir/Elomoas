@@ -1,90 +1,91 @@
-﻿@{
+﻿@model Elomoas.mvc.Models.Settings.AccountInfoVM
+
+@{
     ViewData["Title"] = "Account Info";
 }
-    <div class="middle-sidebar-bottom bg-lightblue theme-dark-bg">
+<div class="middle-sidebar-bottom bg-lightblue theme-dark-bg">
     <div class="middle-sidebar-left">
         <div class="middle-wrap">
             <div class="card w-100 border-0 bg-white shadow-xs p-0 mb-4">
                 <div class="card-body p-4 w-100 bg-current border-0 d-flex rounded-lg">
                     <a asp-controller="Settings" asp-action="Settings" class="d-inline-block mt-2"><i class="ti-arrow-left font-sm text-white"></i></a>
-                    <h4 class="font-xs text-white fw-600 ml-4 mb-0 mt-2">Account Details</h4>
+                    <h4 class="font-xs text-white fw-600 ml-4 mb-0 mt-2">Информация профиля</h4>
                 </div>
-                <div class="card-body p-lg-5 p-4 w-100 border-0 ">
+                <div class="card-body p-lg-5 p-4 w-100 border-0">
+                    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (!ViewContext.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                        </div>
+                    }
+
                     <div class="row justify-content-center">
                         <div class="col-lg-4 text-center">
-                            <figure class="avatar ml-auto mr-auto mb-0 mt-2 w100"><img src="~/images/t-1.jpg" alt="image" class="shadow-sm rounded-lg w-100"></figure>
-                            <h2 class="fw-700 font-sm text-grey-900 mt-3">Surfiya Zakir</h2>
-                            <h4 class="text-grey-500 fw-500 mb-3 font-xsss mb-4">Brooklyn</h4>
-                            <!-- <a href="#" class="p-3 alert-primary text-primary font-xsss fw-500 mt-2 rounded-lg">Upload New Photo</a> -->
+                            <figure class="avatar ml-auto mr-auto mb-0 mt-2 w100">
+                                <img src="@(string.IsNullOrEmpty(Model.Img) ? "/images/user-default.png" : Model.Img)" alt="profile" class="shadow-sm rounded-lg w-100">
+                            </figure>
+                            <h2 class="fw-700 font-sm text-grey-900 mt-3">@Model.FirstName @Model.LastName</h2>
                         </div>
                     </div>
 
-                    <form action="account-information.html#">
+                    <form method="post" asp-controller="Settings" asp-action="AccountInfo">
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xsss">First Name</label>
-                                    <input type="text" class="form-control">
+                                    <label class="mont-font fw-600 font-xssss">Имя</label>
+                                    <input type="text" asp-for="FirstName" class="form-control">
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <div class="col-lg-6 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xsss">Last Name</label>
-                                    <input type="text" class="form-control">
+                                    <label class="mont-font fw-600 font-xssss">Фамилия</label>
+                                    <input type="text" asp-for="LastName" class="form-control">
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6 mb-3">
-                                <div class="form-group">
-                                    <label class="mont-font fw-600 font-xsss">Email</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 mb-3">
-                                <div class="form-group">
-                                    <label class="mont-font fw-600 font-xsss">Phone</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        
-
-                        <div class="row">
-                           
-
                             <div class="col-lg-12 mb-3">
-                                <div class="card mt-3 border-0">
-                                    <div class="card-body d-flex justify-content-between align-items-end p-0">
-                                        <div class="form-group mb-0 w-100">
-                                            <input type="file" name="file" id="file" class="input-file">
-                                            <label for="file" class="rounded-lg text-center bg-white btn-tertiary js-labelFile p-4 w-100 border-dashed">
-                                                <i class="ti-cloud-down large-icon mr-3 d-block"></i>
-                                                <span class="js-fileName">Drag and drop or click to replace</span>
-                                            </label>
-                                        </div>
-                                    </div>
+                                <div class="form-group">
+                                    <label class="mont-font fw-600 font-xssss">Email</label>
+                                    <input type="email" asp-for="Email" class="form-control">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
-                            </div>
-
-                            <div class="col-lg-12 mb-3">
-                                <label class="mont-font fw-600 font-xsss">Description</label>
-                                <textarea class="form-control mb-0 p-3 h100 bg-greylight lh-16" rows="5" placeholder="Write your message..." spellcheck="false"></textarea>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <a href="account-information.html#" class="bg-current text-center text-white font-xsss fw-600 p-3 w175 rounded-lg d-inline-block">Save</a>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-lg-12 mb-3">
+                                <div class="form-group">
+                                    <label class="mont-font fw-600 font-xssss">Описание</label>
+                                    <textarea asp-for="Description" class="form-control mb-0 p-3 h100 bg-greylight lh-16" rows="5" placeholder="Расскажите о себе..."></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 mb-0">
+                                <button type="submit" class="bg-current text-center text-white font-xsss fw-600 p-3 w175 rounded-lg d-inline-block">Сохранить</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
-            <!-- <div class="card w-100 border-0 p-2"></div> -->
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

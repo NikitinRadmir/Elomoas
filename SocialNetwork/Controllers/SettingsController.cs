@@ -27,9 +27,94 @@ namespace Elomoas.Controllers
             return View();
         }
 
-        public IActionResult AccountInfo()
+        public async Task<IActionResult> AccountInfo()
         {
-            return View();
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return RedirectToAction("Login", "Auth");
+
+            var appUser = await _context.AppUsers
+                .FirstOrDefaultAsync(u => u.IdentityId == identityUser.Id);
+
+            if (appUser == null)
+                return RedirectToAction("Login", "Auth");
+
+            var model = new AccountInfoVM();
+
+            // Разбиваем имя на части
+            var nameParts = appUser.Name?.Split(' ') ?? new string[0];
+            model.FirstName = nameParts.Length > 0 ? nameParts[0] : "";
+            model.LastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
+
+            model.Email = appUser.Email;
+            model.Description = appUser.Description;
+            model.Img = appUser.Img;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AccountInfo(AccountInfoVM model)
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return RedirectToAction("Login", "Auth");
+
+            // Проверяем email только если он был изменен
+            if (!string.IsNullOrEmpty(model.Email) && identityUser.Email != model.Email)
+            {
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "Этот email уже используется");
+                    return View(model);
+                }
+
+                // Обновляем IdentityUser только если email изменился
+                identityUser.Email = model.Email;
+                identityUser.UserName = model.Email;
+                var identityResult = await _userManager.UpdateAsync(identityUser);
+
+                if (!identityResult.Succeeded)
+                {
+                    foreach (var error in identityResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model);
+                }
+            }
+
+            // Обновляем AppUser
+            var appUser = await _context.AppUsers
+                .FirstOrDefaultAsync(u => u.IdentityId == identityUser.Id);
+
+            if (appUser != null)
+            {
+                // Собираем полное имя только если хотя бы одно из полей заполнено
+                if (!string.IsNullOrEmpty(model.FirstName) || !string.IsNullOrEmpty(model.LastName))
+                {
+                    var fullName = string.IsNullOrWhiteSpace(model.LastName)
+                        ? model.FirstName
+                        : $"{model.FirstName} {model.LastName}";
+                    appUser.Name = fullName?.Trim();
+                }
+
+                if (!string.IsNullOrEmpty(model.Email))
+                {
+                    appUser.Email = model.Email;
+                }
+
+                if (model.Description != null) // Позволяем сохранять пустое описание
+                {
+                    appUser.Description = model.Description;
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Данные успешно обновлены";
+            }
+
+            return RedirectToAction(nameof(Settings));
         }
 
         public IActionResult Password()
