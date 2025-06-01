@@ -2,7 +2,7 @@ using MediatR;
 using System.Collections.Generic;
 using Elomoas.Domain.Entities;
 
-namespace Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups
+namespace Elomoas.Application.Features.Groups.Query.GetSubscribedGroups
 {
     public class GetSubscribedGroupsQuery : IRequest<IEnumerable<Group>>
     {
@@ -13,4 +13,4 @@ namespace Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups
             UserId = userId;
         }
     }
-} 
+}

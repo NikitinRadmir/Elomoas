@@ -9,6 +9,7 @@ namespace Elomoas.mvc.Models.Users
         public IEnumerable<AppUserDto> Users { get; set; }
         public AppUserDto User { get; set; }
         public IEnumerable<Group> SubscribedGroups { get; set; }
+        public IEnumerable<Course> SubscribedCourses { get; set; }
     }
 }
 

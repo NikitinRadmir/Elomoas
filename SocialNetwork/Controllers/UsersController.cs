@@ -15,7 +15,9 @@ using Elomoas.Application.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
-using Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups;
+using Elomoas.Application.Features.Groups.Query.GetSubscribedGroups;
+using Elomoas.Application.Features.Courses.Query.GetSubscribedCourses;
+
 
 namespace Elomoas.Controllers
 {
@@ -102,10 +104,14 @@ namespace Elomoas.Controllers
             var subscribedGroupsQuery = new GetSubscribedGroupsQuery(currentAppUser.Id);
             var subscribedGroups = await _mediator.Send(subscribedGroupsQuery);
 
+            var subscribedCoursesQuery = new GetSubscribedCoursesQuery(currentAppUser.Id);
+            var subscribedCourses = await _mediator.Send(subscribedCoursesQuery);
+
             var viewModel = new UserVM
             {
                 User = user,
-                SubscribedGroups = subscribedGroups
+                SubscribedGroups = subscribedGroups,
+                SubscribedCourses = subscribedCourses
             };
 
             return View(viewModel);

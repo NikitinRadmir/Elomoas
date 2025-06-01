@@ -64,94 +64,43 @@
 
 
             <div class="tab-pane fade" id="navtabs1">
-                <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">My  <b>Courses</b> </h2></div>
+                <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
+                    <div class="card-body mb-3 pb-0">
+                        <h2 class="fw-400 font-lg d-block"><b>My Courses</b></h2>
+                    </div>
                     <div class="card-body pb-0">
                         <div class="row">
-
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-1.png" alt="image" class="w-100"></a>
+                            @if (Model.SubscribedCourses != null && Model.SubscribedCourses.Any())
+                            {
+                                @foreach (var course in Model.SubscribedCourses)
+                                {
+                                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
+                                        <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
+                                            <div class="card-image w-100 mb-3">
+                                                <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="video-bttn position-relative d-block">
+                                                    <img src="@course.Img" alt="@course.Name" class="w-100">
+                                                </a>
+                                            </div>
+                                            <div class="card-body pt-0">
+                                                <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">@course.PL</span>
+                                                <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right">
+                                                    <span class="font-xsssss">$</span> @course.Price
+                                                </span>
+                                                <h4 class="fw-700 font-xss mt-3 lh-28 mt-0">
+                                                    <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="text-dark text-grey-900">@course.Name</a>
+                                                </h4>
+                                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-course-btn" data-course-id="@course.Id">ОТПИСАТЬСЯ</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 240</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <p class="text-center text-grey-500">You haven't subscribed to any courses yet.</p>
                                 </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-4.jpg" alt="image" class="w-100"></a>
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-warning d-inline-block text-warning mr-1">Python</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 670</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Fundamentals for Scrum Master and Agile Projects </a></h4>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-6.jpg" alt="image" class="w-100"></a>
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 450</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-5.jpg" alt="image" class="w-100"></a>
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Develop</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 370</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">The Data Science Course Complete Data Science </a></h4>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-3.png" alt="image" class="w-100"></a>
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mr-1">Bootstrap</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 60</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Java Programming Masterclass for Developers</a></h4>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 mb-4">
-                                <div class="card w-100 p-0 shadow-xss border-0 rounded-lg overflow-hidden mr-1">
-                                    <div class="card-image w-100 mb-3">
-                                        <a asp-controller="Course" asp-action="Course" class="video-bttn position-relative d-block"><img src="~/images/v-2.png" alt="image" class="w-100"></a>
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-danger d-inline-block text-danger mr-1">Desinger</span>
-                                        <span class="font-xss fw-700 pl-3 pr-3 ls-2 lh-32 d-inline-block text-success float-right"><span class="font-xsssss">$</span> 40</span>
-                                        <h4 class="fw-700 font-xss mt-3 lh-28 mt-0"><a asp-controller="Course" asp-action="Course" class="text-dark text-grey-900">Complete Python Bootcamp From Zero to Hero in Python </a></h4>
-                                        
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -219,7 +168,8 @@
                 alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
             }
 
-            function handleUnsubscribe(btn) {
+            // Обработка отписки от группы
+            function handleGroupUnsubscribe(btn) {
                 var groupId = btn.data('group-id');
                 btn.prop('disabled', true);
 
@@ -242,9 +192,38 @@
                     });
             }
 
+            // Обработка отписки от курса
+            function handleCourseUnsubscribe(btn) {
+                var courseId = btn.data('course-id');
+                btn.prop('disabled', true);
+
+                $.post('/Course/Unsubscribe', { courseId: courseId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.closest('.col-xl-4').fadeOut(300, function() {
+                                $(this).remove();
+                                if ($('.unsubscribe-course-btn').length === 0) {
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false);
+                    });
+            }
+
             $('.unsubscribe-btn').click(function(e) {
                 e.preventDefault();
-                handleUnsubscribe($(this));
+                handleGroupUnsubscribe($(this));
+            });
+
+            $('.unsubscribe-course-btn').click(function(e) {
+                e.preventDefault();
+                handleCourseUnsubscribe($(this));
             });
         });
     </script>

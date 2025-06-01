@@ -7,7 +7,7 @@ using Elomoas.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups
+namespace Elomoas.Application.Features.Groups.Query.GetSubscribedGroups
 {
     public class GetSubscribedGroupsQueryHandler : IRequestHandler<GetSubscribedGroupsQuery, IEnumerable<Group>>
     {
@@ -36,4 +36,4 @@ namespace Elomoas.Application.Features.Groups.Queries.GetSubscribedGroups
             return subscribedGroups;
         }
     }
-} 
+}

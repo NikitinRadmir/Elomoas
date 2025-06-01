@@ -32,6 +32,7 @@ namespace Elomoas.Persistence.Extensions
                 .AddTransient<IGroupRepository, GroupRepository>()
                 .AddTransient<ICourseRepository, CourseRepository>()
                 .AddTransient<IAppUserRepository, AppUserRepository>()
+                .AddTransient<ICourseSubscriptionRepository, CourseSubscriptionRepository>()
                 .AddTransient<IGroupSubscriptionRepository, GroupSubscriptionRepository>();
         }
     }

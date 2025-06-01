@@ -53,10 +53,8 @@
                 </div>
                 <div class="card d-block border-0 rounded-lg overflow-hidden dark-bg-transparent bg-transparent mt-4 pb-3">
                     <div class="row">
-                        <div class="col-10"><h2 class="fw-700 font-md d-block lh-4 mb-2">@Model.Course.Name</h2></div>
-                        <div class="col-2">
-                            
-                            
+                        <div class="col-12">
+                            <h2 class="fw-700 font-md d-block lh-4 mb-2">@Model.Course.Name</h2>
                         </div>
                     </div>
                 </div>
@@ -87,8 +85,21 @@
                         <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Unlimited views</h4>
                         <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Everything in Free</h4>
                         <h4 class="text-white font-xssss mb-4"><i class="ti-check mr-2 text-white"></i> Private share links</h4>
-                        @*Кнопка оплата*@<a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss btn-light">Subscribe</a>
-
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (Model.IsSubscribed)
+                            {
+                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="@Model.Course.Id">ОТПИСАТЬСЯ</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss subscribe-btn" data-course-id="@Model.Course.Id">ПОДПИСАТЬСЯ</a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-block border-0 w-100 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss">ВОЙТИ</a>
+                        }
                     </div>
                 </div>
                 
@@ -103,6 +114,71 @@
 
 @section Scripts {
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function handleSubscriptionError() {
+                alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+            }
+
+            function handleSubscribe(btn) {
+                var courseId = btn.data('course-id');
+                btn.prop('disabled', true);
+
+                $.post('/Course/Subscribe', { courseId: courseId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.text('ОТПИСАТЬСЯ');
+                            btn.removeClass('text-primary').addClass('text-danger');
+                            btn.removeClass('subscribe-btn').addClass('unsubscribe-btn');
+                            btn.off('click').click(function(e) {
+                                e.preventDefault();
+                                handleUnsubscribe($(this));
+                            });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false);
+                    });
+            }
+
+            function handleUnsubscribe(btn) {
+                var courseId = btn.data('course-id');
+                btn.prop('disabled', true);
+
+                $.post('/Course/Unsubscribe', { courseId: courseId })
+                    .done(function(response) {
+                        if (response.success) {
+                            btn.text('ПОДПИСАТЬСЯ');
+                            btn.removeClass('text-danger').addClass('text-primary');
+                            btn.removeClass('unsubscribe-btn').addClass('subscribe-btn');
+                            btn.off('click').click(function(e) {
+                                e.preventDefault();
+                                handleSubscribe($(this));
+                            });
+                        } else {
+                            handleSubscriptionError();
+                        }
+                    })
+                    .fail(handleSubscriptionError)
+                    .always(function() {
+                        btn.prop('disabled', false);
+                    });
+            }
+
+            $('.subscribe-btn').click(function(e) {
+                e.preventDefault();
+                handleSubscribe($(this));
+            });
+
+            $('.unsubscribe-btn').click(function(e) {
+                e.preventDefault();
+                handleUnsubscribe($(this));
+            });
+        });
+    </script>
 }
 
 @section Styles {
