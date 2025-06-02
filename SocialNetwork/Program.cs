@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Elomoas.Infrastructure.Settings;
 using Elomoas.mvc.Hubs;
 using Microsoft.AspNetCore.Identity;
+using Elomoas.Extensions;
+using Microsoft.Extensions.Logging;
+using Elomoas.Logging;
 
 namespace Elomoas;
 
@@ -16,17 +19,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add DbContext
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
+        builder.Logging.AddFile("logs/app-{Date}.txt"); 
+        builder.Logging.SetMinimumLevel(LogLevel.Information);
 
-        // Add services
         builder.Services.AddApplicationLayer();
         builder.Services.AddInfrastructureLayer();
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddPersistenceLayer(builder.Configuration);
 
-        // Configure authentication
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Auth/Login";
@@ -37,12 +40,10 @@ public class Program
         builder.Services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-        // Add SignalR
         builder.Services.AddSignalR();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
@@ -55,6 +56,9 @@ public class Program
             app.UseExceptionHandler("/Error");
         }
 
+        app.UseGlobalExceptionHandling();
+        app.UseRequestLogging();
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles(new StaticFileOptions
         {
@@ -67,6 +71,8 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseUserActivityLogging();
+
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Feed}/{id?}");
@@ -75,7 +81,6 @@ public class Program
              pattern: "Admin/{controller=Dashboard}/{action=Dashboard}/{id?}"
         );
 
-        // Map SignalR hub
         app.MapHub<FriendshipHub>("/friendshipHub");
 
         app.Run();

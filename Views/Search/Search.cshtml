@@ -1,0 +1,40 @@
+@section Scripts {
+    <script>
+        function updateSearchResults(searchTerm, category) {
+            $.get('/Search/Search', { searchTerm: searchTerm, category: category })
+                .done(function (response) {
+                    $('#searchResults').html($(response).find('#searchResults').html());
+                    
+                    const url = new URL(window.location);
+                    url.searchParams.set('searchTerm', searchTerm || '');
+                    url.searchParams.set('category', category || '');
+                    history.pushState({}, '', url);
+                });
+        }
+
+        let searchTimeout;
+        
+        $('#searchInput').on('input', function() {
+            clearTimeout(searchTimeout);
+            const searchTerm = $(this).val();
+            const category = $('#categorySelect').val();
+            
+            searchTimeout = setTimeout(function() {
+                updateSearchResults(searchTerm, category);
+            }, 300);
+        });
+
+        $('#categorySelect').on('change', function() {
+            const searchTerm = $('#searchInput').val();
+            const category = $(this).val();
+            updateSearchResults(searchTerm, category);
+        });
+
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = $('#searchInput').val();
+            const category = $('#categorySelect').val();
+            updateSearchResults(searchTerm, category);
+        });
+    </script>
+} 

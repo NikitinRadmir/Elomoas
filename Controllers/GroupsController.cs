@@ -43,5 +43,20 @@ namespace Elomoas.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Subscribe(int groupId)
+        {
+            var result = await _mediator.Send(new SubscribeCommand(groupId));
+
+            if (!result)
+            {
+                _logger.LogWarning($"Failed to subscribe to group {groupId}");
+                return Json(new { success = false });
+            }
+
+            await _mediator.Send(new GetAllQuery());
+            return Json(new { success = true });
+        }
     }
 } 

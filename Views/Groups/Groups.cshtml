@@ -1,0 +1,41 @@
+@section Scripts {
+    <script>
+        function updateGroups(searchTerm) {
+            $.get('/Groups/Groups', { search: searchTerm })
+                .done(function (response) {
+                    $('#groupsContainer').html($(response).find('#groupsContainer').html());
+                    
+                    const url = new URL(window.location);
+                    url.searchParams.set('search', searchTerm || '');
+                    history.pushState({}, '', url);
+
+                    initializeSubscriptionHandlers();
+                });
+        }
+
+        let searchTimeout;
+        
+        $('#groupSearch').on('input', function() {
+            clearTimeout(searchTimeout);
+            const searchTerm = $(this).val();
+            
+            searchTimeout = setTimeout(function() {
+                updateGroups(searchTerm);
+            }, 300);
+        });
+
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = $('#groupSearch').val();
+            updateGroups(searchTerm);
+        });
+
+        $(window).on('popstate', function() {
+            const url = new URL(window.location);
+            const searchTerm = url.searchParams.get('search') || '';
+            
+            $('#groupSearch').val(searchTerm);
+            updateGroups(searchTerm);
+        });
+    </script>
+} 

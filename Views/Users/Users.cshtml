@@ -1,0 +1,39 @@
+@section Scripts {
+    <script>
+        function updateUsers(searchTerm) {
+            $.get('/Users/Users', { search: searchTerm })
+                .done(function (response) {
+                    $('#usersContainer').html($(response).find('#usersContainer').html());
+                    
+                    const url = new URL(window.location);
+                    url.searchParams.set('search', searchTerm || '');
+                    history.pushState({}, '', url);
+                });
+        }
+
+        let searchTimeout;
+        
+        $('#userSearch').on('input', function() {
+            clearTimeout(searchTimeout);
+            const searchTerm = $(this).val();
+            
+            searchTimeout = setTimeout(function() {
+                updateUsers(searchTerm);
+            }, 300);
+        });
+
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = $('#userSearch').val();
+            updateUsers(searchTerm);
+        });
+
+        $(window).on('popstate', function() {
+            const url = new URL(window.location);
+            const searchTerm = url.searchParams.get('search') || '';
+            
+            $('#userSearch').val(searchTerm);
+            updateUsers(searchTerm);
+        });
+    </script>
+} 
