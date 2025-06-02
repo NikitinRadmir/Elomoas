@@ -8,6 +8,7 @@ using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Controllers
 {
@@ -17,15 +18,18 @@ namespace Elomoas.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IAuthService _authService;
 
         public SettingsController(
             UserManager<IdentityUser> userManager, 
             ApplicationDbContext context,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IAuthService authService)
         {
             _userManager = userManager;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _authService = authService;
         }
 
         public IActionResult Settings()
@@ -215,6 +219,13 @@ namespace Elomoas.Controllers
 
             TempData["SuccessMessage"] = "Пароль успешно изменен";
             return RedirectToAction(nameof(Settings));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.LogoutAsync();
+            return RedirectToAction("Login", "Auth");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
