@@ -2,10 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Elomoas.Models;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Elomoas.Controllers
 {
+    [Authorize]
     public class MessangerController : Controller
     {
         private readonly ILogger<MessangerController> _logger;

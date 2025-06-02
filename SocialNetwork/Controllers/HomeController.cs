@@ -5,9 +5,12 @@ using Elomoas.Models;
 using Elomoas.mvc.Models.Courses;
 using Elomoas.Application.Features.Courses.Query.GetAllCourses;
 using Elomoas.Application.Features.Courses.Query.GetLatestCourses;
+using Elomoas.Application.Features.Courses.Query.GetCoursesCount;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Elomoas.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -24,7 +27,8 @@ public class HomeController : Controller
         var viewModel = new CourseVM
         {
             PopularCourses = await _mediator.Send(new GetAllCoursesQuery()),
-            LatestCourses = await _mediator.Send(new GetLatestCoursesQuery())
+            LatestCourses = await _mediator.Send(new GetLatestCoursesQuery()),
+            CoursesCount = await _mediator.Send(new GetCoursesCountQuery())
         };
 
         return View(viewModel);

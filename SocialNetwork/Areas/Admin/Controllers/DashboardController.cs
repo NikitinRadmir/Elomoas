@@ -3,10 +3,12 @@ using Elomoas.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Elomoas.mvc.Areas.Admin.Controllers;
 
 [Area("Admin")] // Указываем, что этот контроллер принадлежит области Admin
+[Authorize]
 public class DashboardController : Controller
 {
     private readonly ILogger<DashboardController> _logger;

@@ -9,7 +9,8 @@ namespace Elomoas.Application.Interfaces.Repositories
 {
     public interface ICourseRepository
     {
-        Task<IEnumerable<Course>> GetAllCoursesAsync ();
+        Task<IEnumerable<Course>> GetAllCoursesAsync();
         Task<Course> GetCourseById(int id);
+        Task<Dictionary<string, int>> GetCoursesCountByPL();
     }
 }

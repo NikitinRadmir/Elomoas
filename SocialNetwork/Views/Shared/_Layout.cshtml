@@ -61,10 +61,13 @@
         <div class="main-content">
             <div class="middle-sidebar-header bg-white">
                 <button class="header-menu"></button>
-                <form action="#" class="float-left header-search">
+                <form asp-controller="Search" asp-action="Search" method="get" class="float-left header-search">
                     <div class="form-group mb-0 icon-input">
                         <i class="feather-search font-lg text-grey-400"></i>
-                        <input type="text" placeholder="Start typing to search.." class="bg-transparent border-0 lh-32 pt-2 pb-2 pl-5 pr-3 font-xsss fw-500 rounded-xl w350">
+                        <input type="text" 
+                               name="searchTerm"
+                               placeholder="Поиск курсов..." 
+                               class="bg-transparent border-0 lh-32 pt-2 pb-2 pl-5 pr-3 font-xsss fw-500 rounded-xl w350">
                     </div>
                 </form>
                 <ul class="d-flex ml-auto right-menu-icon">
@@ -193,14 +196,14 @@
 
             @RenderBody()
         </div>
-        <!-- main content -->
+        <!-- Mini menu for mobile -->
 
         <div class="app-footer border-0 shadow-lg">
-            <a href="#" class="nav-content-bttn nav-center"><i class="feather-home"></i></a>
-            <a href="#" class="nav-content-bttn"><i class="feather-package"></i></a>
-            <a href="#" class="nav-content-bttn" data-tab="chats"><i class="feather-layout"></i></a>
-            <a href="#" class="nav-content-bttn sidebar-layer"><i class="feather-layers"></i></a>
-            <a href="#" class="nav-content-bttn"><img src="~/images/female-profile.png" alt="user" class="w30 shadow-xss"></a>
+            <a asp-controller="Home" asp-action="Feed" class="nav-content-bttn nav-center"><i class="feather-home"></i></a>
+            <a asp-controller="Users" asp-action="Users" class="nav-content-bttn"><i class="feather-user"></i></a>
+            <a asp-controller="Messanger" asp-action="Messanger" class="nav-content-bttn" ><i class="feather-message-circle"></i></a>
+            <a asp-controller="Groups" asp-action="Groups" class="nav-content-bttn"><i class="feather-users"></i></a>
+            <a asp-controller="Users" asp-action="MyProfile" class="nav-content-bttn"><img src="~/images/female-profile.png" alt="user" class="w30 shadow-xss"></a>
         </div>
     </div>
 

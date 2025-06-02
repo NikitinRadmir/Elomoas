@@ -10,6 +10,7 @@ using Elomoas.Application.Features.Groups.Commands.UnsubscribeFromGroup;
 
 namespace Elomoas.Controllers
 {
+    [Authorize]
     public class GroupsController : Controller
     {
         private readonly ILogger<GroupsController> _logger;
@@ -21,12 +22,20 @@ namespace Elomoas.Controllers
             _mediator = mediator;
         }
 
-        public async Task<IActionResult> Groups()
+        public async Task<IActionResult> Groups(string search)
         {
             var query = new GetAllQuery();
+            var groups = await _mediator.Send(query);
+            
+            if (!string.IsNullOrEmpty(search))
+            {
+                groups = groups.Where(g => g.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+            
             var viewModel = new GroupVM
             {
-                Groups = await _mediator.Send(query)
+                Groups = groups,
+                SearchTerm = search
             };
             return View(viewModel);
         }

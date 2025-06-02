@@ -95,13 +95,17 @@
     <div class="middle-sidebar-left">
         <div class="card mb-4 search-card">
             <div class="card-body search-padding">
-                <div class="form-group mb-0">
-                    <input type="text" 
-                           id="userSearch" 
-                           class="form-control search-input" 
-                           placeholder="🔍 Поиск пользователей по имени..."
-                           autocomplete="off">
-                </div>
+                <form id="searchForm" method="get" asp-controller="Users" asp-action="Users">
+                    <div class="form-group mb-0">
+                        <input type="text" 
+                               id="userSearch" 
+                               name="search"
+                               value="@Model.SearchTerm"
+                               class="form-control search-input" 
+                               placeholder="🔍 Поиск пользователей..."
+                               autocomplete="off">
+                    </div>
+                </form>
             </div>
         </div>
         
@@ -129,30 +133,44 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // Функционал поиска
-            const searchInput = document.getElementById('userSearch');
-            const userItems = document.querySelectorAll('.user-item');
-
-            searchInput.addEventListener('input', function(e) {
-                const searchText = e.target.value.toLowerCase();
-
-                userItems.forEach(item => {
-                    const userName = item.getAttribute('data-user-name');
-                    if (userName.includes(searchText)) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
+        function updateUsers(searchTerm) {
+            $.get('/Users/Users', { search: searchTerm })
+                .done(function (response) {
+                    $('#usersContainer').html($(response).find('#usersContainer').html());
+                    
+                    // Обновляем URL без перезагрузки страницы
+                    const url = new URL(window.location);
+                    url.searchParams.set('search', searchTerm || '');
+                    history.pushState({}, '', url);
                 });
-            });
+        }
 
-            // Анимация фокуса на поле поиска
-            $('#userSearch').focus(function() {
-                $('.search-card').css('transform', 'translateY(-2px)');
-            }).blur(function() {
-                $('.search-card').css('transform', 'translateY(0)');
-            });
+        let searchTimeout;
+        
+        $('#userSearch').on('input', function() {
+            clearTimeout(searchTimeout);
+            const searchTerm = $(this).val();
+            
+            // Добавляем задержку 300мс перед отправкой запроса
+            searchTimeout = setTimeout(function() {
+                updateUsers(searchTerm);
+            }, 300);
+        });
+
+        // Предотвращаем стандартную отправку формы
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = $('#userSearch').val();
+            updateUsers(searchTerm);
+        });
+
+        // Обрабатываем навигацию по истории браузера
+        $(window).on('popstate', function() {
+            const url = new URL(window.location);
+            const searchTerm = url.searchParams.get('search') || '';
+            
+            $('#userSearch').val(searchTerm);
+            updateUsers(searchTerm);
         });
     </script>
 } 

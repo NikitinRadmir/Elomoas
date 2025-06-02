@@ -28,6 +28,15 @@ namespace Elomoas.Persistence.Repositories
             return await _repository.Entities.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<Dictionary<string, int>> GetCoursesCountByPL()
+        {
+            return await _repository.Entities
+                .GroupBy(x => x.PL)
+                .ToDictionaryAsync(
+                    g => g.Key.ToString(),
+                    g => g.Count()
+                );
+        }
 
         //Task<IEnumerable<Course>> GetAllCoursesAsync ();
         //Task<Course> GetCourseById(int id);

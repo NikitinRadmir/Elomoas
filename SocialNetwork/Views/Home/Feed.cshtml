@@ -16,35 +16,40 @@
                         <h2 class="display3-size fw-400 display2-md-size sm-mt-7 sm-pt-10">Find a perfect <b class="d-lg-block">Online Course</b></h2>
                         <h4 class="text-grey-500 font-xssss fw-500 ml-1 lh-24">For only course you need to learn web development</h4>
                         <div class="form-group mt-lg-4 p-3 border-light border p-2 bg-white rounded-lg ">
-                            <div class="row">
-                                @*ФИЛЬТР И ПОИСК*@
-                                <div class="col-md-5">
-                                    <div class="form-group icon-input mb-0">
-                                        <i class="ti-search font-xs text-grey-400"></i>
-                                        <input type="text" class="style1-input bg-transparent border-0 pl-5 font-xsss mb-0 text-grey-500 fw-500" placeholder="Search online courses..">
+                            <form id="searchForm" asp-controller="Search" asp-action="Search" method="get">
+                                <div class="row">
+                                    @*ФИЛЬТР И ПОИСК*@
+                                    <div class="col-md-5">
+                                        <div class="form-group icon-input mb-0">
+                                            <i class="ti-search font-xs text-grey-400"></i>
+                                            <input type="text" 
+                                                   name="searchTerm"
+                                                   class="style1-input bg-transparent border-0 pl-5 font-xsss mb-0 text-grey-500 fw-500" 
+                                                   placeholder="Search online courses..">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-4">
-                                    <div class="form-group icon-input mb-0">
-                                        <i class="ti-package font-xs text-grey-400"></i>
-                                        <select class="style1-select bg-transparent border-0 pl-5">
-                                            <option value="Bootstrap">Bootstrap</option>
-                                            <option value="HTML">HTML</option>
-                                            <option value="Jquery">Jquery</option>
-                                            <option value="Sass">Sass</option>
-                                            <option value="React">React</option>
-                                            <option value="JAVA">JAVA</option>
-                                            <option value="Python">Python</option>
-                                            <option value="Mongodb">Mongodb</option>
-                                            <option value="Desinger">Desinger</option>
-                                        </select>
+                                    <div class="col-md-4">
+                                        <div class="form-group icon-input mb-0">
+                                            <i class="ti-package font-xs text-grey-400"></i>
+                                            <select name="category" class="style1-select bg-transparent border-0 pl-5">
+                                                <option value="">Select PL</option>
+                                                <option value="BOOTSTRAP">Bootstrap</option>
+                                                <option value="HTML">HTML</option>
+                                                <option value="JQUERY">Jquery</option>
+                                                <option value="SASS">Sass</option>
+                                                <option value="REACT">React</option>
+                                                <option value="JAVA">JAVA</option>
+                                                <option value="PYTHON">Python</option>
+                                                <option value="MONGODB">Mongodb</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase">Search</button>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <a asp-controller="Search" asp-action="Search" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase ">Search</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                         <h4 class="text-grey-500 font-xssss fw-500 ml-1 lh-24"> <b class="text-grey-800 text-dark">Popular Search :</b> Designer, Developer, PHP, HTML, CSS, SCSS </h4>
                     </div>
@@ -60,10 +65,10 @@
                     @*Категории*@
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="BOOTSTRAP">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download1.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Bootstrap <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Bootstrap <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("BOOTSTRAP", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -71,10 +76,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="HTML">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download2.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">HTML <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">HTML <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("HTML", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -82,10 +87,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #e5f4fb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="JQUERY">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download3.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Jquery <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Jquery <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("JQUERY", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -93,10 +98,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #dcf4f8;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="SASS">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download4.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Sass <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Sass <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("SASS", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -105,10 +110,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="REACT">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download5.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">React <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">React <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("REACT", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -116,10 +121,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="JAVA">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download6.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">JAVA <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">JAVA <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("JAVA", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -127,10 +132,10 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #e5f4fb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="PYTHON">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/download7.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Python<span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Python<span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("PYTHON", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
@@ -138,38 +143,14 @@
 
                     <div class="item">
                         <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a asp-controller="Search" asp-action="Search">
+                            <a asp-controller="Search" asp-action="Search" asp-route-category="MONGODB">
                                 <div class="card-body p-2 ml-1 ">
                                     <span class="btn-round-xl bg-white"><img src="~/images/mongodb.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Mongodb <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
+                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Mongodb <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">@(Model.CoursesCount.GetValueOrDefault("MONGODB", 0)) Course</span></h4>
                                 </div>
                             </a>
                         </div>
                     </div>
-
-                    <div class="item">
-                        <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fcf1eb;">
-                            <a asp-controller="Search" asp-action="Search">
-                                <div class="card-body p-2 ml-1 ">
-                                    <span class="btn-round-xl bg-white"><img src="~/images/download1.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Desinger <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="card cat-card-hover mr-1 w140 border-0 p-4 rounded-lg text-center" style="background-color: #fff9eb;">
-                            <a asp-controller="Search" asp-action="Search">
-                                <div class="card-body p-2 ml-1 ">
-                                    <span class="btn-round-xl bg-white"><img src="~/images/download2.png" alt="icon" class="p-2"></span>
-                                    <h4 class="fw-600 font-xsss mt-3 mb-0">Desinger <span class="d-block font-xsssss fw-500 text-grey-500 mt-2">32 Course</span></h4>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-
                 </div>
             </div>
 

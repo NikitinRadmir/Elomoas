@@ -2,10 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Elomoas.Models;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Elomoas.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
         private readonly ILogger<ErrorController> _logger;
@@ -17,19 +18,31 @@ namespace Elomoas.Controllers
             _mediator = mediator;
         }
 
-        public async Task<IActionResult> Error404()
+        [Route("Error/{statusCode}")]
+        public IActionResult HttpStatusCodeHandler(int statusCode)
         {
-
-            return View();
+            switch (statusCode)
+            {
+                case 404:
+                    return View("Error404");
+                case 403:
+                    return View("Error403");
+                case 500:
+                    return View("Error500");
+                default:
+                    return View("Error");
+            }
         }
 
-
-
-
+        [Route("Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionDetails = new ErrorViewModel 
+            { 
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
+            };
+            return View(exceptionDetails);
         }
     }
 }

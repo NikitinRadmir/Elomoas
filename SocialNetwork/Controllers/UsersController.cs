@@ -21,6 +21,7 @@ using Elomoas.Application.Features.Courses.Query.GetSubscribedCourses;
 
 namespace Elomoas.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly ILogger<UsersController> _logger;
@@ -46,12 +47,21 @@ namespace Elomoas.Controllers
             _userRepository = userRepository;
         }
 
-        public async Task<IActionResult> Users()
+        public async Task<IActionResult> Users(string search)
         {
             var query = new GetAllUsersQuery();
+            var users = await _mediator.Send(query);
+            
+            if (!string.IsNullOrEmpty(search))
+            {
+                users = users.Where(u => u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) || 
+                                      u.Email.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+            
             var viewModel = new UserVM
             {
-                Users = await _mediator.Send(query)
+                Users = users,
+                SearchTerm = search
             };
             return View(viewModel);
         }
