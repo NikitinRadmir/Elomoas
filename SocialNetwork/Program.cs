@@ -5,11 +5,13 @@ using Elomoas.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Elomoas.Infrastructure.Settings;
-using Elomoas.mvc.Hubs;
+
 using Microsoft.AspNetCore.Identity;
 using Elomoas.Extensions;
 using Microsoft.Extensions.Logging;
 using Elomoas.Logging;
+using Elomoas.Hubs;
+
 
 namespace Elomoas;
 
@@ -41,8 +43,6 @@ public class Program
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         builder.Services.AddSignalR();
-
-
 
         var app = builder.Build();
 

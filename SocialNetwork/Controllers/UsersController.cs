@@ -137,21 +137,19 @@ namespace Elomoas.Controllers
             if (currentUser == null)
             {
                 _logger.LogWarning("HandleFriendRequest: Current user not found");
-                return Unauthorized();
+                return Json(new { success = false, message = "Пользователь не авторизован" });
             }
 
             if (string.IsNullOrEmpty(targetUserId))
             {
                 _logger.LogWarning("HandleFriendRequest: targetUserId is null or empty");
-                TempData["Error"] = "Не указан пользователь для действия";
-                return RedirectToAction(nameof(Users));
+                return Json(new { success = false, message = "Не указан пользователь для действия" });
             }
 
             if (string.IsNullOrEmpty(action))
             {
                 _logger.LogWarning("HandleFriendRequest: action is null or empty");
-                TempData["Error"] = "Не указано действие";
-                return RedirectToAction(nameof(Users));
+                return Json(new { success = false, message = "Не указано действие" });
             }
 
             _logger.LogInformation(
@@ -159,41 +157,39 @@ namespace Elomoas.Controllers
                 action, currentUser.Id, targetUserId);
 
             bool success = false;
+            string message = "";
             try
             {
                 switch (action.ToLower())
                 {
                     case "add":
                         success = await _friendshipService.SendFriendRequestAsync(currentUser.Id, targetUserId);
+                        message = success ? "Запрос в друзья отправлен" : "Не удалось отправить запрос в друзья";
                         break;
                     case "accept":
                         success = await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, targetUserId);
+                        message = success ? "Запрос в друзья принят" : "Не удалось принять запрос в друзья";
                         break;
                     case "reject":
                         success = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, targetUserId);
+                        message = success ? "Запрос в друзья отклонен" : "Не удалось отклонить запрос в друзья";
+                        break;
+                    case "remove":
+                        success = await _friendshipService.RemoveFriendAsync(currentUser.Id, targetUserId);
+                        message = success ? "Пользователь удален из друзей" : "Не удалось удалить пользователя из друзей";
                         break;
                     default:
                         _logger.LogWarning($"HandleFriendRequest: Unknown action {action}");
-                        TempData["Error"] = "Неизвестное действие";
-                        return RedirectToAction(nameof(Users));
+                        return Json(new { success = false, message = "Неизвестное действие" });
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "HandleFriendRequest: Error processing friend request");
-                success = false;
+                return Json(new { success = false, message = "Произошла ошибка при обработке запроса" });
             }
 
-            if (success)
-            {
-                TempData["Success"] = "Действие выполнено успешно";
-            }
-            else
-            {
-                TempData["Error"] = "Не удалось выполнить действие";
-            }
-
-            return RedirectToAction(nameof(Users));
+            return Json(new { success = success, message = message });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

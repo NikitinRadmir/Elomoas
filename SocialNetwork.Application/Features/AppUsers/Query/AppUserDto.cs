@@ -1,5 +1,6 @@
 ﻿using Elomoas.Domain.Common;
 using Elomoas.Domain.Entities.Enum;
+using Elomoas.Domain.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,4 +19,7 @@ public class AppUserDto
     public string Img { get; set; }
     public string Description { get; set; }
     public string Password { get; set; }
+    public FriendshipStatus? FriendshipStatus { get; set; }
+    public bool IsFriend { get; set; }
+    public bool IsSentByMe { get; set; }
 }

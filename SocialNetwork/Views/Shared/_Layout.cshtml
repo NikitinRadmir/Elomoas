@@ -18,6 +18,28 @@
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon.png">
     
+    <!-- Toastr custom styles -->
+    <style>
+        .toast-success { background-color: #51A351 !important; }
+        .toast-error { background-color: #BD362F !important; }
+        .toast-info { background-color: #2F96B4 !important; }
+        .toast-warning { background-color: #F89406 !important; }
+        #toast-container > div {
+            opacity: 1 !important;
+            padding: 15px 15px 15px 50px !important;
+            width: 300px !important;
+            font-size: 16px !important;
+            border-radius: 10px !important;
+            box-shadow: 0 0 12px rgba(0,0,0,0.3) !important;
+        }
+        .toast-message {
+            font-size: 14px !important;
+        }
+        #toast-container {
+            z-index: 999999 !important;
+        }
+    </style>
+    
     @RenderSection("Styles", required: false)
 </head>
 
@@ -237,6 +259,45 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
+
+        // Инициализация SignalR
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/friendshipHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveFriendRequest", function (data) {
+            toastr.info('Вы получили новый запрос в друзья');
+        });
+
+        connection.on("FriendRequestAccepted", function (data) {
+            toastr.success('Ваш запрос в друзья был принят');
+        });
+
+        connection.on("FriendRequestRejected", function (data) {
+            toastr.warning('Ваш запрос в друзья был отклонен');
+        });
+
+        connection.on("FriendRemoved", function (data) {
+            toastr.warning('Пользователь удалил вас из друзей');
+        });
+
+        // Запуск соединения
+        connection.start()
+            .then(function () {
+                // После успешного подключения добавляем пользователя в группу
+                if (connection.connectionStarted) {
+                    const userId = '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value';
+                    if (userId) {
+                        connection.invoke("AddToGroup", userId).catch(function (err) {
+                            console.error(err);
+                        });
+                    }
+                }
+            })
+            .catch(function (err) {
+                console.error(err);
+            });
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

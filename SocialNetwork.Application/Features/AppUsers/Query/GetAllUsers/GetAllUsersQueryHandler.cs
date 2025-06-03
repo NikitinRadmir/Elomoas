@@ -18,15 +18,18 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
         private readonly IAppUserRepository _userRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IFriendshipRepository _friendshipRepository;
 
         public GetAllUsersQueryHandler(
             IAppUserRepository userRepository,
             UserManager<IdentityUser> userManager,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IFriendshipRepository friendshipRepository)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _currentUserService = currentUserService;
+            _friendshipRepository = friendshipRepository;
         }
 
         public async Task<IEnumerable<AppUserDto>> Handle(GetAllUsersQuery query, CancellationToken ct)
@@ -44,7 +47,18 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
                 if (user.IdentityId == currentUser.Id)
                     continue; // Skip current user
 
-                dtos.Add(MapToDto(user));
+                var dto = MapToDto(user);
+                
+                // Получаем статус дружбы
+                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
+                if (friendship != null)
+                {
+                    dto.FriendshipStatus = friendship.Status;
+                    dto.IsFriend = friendship.Status == Domain.Entities.Enums.FriendshipStatus.Accepted;
+                    dto.IsSentByMe = friendship.UserId == currentUser.Id;
+                }
+
+                dtos.Add(dto);
             }
 
             return dtos;

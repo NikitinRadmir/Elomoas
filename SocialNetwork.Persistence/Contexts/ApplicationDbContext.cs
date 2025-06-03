@@ -13,8 +13,7 @@ namespace Elomoas.Persistence.Contexts
         public DbSet<Course> Courses { get; set; }
         public DbSet<GroupSubscription> GroupSubscriptions { get; set; }
         public DbSet<CourseSubscription> CourseSubscriptions { get; set; }
-
-
+        public DbSet<Friendship> Friendships { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -27,6 +26,7 @@ namespace Elomoas.Persistence.Contexts
             modelBuilder.ApplyConfiguration(new GroupsConfiguration());
             modelBuilder.ApplyConfiguration(new CoursesConfiguration());
             modelBuilder.ApplyConfiguration(new AppUserConfiguration());
+            modelBuilder.ApplyConfiguration(new FriendshipConfiguration());
         }
     }
 }
