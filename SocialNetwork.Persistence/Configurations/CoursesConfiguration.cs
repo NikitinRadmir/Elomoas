@@ -174,6 +174,336 @@ namespace Elomoas.Persistence.Configurations
                     PL = ProgramLanguage.BOOTSTRAP,
                     Video = "/images/video4.mp4",
                     Learn = "Build enterprise UIs^Create component libraries^Implement design systems^Customize themes^Ensure accessibility^Manage large projects^Optimize performance^Deploy enterprise apps"
+                },
+                new Course
+                {
+                    Id = 16,
+                    Name = "Advanced Web Development",
+                    Description = "Master advanced web development patterns and best practices. Learn modern features and functional programming concepts.",
+                    Img = "/images/v-1.png",
+                    Price = 180,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Master design patterns^Use modern features^Implement functional programming^Build scalable applications^Optimize performance^Write clean code^Test web apps^Deploy modern web apps"
+                },
+                new Course
+                {
+                    Id = 17,
+                    Name = "React Native Mobile Development",
+                    Description = "Create cross-platform mobile applications using React Native framework. Build native iOS and Android apps with JavaScript.",
+                    Img = "/images/v-2.png",
+                    Price = 220,
+                    PL = ProgramLanguage.REACT,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build mobile apps^Use native components^Handle device features^Create custom UI^Implement navigation^Manage state^Deploy to stores^Debug applications"
+                },
+                new Course
+                {
+                    Id = 18,
+                    Name = "Cloud Computing with AWS",
+                    Description = "Learn cloud computing fundamentals and advanced concepts using Amazon Web Services (AWS).",
+                    Img = "/images/v-3.png",
+                    Price = 250,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Setup AWS services^Deploy applications^Manage databases^Configure security^Scale services^Monitor performance^Implement DevOps^Optimize costs"
+                },
+                new Course
+                {
+                    Id = 19,
+                    Name = "Machine Learning with TensorFlow",
+                    Description = "Deep dive into machine learning using TensorFlow framework. Build and deploy AI models.",
+                    Img = "/images/v-4.png",
+                    Price = 280,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build AI models^Train networks^Process data^Implement CNN^Use transfer learning^Deploy models^Optimize performance^Create AI apps"
+                },
+                new Course
+                {
+                    Id = 20,
+                    Name = "Vue.js 3 Complete Guide",
+                    Description = "Master Vue.js 3 framework with Composition API and modern best practices.",
+                    Img = "/images/v-5.jpg",
+                    Price = 190,
+                    PL = ProgramLanguage.REACT,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use Composition API^Build components^Manage state^Handle routing^Implement Vuex^Test applications^Deploy apps^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 21,
+                    Name = "Angular Enterprise Development",
+                    Description = "Build enterprise-grade applications with Angular framework and TypeScript.",
+                    Img = "/images/v-6.jpg",
+                    Price = 230,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Master Angular^Use TypeScript^Create components^Manage state^Handle routing^Test apps^Deploy applications^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 22,
+                    Name = "DevOps and CI/CD",
+                    Description = "Learn modern DevOps practices and implement continuous integration/deployment pipelines.",
+                    Img = "/images/v-7.jpg",
+                    Price = 260,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Setup CI/CD^Use Docker^Implement Kubernetes^Automate deployment^Monitor systems^Manage configs^Ensure security^Scale applications"
+                },
+                new Course
+                {
+                    Id = 23,
+                    Name = "Modern Web Development",
+                    Description = "Learn modern web development with latest technologies and frameworks.",
+                    Img = "/images/v-1.png",
+                    Price = 270,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Create web apps^Use modern frameworks^Build responsive sites^Handle interactions^Implement security^Test websites^Deploy to cloud^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 24,
+                    Name = "Advanced Java Development",
+                    Description = "Create enterprise applications using Java and Spring framework.",
+                    Img = "/images/v-2.png",
+                    Price = 240,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use Spring^Build APIs^Handle data^Implement security^Use Hibernate^Create services^Deploy apps^Debug systems"
+                },
+                new Course
+                {
+                    Id = 25,
+                    Name = "Database Development",
+                    Description = "Master database development with MongoDB and modern architecture components.",
+                    Img = "/images/v-3.png",
+                    Price = 230,
+                    PL = ProgramLanguage.MONGODB,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use MongoDB^Build schemas^Handle data^Implement queries^Use aggregation^Create indexes^Deploy databases^Debug systems"
+                },
+                new Course
+                {
+                    Id = 26,
+                    Name = "Game Development Basics",
+                    Description = "Create 2D and 3D games using modern game engines.",
+                    Img = "/images/v-4.png",
+                    Price = 250,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use game engines^Create gameplay^Handle physics^Implement AI^Create animations^Add sound^Deploy games^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 27,
+                    Name = "Data Engineering",
+                    Description = "Learn data engineering principles and build robust data pipelines.",
+                    Img = "/images/v-5.jpg",
+                    Price = 280,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build pipelines^Process data^Use databases^Handle big data^Implement ETL^Monitor systems^Ensure quality^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 28,
+                    Name = "Cybersecurity Fundamentals",
+                    Description = "Master cybersecurity principles and protect systems from threats.",
+                    Img = "/images/v-6.jpg",
+                    Price = 260,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Implement security^Handle threats^Use encryption^Protect systems^Monitor networks^Respond to incidents^Ensure compliance^Use best practices"
+                },
+                new Course
+                {
+                    Id = 29,
+                    Name = "UI/UX Design",
+                    Description = "Learn user interface and user experience design principles.",
+                    Img = "/images/v-7.jpg",
+                    Price = 190,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Design interfaces^Create wireframes^Build prototypes^Test usability^Handle feedback^Implement designs^Use design tools^Follow principles"
+                },
+                new Course
+                {
+                    Id = 30,
+                    Name = "Full Stack Development",
+                    Description = "Become a full stack developer with modern web technologies.",
+                    Img = "/images/v-1.png",
+                    Price = 300,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build frontend^Create backend^Handle database^Implement security^Deploy apps^Monitor systems^Scale applications^Use best practices"
+                },
+                new Course
+                {
+                    Id = 31,
+                    Name = "Database Administration",
+                    Description = "Master database administration and optimization techniques.",
+                    Img = "/images/v-2.png",
+                    Price = 240,
+                    PL = ProgramLanguage.MONGODB,
+                    Video = "/images/video4.mp4",
+                    Learn = "Manage databases^Optimize queries^Ensure security^Handle backup^Monitor performance^Implement HA^Use best practices^Solve problems"
+                },
+                new Course
+                {
+                    Id = 32,
+                    Name = "Software Architecture",
+                    Description = "Learn software architecture patterns and best practices.",
+                    Img = "/images/v-3.png",
+                    Price = 270,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Design systems^Use patterns^Handle scaling^Ensure security^Monitor performance^Make decisions^Document architecture^Lead teams"
+                },
+                new Course
+                {
+                    Id = 33,
+                    Name = "Cloud Native Development",
+                    Description = "Build cloud-native applications using modern technologies.",
+                    Img = "/images/v-4.png",
+                    Price = 280,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use containers^Implement microservices^Handle scaling^Ensure resilience^Monitor systems^Deploy apps^Optimize performance^Follow practices"
+                },
+                new Course
+                {
+                    Id = 34,
+                    Name = "Natural Language Processing",
+                    Description = "Master natural language processing with Python and modern libraries.",
+                    Img = "/images/v-5.jpg",
+                    Price = 290,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Process text^Build models^Handle languages^Implement AI^Use NLTK^Create applications^Deploy solutions^Optimize performance"
+                },
+                new Course
+                {
+                    Id = 35,
+                    Name = "Web Performance",
+                    Description = "Learn techniques to optimize web application performance.",
+                    Img = "/images/v-6.jpg",
+                    Price = 210,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Optimize loading^Handle caching^Improve rendering^Reduce size^Monitor performance^Debug issues^Use best practices^Implement PWA"
+                },
+                new Course
+                {
+                    Id = 36,
+                    Name = "Microservices Architecture",
+                    Description = "Design and implement microservices-based applications.",
+                    Img = "/images/v-7.jpg",
+                    Price = 260,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Design services^Handle communication^Ensure security^Monitor systems^Scale apps^Deploy services^Handle failures^Use best practices"
+                },
+                new Course
+                {
+                    Id = 37,
+                    Name = "Frontend Development",
+                    Description = "Master frontend development and optimization techniques.",
+                    Img = "/images/v-1.png",
+                    Price = 220,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build interfaces^Improve CSS^Handle assets^Use frameworks^Monitor performance^Debug issues^Implement PWA^Follow best practices"
+                },
+                new Course
+                {
+                    Id = 38,
+                    Name = "Backend Development",
+                    Description = "Learn backend development with modern technologies.",
+                    Img = "/images/v-2.png",
+                    Price = 250,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Build APIs^Handle data^Ensure security^Monitor systems^Scale services^Deploy apps^Use best practices^Solve problems"
+                },
+                new Course
+                {
+                    Id = 39,
+                    Name = "Mobile UI Development",
+                    Description = "Create beautiful and responsive mobile user interfaces.",
+                    Img = "/images/v-3.png",
+                    Price = 230,
+                    PL = ProgramLanguage.REACT,
+                    Video = "/images/video4.mp4",
+                    Learn = "Design UI^Handle responsive^Create animations^Implement UX^Use components^Test interfaces^Deploy apps^Follow principles"
+                },
+                new Course
+                {
+                    Id = 40,
+                    Name = "Testing and Quality Assurance",
+                    Description = "Master software testing and quality assurance practices.",
+                    Img = "/images/v-4.png",
+                    Price = 240,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Write tests^Automate testing^Ensure quality^Handle CI/CD^Monitor systems^Debug issues^Use best practices^Improve processes"
+                },
+                new Course
+                {
+                    Id = 41,
+                    Name = "API Development",
+                    Description = "Learn to design and develop robust APIs.",
+                    Img = "/images/v-5.jpg",
+                    Price = 230,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Design APIs^Handle security^Document endpoints^Test APIs^Monitor usage^Scale services^Use best practices^Solve problems"
+                },
+                new Course
+                {
+                    Id = 42,
+                    Name = "Web Applications",
+                    Description = "Build modern progressive web applications.",
+                    Img = "/images/v-6.jpg",
+                    Price = 220,
+                    PL = ProgramLanguage.HTML,
+                    Video = "/images/video4.mp4",
+                    Learn = "Create PWAs^Handle offline^Use service workers^Implement push^Optimize performance^Deploy apps^Follow standards^Improve UX"
+                },
+                new Course
+                {
+                    Id = 43,
+                    Name = "Data Visualization",
+                    Description = "Master data visualization techniques and tools.",
+                    Img = "/images/v-7.jpg",
+                    Price = 240,
+                    PL = ProgramLanguage.PYTHON,
+                    Video = "/images/video4.mp4",
+                    Learn = "Create charts^Handle data^Use libraries^Build dashboards^Implement interactivity^Deploy solutions^Follow principles^Improve UX"
+                },
+                new Course
+                {
+                    Id = 44,
+                    Name = "Cloud Architecture",
+                    Description = "Learn to build applications using cloud architecture.",
+                    Img = "/images/v-1.png",
+                    Price = 260,
+                    PL = ProgramLanguage.JAVA,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use cloud services^Handle events^Manage state^Monitor functions^Optimize costs^Deploy apps^Follow practices^Solve problems"
+                },
+                new Course
+                {
+                    Id = 45,
+                    Name = "Cross-Platform Development",
+                    Description = "Build cross-platform applications using modern frameworks.",
+                    Img = "/images/v-2.png",
+                    Price = 250,
+                    PL = ProgramLanguage.REACT,
+                    Video = "/images/video4.mp4",
+                    Learn = "Use frameworks^Share code^Handle platform^Create UI^Implement features^Deploy apps^Follow practices^Solve problems"
                 }
             );
         }

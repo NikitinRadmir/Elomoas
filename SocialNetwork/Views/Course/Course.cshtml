@@ -112,6 +112,38 @@
     
 </div>
 
+@if (!Model.IsSubscribed)
+{
+    <div class="subscription-options">
+        <h3 class="mb-4">Выберите продолжительность подписки</h3>
+        <div class="duration-options">
+            @foreach (var option in Model.DurationOptions)
+            {
+                <div class="duration-option" data-months="@option.Months" data-base-price="@Model.Course.Price">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@option.GetDisplayText()</h5>
+                            <p class="card-text price-display">
+                                <span class="calculated-price">@option.CalculatePrice(Model.Course.Price)</span> ₽
+                            </p>
+                            <button class="btn btn-primary select-duration" data-months="@option.Months">
+                                Выбрать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="subscription-action mt-4 text-center d-none" id="subscriptionAction">
+        <h4>Итоговая стоимость: <span id="finalPrice">0</span> ₽</h4>
+        <button class="btn btn-lg btn-success" id="subscribeButton" data-course-id="@Model.Course.Id">
+            Подписаться
+        </button>
+    </div>
+}
+
 @section Scripts {
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script>
@@ -177,10 +209,87 @@
                 e.preventDefault();
                 handleUnsubscribe($(this));
             });
+
+            let selectedDuration = null;
+
+            $('.select-duration').click(function(e) {
+                e.preventDefault();
+                const months = $(this).data('months');
+                selectedDuration = months;
+
+                // Update UI
+                $('.duration-option').removeClass('selected');
+                $(this).closest('.duration-option').addClass('selected');
+
+                // Update final price
+                const price = $(this).closest('.duration-option').find('.calculated-price').text();
+                $('#finalPrice').text(price);
+                $('#subscriptionAction').removeClass('d-none');
+            });
+
+            $('#subscribeButton').click(function() {
+                if (!selectedDuration) return;
+
+                const courseId = $(this).data('course-id');
+                
+                $.post('/Course/Subscribe', {
+                    courseId: courseId,
+                    durationInMonths: selectedDuration
+                })
+                .done(function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Произошла ошибка при подписке на курс');
+                    }
+                })
+                .fail(function() {
+                    alert('Произошла ошибка при подписке на курс');
+                });
+            });
         });
     </script>
 }
 
 @section Styles {
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <style>
+        .subscription-options {
+            margin: 2rem 0;
+        }
+
+        .duration-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .duration-option .card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .duration-option .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .duration-option.selected .card {
+            border-color: #28a745;
+            background-color: #f8fff8;
+        }
+
+        .price-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        #subscriptionAction {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+    </style>
 }

@@ -16,7 +16,7 @@ namespace Elomoas.Application.Features.Courses.Command.SubscribeToCourse
 
         public async Task<bool> Handle(SubscribeToCourseCommand request, CancellationToken cancellationToken)
         {
-            await _subscriptionRepository.Subscribe(request.UserId, request.CourseId);
+            await _subscriptionRepository.Subscribe(request.UserId, request.CourseId, request.DurationInMonths);
             return true;
         }
     }

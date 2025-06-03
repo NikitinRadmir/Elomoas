@@ -66,7 +66,7 @@ namespace Elomoas.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Subscribe(int courseId)
+        public async Task<IActionResult> Subscribe(int courseId, int durationInMonths)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Elomoas.Controllers
                     return Json(new { success = false });
                 }
 
-                var command = new SubscribeToCourseCommand(currentAppUser.Id, courseId);
+                var command = new SubscribeToCourseCommand(currentAppUser.Id, courseId, durationInMonths);
                 var result = await _mediator.Send(command);
 
                 return Json(new { success = result });
@@ -124,6 +124,34 @@ namespace Elomoas.Controllers
                 _logger.LogError(ex, "Error unsubscribing from course");
                 return Json(new { success = false });
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CalculatePrice(int courseId, int durationInMonths)
+        {
+            var course = await _mediator.Send(new GetCourseByIdQuery(courseId));
+            if (course == null)
+                return Json(new { success = false });
+
+            var option = new SubscriptionDurationOption { Months = durationInMonths };
+            switch (durationInMonths)
+            {
+                case 3:
+                    option.DiscountPercent = 10;
+                    break;
+                case 6:
+                    option.DiscountPercent = 20;
+                    break;
+                case 12:
+                    option.DiscountPercent = 30;
+                    break;
+                default:
+                    option.DiscountPercent = 0;
+                    break;
+            }
+
+            var price = option.CalculatePrice(course.Price);
+            return Json(new { success = true, price = price });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Elomoas.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250601201825_Initial")]
+    [Migration("20250603140346_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -285,6 +285,336 @@ namespace Elomoas.Persistence.Migrations
                             PL = 0,
                             Price = 220,
                             Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Description = "Master advanced web development patterns and best practices. Learn modern features and functional programming concepts.",
+                            Img = "/images/v-1.png",
+                            Learn = "Master design patterns^Use modern features^Implement functional programming^Build scalable applications^Optimize performance^Write clean code^Test web apps^Deploy modern web apps",
+                            Name = "Advanced Web Development",
+                            PL = 1,
+                            Price = 180,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Description = "Create cross-platform mobile applications using React Native framework. Build native iOS and Android apps with JavaScript.",
+                            Img = "/images/v-2.png",
+                            Learn = "Build mobile apps^Use native components^Handle device features^Create custom UI^Implement navigation^Manage state^Deploy to stores^Debug applications",
+                            Name = "React Native Mobile Development",
+                            PL = 4,
+                            Price = 220,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Description = "Learn cloud computing fundamentals and advanced concepts using Amazon Web Services (AWS).",
+                            Img = "/images/v-3.png",
+                            Learn = "Setup AWS services^Deploy applications^Manage databases^Configure security^Scale services^Monitor performance^Implement DevOps^Optimize costs",
+                            Name = "Cloud Computing with AWS",
+                            PL = 6,
+                            Price = 250,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Description = "Deep dive into machine learning using TensorFlow framework. Build and deploy AI models.",
+                            Img = "/images/v-4.png",
+                            Learn = "Build AI models^Train networks^Process data^Implement CNN^Use transfer learning^Deploy models^Optimize performance^Create AI apps",
+                            Name = "Machine Learning with TensorFlow",
+                            PL = 6,
+                            Price = 280,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Description = "Master Vue.js 3 framework with Composition API and modern best practices.",
+                            Img = "/images/v-5.jpg",
+                            Learn = "Use Composition API^Build components^Manage state^Handle routing^Implement Vuex^Test applications^Deploy apps^Optimize performance",
+                            Name = "Vue.js 3 Complete Guide",
+                            PL = 4,
+                            Price = 190,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Description = "Build enterprise-grade applications with Angular framework and TypeScript.",
+                            Img = "/images/v-6.jpg",
+                            Learn = "Master Angular^Use TypeScript^Create components^Manage state^Handle routing^Test apps^Deploy applications^Optimize performance",
+                            Name = "Angular Enterprise Development",
+                            PL = 5,
+                            Price = 230,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Description = "Learn modern DevOps practices and implement continuous integration/deployment pipelines.",
+                            Img = "/images/v-7.jpg",
+                            Learn = "Setup CI/CD^Use Docker^Implement Kubernetes^Automate deployment^Monitor systems^Manage configs^Ensure security^Scale applications",
+                            Name = "DevOps and CI/CD",
+                            PL = 6,
+                            Price = 260,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Description = "Learn modern web development with latest technologies and frameworks.",
+                            Img = "/images/v-1.png",
+                            Learn = "Create web apps^Use modern frameworks^Build responsive sites^Handle interactions^Implement security^Test websites^Deploy to cloud^Optimize performance",
+                            Name = "Modern Web Development",
+                            PL = 1,
+                            Price = 270,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Description = "Create enterprise applications using Java and Spring framework.",
+                            Img = "/images/v-2.png",
+                            Learn = "Use Spring^Build APIs^Handle data^Implement security^Use Hibernate^Create services^Deploy apps^Debug systems",
+                            Name = "Advanced Java Development",
+                            PL = 5,
+                            Price = 240,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Description = "Master database development with MongoDB and modern architecture components.",
+                            Img = "/images/v-3.png",
+                            Learn = "Use MongoDB^Build schemas^Handle data^Implement queries^Use aggregation^Create indexes^Deploy databases^Debug systems",
+                            Name = "Database Development",
+                            PL = 7,
+                            Price = 230,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Description = "Create 2D and 3D games using modern game engines.",
+                            Img = "/images/v-4.png",
+                            Learn = "Use game engines^Create gameplay^Handle physics^Implement AI^Create animations^Add sound^Deploy games^Optimize performance",
+                            Name = "Game Development Basics",
+                            PL = 5,
+                            Price = 250,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Description = "Learn data engineering principles and build robust data pipelines.",
+                            Img = "/images/v-5.jpg",
+                            Learn = "Build pipelines^Process data^Use databases^Handle big data^Implement ETL^Monitor systems^Ensure quality^Optimize performance",
+                            Name = "Data Engineering",
+                            PL = 6,
+                            Price = 280,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Description = "Master cybersecurity principles and protect systems from threats.",
+                            Img = "/images/v-6.jpg",
+                            Learn = "Implement security^Handle threats^Use encryption^Protect systems^Monitor networks^Respond to incidents^Ensure compliance^Use best practices",
+                            Name = "Cybersecurity Fundamentals",
+                            PL = 6,
+                            Price = 260,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Description = "Learn user interface and user experience design principles.",
+                            Img = "/images/v-7.jpg",
+                            Learn = "Design interfaces^Create wireframes^Build prototypes^Test usability^Handle feedback^Implement designs^Use design tools^Follow principles",
+                            Name = "UI/UX Design",
+                            PL = 1,
+                            Price = 190,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Description = "Become a full stack developer with modern web technologies.",
+                            Img = "/images/v-1.png",
+                            Learn = "Build frontend^Create backend^Handle database^Implement security^Deploy apps^Monitor systems^Scale applications^Use best practices",
+                            Name = "Full Stack Development",
+                            PL = 5,
+                            Price = 300,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Description = "Master database administration and optimization techniques.",
+                            Img = "/images/v-2.png",
+                            Learn = "Manage databases^Optimize queries^Ensure security^Handle backup^Monitor performance^Implement HA^Use best practices^Solve problems",
+                            Name = "Database Administration",
+                            PL = 7,
+                            Price = 240,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Description = "Learn software architecture patterns and best practices.",
+                            Img = "/images/v-3.png",
+                            Learn = "Design systems^Use patterns^Handle scaling^Ensure security^Monitor performance^Make decisions^Document architecture^Lead teams",
+                            Name = "Software Architecture",
+                            PL = 5,
+                            Price = 270,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Description = "Build cloud-native applications using modern technologies.",
+                            Img = "/images/v-4.png",
+                            Learn = "Use containers^Implement microservices^Handle scaling^Ensure resilience^Monitor systems^Deploy apps^Optimize performance^Follow practices",
+                            Name = "Cloud Native Development",
+                            PL = 5,
+                            Price = 280,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Description = "Master natural language processing with Python and modern libraries.",
+                            Img = "/images/v-5.jpg",
+                            Learn = "Process text^Build models^Handle languages^Implement AI^Use NLTK^Create applications^Deploy solutions^Optimize performance",
+                            Name = "Natural Language Processing",
+                            PL = 6,
+                            Price = 290,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Description = "Learn techniques to optimize web application performance.",
+                            Img = "/images/v-6.jpg",
+                            Learn = "Optimize loading^Handle caching^Improve rendering^Reduce size^Monitor performance^Debug issues^Use best practices^Implement PWA",
+                            Name = "Web Performance",
+                            PL = 1,
+                            Price = 210,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Description = "Design and implement microservices-based applications.",
+                            Img = "/images/v-7.jpg",
+                            Learn = "Design services^Handle communication^Ensure security^Monitor systems^Scale apps^Deploy services^Handle failures^Use best practices",
+                            Name = "Microservices Architecture",
+                            PL = 5,
+                            Price = 260,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Description = "Master frontend development and optimization techniques.",
+                            Img = "/images/v-1.png",
+                            Learn = "Build interfaces^Improve CSS^Handle assets^Use frameworks^Monitor performance^Debug issues^Implement PWA^Follow best practices",
+                            Name = "Frontend Development",
+                            PL = 1,
+                            Price = 220,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Description = "Learn backend development with modern technologies.",
+                            Img = "/images/v-2.png",
+                            Learn = "Build APIs^Handle data^Ensure security^Monitor systems^Scale services^Deploy apps^Use best practices^Solve problems",
+                            Name = "Backend Development",
+                            PL = 5,
+                            Price = 250,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Description = "Create beautiful and responsive mobile user interfaces.",
+                            Img = "/images/v-3.png",
+                            Learn = "Design UI^Handle responsive^Create animations^Implement UX^Use components^Test interfaces^Deploy apps^Follow principles",
+                            Name = "Mobile UI Development",
+                            PL = 4,
+                            Price = 230,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Description = "Master software testing and quality assurance practices.",
+                            Img = "/images/v-4.png",
+                            Learn = "Write tests^Automate testing^Ensure quality^Handle CI/CD^Monitor systems^Debug issues^Use best practices^Improve processes",
+                            Name = "Testing and Quality Assurance",
+                            PL = 5,
+                            Price = 240,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Description = "Learn to design and develop robust APIs.",
+                            Img = "/images/v-5.jpg",
+                            Learn = "Design APIs^Handle security^Document endpoints^Test APIs^Monitor usage^Scale services^Use best practices^Solve problems",
+                            Name = "API Development",
+                            PL = 5,
+                            Price = 230,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Description = "Build modern progressive web applications.",
+                            Img = "/images/v-6.jpg",
+                            Learn = "Create PWAs^Handle offline^Use service workers^Implement push^Optimize performance^Deploy apps^Follow standards^Improve UX",
+                            Name = "Web Applications",
+                            PL = 1,
+                            Price = 220,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Description = "Master data visualization techniques and tools.",
+                            Img = "/images/v-7.jpg",
+                            Learn = "Create charts^Handle data^Use libraries^Build dashboards^Implement interactivity^Deploy solutions^Follow principles^Improve UX",
+                            Name = "Data Visualization",
+                            PL = 6,
+                            Price = 240,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Description = "Learn to build applications using cloud architecture.",
+                            Img = "/images/v-1.png",
+                            Learn = "Use cloud services^Handle events^Manage state^Monitor functions^Optimize costs^Deploy apps^Follow practices^Solve problems",
+                            Name = "Cloud Architecture",
+                            PL = 5,
+                            Price = 260,
+                            Video = "/images/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Description = "Build cross-platform applications using modern frameworks.",
+                            Img = "/images/v-2.png",
+                            Learn = "Use frameworks^Share code^Handle platform^Create UI^Implement features^Deploy apps^Follow practices^Solve problems",
+                            Name = "Cross-Platform Development",
+                            PL = 4,
+                            Price = 250,
+                            Video = "/images/video4.mp4"
                         });
                 });
 
@@ -304,6 +634,15 @@ namespace Elomoas.Persistence.Migrations
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DurationInMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("SubscriptionPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
@@ -437,6 +776,126 @@ namespace Elomoas.Persistence.Migrations
                             Description = "Learn new secrets to creating awesome Microsoft Access databases and VBA coding not covered in any of my other courses!",
                             Img = "/images/download6.png",
                             Name = "Node JS",
+                            PL = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Master Python programming with advanced concepts and real-world applications!",
+                            Img = "/images/download7.png",
+                            Name = "Advanced Python Development",
+                            PL = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Become a full-stack developer with modern JavaScript frameworks and tools!",
+                            Img = "/images/download1.png",
+                            Name = "Full Stack JavaScript",
+                            PL = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Learn Vue.js from basics to advanced concepts with practical projects!",
+                            Img = "/images/download2.png",
+                            Name = "Vue.js Mastery",
+                            PL = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "Build enterprise-level applications with Angular framework!",
+                            Img = "/images/download3.png",
+                            Name = "Angular Enterprise",
+                            PL = 5
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "Master DevOps practices and tools for modern software development!",
+                            Img = "/images/download4.png",
+                            Name = "DevOps Essentials",
+                            PL = 6
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Description = "Design and implement scalable cloud solutions!",
+                            Img = "/images/download5.png",
+                            Name = "Cloud Architecture",
+                            PL = 5
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Description = "Create cross-platform mobile applications with modern frameworks!",
+                            Img = "/images/download6.png",
+                            Name = "Mobile App Development",
+                            PL = 4
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Description = "Learn the basics of data science and machine learning!",
+                            Img = "/images/download7.png",
+                            Name = "Data Science Fundamentals",
+                            PL = 6
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Description = "Master web security concepts and best practices!",
+                            Img = "/images/download1.png",
+                            Name = "Web Security",
+                            PL = 5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Description = "Create beautiful and user-friendly interfaces!",
+                            Img = "/images/download2.png",
+                            Name = "UI/UX Design",
+                            PL = 1
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Description = "Learn frontend development with modern frameworks!",
+                            Img = "/images/download3.png",
+                            Name = "Frontend Development",
+                            PL = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Description = "Create exciting games with modern game development frameworks!",
+                            Img = "/images/download4.png",
+                            Name = "Game Development",
+                            PL = 5
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Description = "Deep dive into machine learning algorithms and applications!",
+                            Img = "/images/download5.png",
+                            Name = "Machine Learning",
+                            PL = 6
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Description = "Master database design and optimization techniques!",
+                            Img = "/images/download6.png",
+                            Name = "Database Design",
+                            PL = 7
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Description = "Learn to design and implement scalable software architectures!",
+                            Img = "/images/download7.png",
+                            Name = "Software Architecture",
                             PL = 5
                         });
                 });
