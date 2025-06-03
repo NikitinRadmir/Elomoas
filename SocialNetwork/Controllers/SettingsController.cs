@@ -9,6 +9,8 @@ using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Elomoas.Application.Interfaces.Services;
+using Elomoas.Application.Interfaces.Repositories;
+using System.IO;
 
 namespace Elomoas.Controllers
 {
@@ -19,17 +21,20 @@ namespace Elomoas.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IAuthService _authService;
+        private readonly IAppUserRepository _userRepository;
 
         public SettingsController(
             UserManager<IdentityUser> userManager, 
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
-            IAuthService authService)
+            IAuthService authService,
+            IAppUserRepository userRepository)
         {
             _userManager = userManager;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _authService = authService;
+            _userRepository = userRepository;
         }
 
         public IActionResult Settings()
@@ -232,6 +237,167 @@ namespace Elomoas.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var appUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = appUsers.FirstOrDefault(u => u.IdentityId == identityUser.Id);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var nameParts = currentUser.FullName?.Split(' ') ?? new string[0];
+            var firstName = nameParts.Length > 0 ? nameParts[0] : string.Empty;
+            var lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+
+            var viewModel = new SettingsVM
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = identityUser.Email,
+                Description = currentUser.Description,
+                ProfileImage = currentUser.ProfileImage
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(SettingsVM model)
+        {
+            if (!ModelState.IsValid)
+                return View("Index", model);
+
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var appUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = appUsers.FirstOrDefault(u => u.IdentityId == identityUser.Id);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
+            if (model.Email != identityUser.Email)
+            {
+                var emailToken = await _userManager.GenerateChangeEmailTokenAsync(identityUser, model.Email);
+                var emailResult = await _userManager.ChangeEmailAsync(identityUser, model.Email, emailToken);
+                
+                if (!emailResult.Succeeded)
+                {
+                    foreach (var error in emailResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View("Index", model);
+                }
+            }
+
+            currentUser.Description = model.Description;
+
+            if (!string.IsNullOrWhiteSpace(model.FirstName) || !string.IsNullOrWhiteSpace(model.LastName))
+            {
+                var fullName = $"{model.FirstName?.Trim()} {model.LastName?.Trim()}".Trim();
+                currentUser.FullName = fullName;
+            }
+
+            if (model.ProfileImageFile != null)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(model.ProfileImageFile.FileName).ToLowerInvariant();
+                
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("ProfileImageFile", "Поддерживаются только изображения форматов: .jpg, .jpeg, .png, .gif");
+                    return View("Index", model);
+                }
+
+                if (model.ProfileImageFile.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("ProfileImageFile", "Размер файла не должен превышать 5MB");
+                    return View("Index", model);
+                }
+
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                if (!string.IsNullOrEmpty(currentUser.ProfileImage))
+                {
+                    var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, currentUser.ProfileImage.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.ProfileImageFile.CopyToAsync(stream);
+                }
+
+                currentUser.ProfileImage = $"/uploads/profiles/{fileName}";
+            }
+
+            await _userRepository.UpdateAsync(currentUser);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassword(PasswordVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var settingsVM = await GetCurrentSettingsVM();
+                settingsVM.PasswordVM = model;
+                return View("Index", settingsVM);
+            }
+
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var result = await _userManager.ChangePasswordAsync(identityUser, model.CurrentPassword, model.NewPassword);
+            
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                
+                var settingsVM = await GetCurrentSettingsVM();
+                settingsVM.PasswordVM = model;
+                return View("Index", settingsVM);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        private async Task<SettingsVM> GetCurrentSettingsVM()
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            var appUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = appUsers.FirstOrDefault(u => u.IdentityId == identityUser.Id);
+
+            var nameParts = currentUser.FullName?.Split(' ') ?? new string[0];
+            var firstName = nameParts.Length > 0 ? nameParts[0] : string.Empty;
+            var lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+
+            return new SettingsVM
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = identityUser.Email,
+                Description = currentUser.Description,
+                ProfileImage = currentUser.ProfileImage
+            };
         }
     }
 }

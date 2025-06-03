@@ -55,142 +55,120 @@ namespace Elomoas.Controllers
 
         public async Task<IActionResult> Users(string search)
         {
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
+            var currentIdentityUser = await _userManager.GetUserAsync(User);
+            if (currentIdentityUser == null)
+                return RedirectToAction("Login", "Account");
 
-            var query = new GetAllUsersQuery();
-            var allUsers = await _mediator.Send(query);
-            
-            // Получаем входящие заявки в друзья
+            var allUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = allUsers.FirstOrDefault(u => u.IdentityId == currentIdentityUser.Id);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
             var pendingFriendships = await _friendshipRepository.GetPendingFriendshipsAsync(currentUser.Id);
-            var pendingFriendIds = pendingFriendships
-                .Where(f => f.FriendId == currentUser.Id) // Только входящие заявки
-                .Select(f => f.UserId)
+            var incomingRequests = pendingFriendships
+                .Where(f => f.FriendId == currentUser.Id)
+                .Select(f => allUsers.FirstOrDefault(u => u.Id == f.UserId))
+                .Where(u => u != null)
                 .ToList();
 
-            // Получаем список друзей
-            var friendships = await _friendshipRepository.GetAcceptedFriendshipsAsync(currentUser.Id);
-            var friendIds = friendships
+            var acceptedFriendships = await _friendshipRepository.GetAcceptedFriendshipsAsync(currentUser.Id);
+            var friends = acceptedFriendships
                 .SelectMany(f => new[] { f.UserId, f.FriendId })
                 .Where(id => id != currentUser.Id)
+                .Select(id => allUsers.FirstOrDefault(u => u.Id == id))
+                .Where(u => u != null)
                 .ToList();
 
-            // Фильтруем и группируем пользователей
-            var pendingRequests = allUsers.Where(u => pendingFriendIds.Contains(u.IdentityId));
-            var friends = allUsers.Where(u => friendIds.Contains(u.IdentityId));
-            var otherUsers = allUsers.Where(u => !pendingFriendIds.Contains(u.IdentityId) && 
-                                                !friendIds.Contains(u.IdentityId) && 
-                                                u.IdentityId != currentUser.Id);
+            var otherUsers = allUsers
+                .Where(u => u.Id != currentUser.Id)
+                .Where(u => !friends.Contains(u))
+                .Where(u => !incomingRequests.Contains(u))
+                .ToList();
 
-            // Применяем поиск, если указан
             if (!string.IsNullOrEmpty(search))
             {
                 var searchLower = search.ToLower();
-                pendingRequests = pendingRequests.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                                           u.Email.ToLower().Contains(searchLower));
-                friends = friends.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                          u.Email.ToLower().Contains(searchLower));
-                otherUsers = otherUsers.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                                 u.Email.ToLower().Contains(searchLower));
+                incomingRequests = incomingRequests
+                    .Where(u => u.FullName.ToLower().Contains(searchLower))
+                    .ToList();
+                friends = friends
+                    .Where(u => u.FullName.ToLower().Contains(searchLower))
+                    .ToList();
+                otherUsers = otherUsers
+                    .Where(u => u.FullName.ToLower().Contains(searchLower))
+                    .ToList();
             }
 
-            // Объединяем результаты в нужном порядке
-            var orderedUsers = pendingRequests.Concat(friends).Concat(otherUsers);
-            
-            var viewModel = new UserVM
+            var viewModel = new UsersVM
             {
-                Users = orderedUsers,
-                PendingFriendRequests = pendingRequests,
+                IncomingRequests = incomingRequests,
                 Friends = friends,
+                OtherUsers = otherUsers,
                 SearchTerm = search
             };
 
             return View(viewModel);
         }
 
-        public async Task<IActionResult> UserPage(int id)
+        public async Task<IActionResult> Profile(string id)
         {
-            try
+            if (string.IsNullOrEmpty(id))
+                return RedirectToAction("Users");
+
+            var currentIdentityUser = await _userManager.GetUserAsync(User);
+            if (currentIdentityUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var allUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = allUsers.FirstOrDefault(u => u.IdentityId == currentIdentityUser.Id);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var targetUser = allUsers.FirstOrDefault(u => u.Id == id);
+            if (targetUser == null)
+                return RedirectToAction("Users");
+
+            if (targetUser.Id == currentUser.Id)
+                return RedirectToAction("MyProfile");
+
+            var friendshipStatus = await _friendshipRepository.GetFriendshipStatusAsync(currentUser.Id, targetUser.Id);
+
+            var viewModel = new ProfileVM
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser == null)
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                User = targetUser,
+                FriendshipStatus = friendshipStatus
+            };
 
-                var query = new GetUserByIdQuery(id);
-                var user = await _mediator.Send(query);
-
-                if (user == null)
-                {
-                    _logger.LogWarning($"User with ID {id} not found");
-                    return NotFound();
-                }
-
-                // Получаем статус дружбы
-                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
-                if (friendship != null)
-                {
-                    user.FriendshipStatus = friendship.Status;
-                    user.IsFriend = friendship.Status == Domain.Entities.Enums.FriendshipStatus.Accepted;
-                    user.IsSentByMe = friendship.UserId == currentUser.Id;
-                }
-
-                var viewModel = new UserVM
-                {
-                    User = user
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error while getting user with ID {id}");
-                return RedirectToAction(nameof(Users));
-            }
+            return View(viewModel);
         }
 
-        [Authorize]
         public async Task<IActionResult> MyProfile()
         {
-            var identityUser = await _userManager.GetUserAsync(User);
-            if (identityUser == null)
+            var currentIdentityUser = await _userManager.GetUserAsync(User);
+            if (currentIdentityUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var allUsers = await _userRepository.GetAllUsersAsync();
+            var currentUser = allUsers.FirstOrDefault(u => u.IdentityId == currentIdentityUser.Id);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var acceptedFriendships = await _friendshipRepository.GetAcceptedFriendshipsAsync(currentUser.Id);
+            var friends = acceptedFriendships
+                .SelectMany(f => new[] { f.UserId, f.FriendId })
+                .Where(id => id != currentUser.Id)
+                .Select(id => allUsers.FirstOrDefault(u => u.Id == id))
+                .Where(u => u != null)
+                .ToList();
+
+            var viewModel = new MyProfileVM
             {
-                return RedirectToAction("Login", "Auth");
-            }
-            var appUser = await _userRepository.GetAllUsersAsync();
-            var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == identityUser.Id);
-            if (currentAppUser == null)
-            {
-                return NotFound();
-            }
-
-            var userQuery = new GetUserByIdQuery(currentAppUser.Id);
-            var user = await _mediator.Send(userQuery);
-
-            var subscribedGroupsQuery = new GetSubscribedGroupsQuery(currentAppUser.Id);
-            var subscribedGroups = await _mediator.Send(subscribedGroupsQuery);
-
-            var subscribedCoursesQuery = new GetSubscribedCoursesQuery(currentAppUser.Id);
-            var subscribedCourses = await _mediator.Send(subscribedCoursesQuery);
-
-            // Получаем список друзей
-            var friends = await _friendshipService.GetUserFriendsAsync(identityUser.Id);
-
-            var viewModel = new UserVM
-            {
-                User = user,
-                SubscribedGroups = subscribedGroups,
-                SubscribedCourses = subscribedCourses,
+                User = currentUser,
                 Friends = friends
             };
 
             return View(viewModel);
         }
-    
 
         [Authorize]
         [HttpPost]
