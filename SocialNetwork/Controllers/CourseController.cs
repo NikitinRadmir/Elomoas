@@ -11,6 +11,8 @@ using Elomoas.Application.Interfaces.Repositories;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Elomoas.Domain.Entities;
 
 namespace Elomoas.Controllers
 {
@@ -21,19 +23,22 @@ namespace Elomoas.Controllers
         private readonly IAppUserRepository _userRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ICourseSubscriptionRepository _subscriptionRepository;
+        private readonly IGenericRepository<CourseSubscription> _subscriptionGenericRepository;
 
         public CourseController(
             ILogger<CourseController> logger,
             IMediator mediator,
             IAppUserRepository userRepository,
             UserManager<IdentityUser> userManager,
-            ICourseSubscriptionRepository subscriptionRepository)
+            ICourseSubscriptionRepository subscriptionRepository,
+            IGenericRepository<CourseSubscription> subscriptionGenericRepository)
         {
             _logger = logger;
             _mediator = mediator;
             _userRepository = userRepository;
             _userManager = userManager;
             _subscriptionRepository = subscriptionRepository;
+            _subscriptionGenericRepository = subscriptionGenericRepository;
         }
 
         public async Task<IActionResult> Course(int id)
@@ -58,6 +63,22 @@ namespace Elomoas.Controllers
                 if (currentAppUser != null)
                 {
                     viewModel.IsSubscribed = await _subscriptionRepository.IsSubscribed(currentAppUser.Id, id);
+
+                    if (viewModel.IsSubscribed)
+                    {
+                        var subscription = await _subscriptionGenericRepository.Entities
+                            .FirstOrDefaultAsync(s => s.UserId == currentAppUser.Id && s.CourseId == id);
+
+                        if (subscription != null)
+                        {
+                            viewModel.SubscriptionInfo = new SubscriptionInfo
+                            {
+                                DurationInMonths = subscription.DurationInMonths,
+                                SubscriptionPrice = subscription.SubscriptionPrice,
+                                ExpirationDate = subscription.ExpirationDate
+                            };
+                        }
+                    }
                 }
             }
 

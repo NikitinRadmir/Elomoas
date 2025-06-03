@@ -1,5 +1,6 @@
 using Elomoas.Application.Features.Courses.Query;
 using Elomoas.Domain.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace Elomoas.mvc.Models.Courses
@@ -10,6 +11,7 @@ namespace Elomoas.mvc.Models.Courses
         public bool IsSubscribed { get; set; }
         public int SelectedDuration { get; set; }
         public List<SubscriptionDurationOption> DurationOptions { get; set; }
+        public SubscriptionInfo SubscriptionInfo { get; set; }
 
         public CourseDetailsVM()
         {
@@ -21,6 +23,13 @@ namespace Elomoas.mvc.Models.Courses
                 new SubscriptionDurationOption { Months = 12, DiscountPercent = 30 }
             };
         }
+    }
+
+    public class SubscriptionInfo
+    {
+        public int DurationInMonths { get; set; }
+        public decimal SubscriptionPrice { get; set; }
+        public DateTime ExpirationDate { get; set; }
     }
 
     public class SubscriptionDurationOption

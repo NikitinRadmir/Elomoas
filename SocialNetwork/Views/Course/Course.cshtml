@@ -80,7 +80,7 @@
                 <div class="card p-4 mb-4 bg-primary border-0 shadow-xss rounded-lg">
                     <div class="card-body">
                         <h2 class="text-white font-xsssss fw-700 text-uppercase ls-3 ">@Model.Course.PL</h2>
-                        <h1 class="display2-size text-white fw-700">$ @Model.Course.Price</h1>
+                        <h1 class="display2-size text-white fw-700">$ @Model.Course.Price / month</h1>
                         <h4 class="text-white fw-500 mb-4 lh-24 font-xssss">For anyone validating Framer as a professional prototyping tool.</h4>
                         <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Unlimited views</h4>
                         <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Everything in Free</h4>
@@ -89,11 +89,52 @@
                         {
                             @if (Model.IsSubscribed)
                             {
+                                <div class="bg-white p-3 rounded-lg mb-3">
+                                    <h4 class="text-success fw-600 font-xssss mb-2">Активная подписка</h4>
+                                    <div class="subscription-info">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="font-xssss fw-600 text-grey-600">Продолжительность:</span>
+                                            <span class="font-xssss fw-700 text-primary">@Model.SubscriptionInfo.DurationInMonths мес.</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="font-xssss fw-600 text-grey-600">Стоимость:</span>
+                                            <span class="font-xssss fw-700 text-primary">$@Model.SubscriptionInfo.SubscriptionPrice</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="font-xssss fw-600 text-grey-600">Действует до:</span>
+                                            <span class="font-xssss fw-700 text-primary">@Model.SubscriptionInfo.ExpirationDate.ToString("dd.MM.yyyy")</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="@Model.Course.Id">ОТПИСАТЬСЯ</a>
                             }
                             else
                             {
-                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss subscribe-btn" data-course-id="@Model.Course.Id">ПОДПИСАТЬСЯ</a>
+                                <div class="subscription-options bg-white p-3 rounded-lg">
+                                    <h4 class="text-primary fw-600 font-xssss mb-3">Выберите продолжительность:</h4>
+                                    <div class="duration-options">
+                                        @foreach (var option in Model.DurationOptions)
+                                        {
+                                            <div class="duration-option mb-2" data-months="@option.Months" data-base-price="@Model.Course.Price">
+                                                <div class="d-flex justify-content-between align-items-center p-2 rounded cursor-pointer duration-select @(option.Months == 1 ? "selected" : "")">
+                                                    <div>
+                                                        <span class="font-xssss fw-600">@option.GetDisplayText()</span>
+                                                        @if (option.DiscountPercent > 0)
+                                                        {
+                                                            <span class="badge bg-success text-white ml-2">-@option.DiscountPercent%</span>
+                                                        }
+                                                    </div>
+                                                    <div class="text-primary font-xssss fw-700">
+                                                        $@option.CalculatePrice(Model.Course.Price)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="@Model.Course.Id" data-duration="1">
+                                        ПОДПИСАТЬСЯ
+                                    </button>
+                                </div>
                             }
                         }
                         else
@@ -112,129 +153,69 @@
     
 </div>
 
-@if (!Model.IsSubscribed)
-{
-    <div class="subscription-options">
-        <h3 class="mb-4">Выберите продолжительность подписки</h3>
-        <div class="duration-options">
-            @foreach (var option in Model.DurationOptions)
-            {
-                <div class="duration-option" data-months="@option.Months" data-base-price="@Model.Course.Price">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">@option.GetDisplayText()</h5>
-                            <p class="card-text price-display">
-                                <span class="calculated-price">@option.CalculatePrice(Model.Course.Price)</span> ₽
-                            </p>
-                            <button class="btn btn-primary select-duration" data-months="@option.Months">
-                                Выбрать
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
+@section Styles {
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <style>
+        .duration-select {
+            border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    <div class="subscription-action mt-4 text-center d-none" id="subscriptionAction">
-        <h4>Итоговая стоимость: <span id="finalPrice">0</span> ₽</h4>
-        <button class="btn btn-lg btn-success" id="subscribeButton" data-course-id="@Model.Course.Id">
-            Подписаться
-        </button>
-    </div>
+        .duration-select:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+
+        .duration-select.selected {
+            background-color: #e8f4ff;
+            border-color: #007bff;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
 }
 
 @section Scripts {
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script>
         $(document).ready(function() {
-            function handleSubscriptionError() {
-                alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
-            }
+            let selectedDuration = 1; // Default to 1 month
 
-            function handleSubscribe(btn) {
-                var courseId = btn.data('course-id');
-                btn.prop('disabled', true);
-
-                $.post('/Course/Subscribe', { courseId: courseId })
-                    .done(function(response) {
-                        if (response.success) {
-                            btn.text('ОТПИСАТЬСЯ');
-                            btn.removeClass('text-primary').addClass('text-danger');
-                            btn.removeClass('subscribe-btn').addClass('unsubscribe-btn');
-                            btn.off('click').click(function(e) {
-                                e.preventDefault();
-                                handleUnsubscribe($(this));
-                            });
-                        } else {
-                            handleSubscriptionError();
-                        }
-                    })
-                    .fail(handleSubscriptionError)
-                    .always(function() {
-                        btn.prop('disabled', false);
-                    });
-            }
-
-            function handleUnsubscribe(btn) {
-                var courseId = btn.data('course-id');
-                btn.prop('disabled', true);
-
-                $.post('/Course/Unsubscribe', { courseId: courseId })
-                    .done(function(response) {
-                        if (response.success) {
-                            btn.text('ПОДПИСАТЬСЯ');
-                            btn.removeClass('text-danger').addClass('text-primary');
-                            btn.removeClass('unsubscribe-btn').addClass('subscribe-btn');
-                            btn.off('click').click(function(e) {
-                                e.preventDefault();
-                                handleSubscribe($(this));
-                            });
-                        } else {
-                            handleSubscriptionError();
-                        }
-                    })
-                    .fail(handleSubscriptionError)
-                    .always(function() {
-                        btn.prop('disabled', false);
-                    });
-            }
-
-            $('.subscribe-btn').click(function(e) {
-                e.preventDefault();
-                handleSubscribe($(this));
-            });
-
-            $('.unsubscribe-btn').click(function(e) {
-                e.preventDefault();
-                handleUnsubscribe($(this));
-            });
-
-            let selectedDuration = null;
-
-            $('.select-duration').click(function(e) {
-                e.preventDefault();
-                const months = $(this).data('months');
+            $('.duration-select').click(function() {
+                const option = $(this).closest('.duration-option');
+                const months = option.data('months');
+                
+                // Update selection
+                $('.duration-select').removeClass('selected');
+                $(this).addClass('selected');
+                
+                // Update subscribe button
                 selectedDuration = months;
-
-                // Update UI
-                $('.duration-option').removeClass('selected');
-                $(this).closest('.duration-option').addClass('selected');
-
-                // Update final price
-                const price = $(this).closest('.duration-option').find('.calculated-price').text();
+                $('#subscribeButton').data('duration', months);
+                
+                // Update price display if needed
+                const price = option.find('.text-primary').text();
                 $('#finalPrice').text(price);
-                $('#subscriptionAction').removeClass('d-none');
             });
 
             $('#subscribeButton').click(function() {
-                if (!selectedDuration) return;
-
                 const courseId = $(this).data('course-id');
+                const duration = $(this).data('duration');
+                
+                $(this).prop('disabled', true);
+                $(this).html('<span class="spinner-border spinner-border-sm mr-2"></span>Подождите...');
                 
                 $.post('/Course/Subscribe', {
                     courseId: courseId,
-                    durationInMonths: selectedDuration
+                    durationInMonths: duration
                 })
                 .done(function(response) {
                     if (response.success) {
@@ -245,51 +226,41 @@
                 })
                 .fail(function() {
                     alert('Произошла ошибка при подписке на курс');
+                })
+                .always(function() {
+                    $('#subscribeButton').prop('disabled', false);
+                    $('#subscribeButton').html('ПОДПИСАТЬСЯ');
                 });
+            });
+
+            $('.unsubscribe-btn').click(function(e) {
+                e.preventDefault();
+                const btn = $(this);
+                const courseId = btn.data('course-id');
+                
+                if (!confirm('Вы уверены, что хотите отписаться от курса?')) {
+                    return;
+                }
+                
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm mr-2"></span>Подождите...');
+
+                $.post('/Course/Unsubscribe', { courseId: courseId })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Произошла ошибка при отписке от курса');
+                        }
+                    })
+                    .fail(function() {
+                        alert('Произошла ошибка при отписке от курса');
+                    })
+                    .always(function() {
+                        btn.prop('disabled', false);
+                        btn.html('ОТПИСАТЬСЯ');
+                    });
             });
         });
     </script>
-}
-
-@section Styles {
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-    <style>
-        .subscription-options {
-            margin: 2rem 0;
-        }
-
-        .duration-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .duration-option .card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .duration-option .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .duration-option.selected .card {
-            border-color: #28a745;
-            background-color: #f8fff8;
-        }
-
-        .price-display {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-
-        #subscriptionAction {
-            background-color: #f8f9fa;
-            padding: 2rem;
-            border-radius: 8px;
-        }
-    </style>
 }
