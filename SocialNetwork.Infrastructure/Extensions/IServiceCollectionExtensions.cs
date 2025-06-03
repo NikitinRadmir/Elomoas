@@ -22,10 +22,8 @@ namespace Elomoas.Infrastructure.Extensions
         {
             services
                 .AddTransient<IMediator, Mediator>()
-                .AddTransient<IFriendshipService, FriendshipService>()
                 .AddTransient<ISubscriptionExpirationService, SubscriptionExpirationService>()
                 .AddHostedService<SubscriptionExpirationService>()
-                //.AddTransient<IMessageService, MessageService>()
                 .AddTransient<ICurrentUserService, CurrentUserService>()
                 .AddHttpContextAccessor()
                 .AddTransient<IEmailService, EmailService>()
