@@ -57,7 +57,6 @@ public class Program
         }
 
         app.UseGlobalExceptionHandling();
-        app.UseRequestLogging();
         
         app.UseHttpsRedirection();
         app.UseStaticFiles(new StaticFileOptions
@@ -70,7 +69,8 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
+        app.UseRequestLogging();
         app.UseUserActivityLogging();
 
         app.MapControllerRoute(
