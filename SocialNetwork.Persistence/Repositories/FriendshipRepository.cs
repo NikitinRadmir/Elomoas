@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
+using System.Collections.Generic;
 
 namespace Elomoas.Persistence.Repositories
 {
@@ -92,6 +93,22 @@ namespace Elomoas.Persistence.Repositories
             return await _repository.Entities
                 .FirstOrDefaultAsync(f => (f.UserId == userId && f.FriendId == friendId) ||
                                         (f.UserId == friendId && f.FriendId == userId));
+        }
+
+        public async Task<IEnumerable<Friendship>> GetPendingFriendshipsAsync(string userId)
+        {
+            return await _repository.Entities
+                .Where(f => (f.UserId == userId || f.FriendId == userId) && 
+                           f.Status == FriendshipStatus.Pending)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Friendship>> GetAcceptedFriendshipsAsync(string userId)
+        {
+            return await _repository.Entities
+                .Where(f => (f.UserId == userId || f.FriendId == userId) && 
+                           f.Status == FriendshipStatus.Accepted)
+                .ToListAsync();
         }
     }
 } 

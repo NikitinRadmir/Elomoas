@@ -25,16 +25,23 @@ namespace Elomoas.Controllers
         public async Task<IActionResult> Groups(string search)
         {
             var query = new GetAllQuery();
-            var groups = await _mediator.Send(query);
+            var allGroups = await _mediator.Send(query);
+            
+            // Разделяем группы на подписанные и остальные
+            var subscribedGroups = allGroups.Where(g => g.IsCurrentUserSubscribed);
+            var otherGroups = allGroups.Where(g => !g.IsCurrentUserSubscribed);
             
             if (!string.IsNullOrEmpty(search))
             {
-                groups = groups.Where(g => g.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+                var searchLower = search.ToLower();
+                subscribedGroups = subscribedGroups.Where(g => g.Name.ToLower().Contains(searchLower));
+                otherGroups = otherGroups.Where(g => g.Name.ToLower().Contains(searchLower));
             }
             
             var viewModel = new GroupVM
             {
-                Groups = groups,
+                Groups = otherGroups,
+                SubscribedGroups = subscribedGroups,
                 SearchTerm = search
             };
             return View(viewModel);

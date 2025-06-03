@@ -55,20 +55,59 @@ namespace Elomoas.Controllers
 
         public async Task<IActionResult> Users(string search)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             var query = new GetAllUsersQuery();
-            var users = await _mediator.Send(query);
+            var allUsers = await _mediator.Send(query);
             
+            // Получаем входящие заявки в друзья
+            var pendingFriendships = await _friendshipRepository.GetPendingFriendshipsAsync(currentUser.Id);
+            var pendingFriendIds = pendingFriendships
+                .Where(f => f.FriendId == currentUser.Id) // Только входящие заявки
+                .Select(f => f.UserId)
+                .ToList();
+
+            // Получаем список друзей
+            var friendships = await _friendshipRepository.GetAcceptedFriendshipsAsync(currentUser.Id);
+            var friendIds = friendships
+                .SelectMany(f => new[] { f.UserId, f.FriendId })
+                .Where(id => id != currentUser.Id)
+                .ToList();
+
+            // Фильтруем и группируем пользователей
+            var pendingRequests = allUsers.Where(u => pendingFriendIds.Contains(u.IdentityId));
+            var friends = allUsers.Where(u => friendIds.Contains(u.IdentityId));
+            var otherUsers = allUsers.Where(u => !pendingFriendIds.Contains(u.IdentityId) && 
+                                                !friendIds.Contains(u.IdentityId) && 
+                                                u.IdentityId != currentUser.Id);
+
+            // Применяем поиск, если указан
             if (!string.IsNullOrEmpty(search))
             {
-                users = users.Where(u => u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) || 
-                                      u.Email.Contains(search, StringComparison.OrdinalIgnoreCase));
+                var searchLower = search.ToLower();
+                pendingRequests = pendingRequests.Where(u => u.Name.ToLower().Contains(searchLower) || 
+                                                           u.Email.ToLower().Contains(searchLower));
+                friends = friends.Where(u => u.Name.ToLower().Contains(searchLower) || 
+                                          u.Email.ToLower().Contains(searchLower));
+                otherUsers = otherUsers.Where(u => u.Name.ToLower().Contains(searchLower) || 
+                                                 u.Email.ToLower().Contains(searchLower));
             }
+
+            // Объединяем результаты в нужном порядке
+            var orderedUsers = pendingRequests.Concat(friends).Concat(otherUsers);
             
             var viewModel = new UserVM
             {
-                Users = users,
+                Users = orderedUsers,
+                PendingFriendRequests = pendingRequests,
+                Friends = friends,
                 SearchTerm = search
             };
+
             return View(viewModel);
         }
 

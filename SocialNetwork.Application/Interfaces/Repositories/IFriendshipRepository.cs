@@ -1,5 +1,6 @@
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Elomoas.Application.Interfaces.Repositories
@@ -13,5 +14,7 @@ namespace Elomoas.Application.Interfaces.Repositories
         Task<bool> AreFriendsAsync(string userId, string friendId);
         Task<FriendshipStatus?> GetFriendshipStatusAsync(string userId, string friendId);
         Task<Friendship> GetFriendshipAsync(string userId, string friendId);
+        Task<IEnumerable<Friendship>> GetPendingFriendshipsAsync(string userId);
+        Task<IEnumerable<Friendship>> GetAcceptedFriendshipsAsync(string userId);
     }
 } 
