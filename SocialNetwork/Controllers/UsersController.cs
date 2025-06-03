@@ -9,7 +9,6 @@ using Elomoas.mvc.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Elomoas.Application.Interfaces.Services;
 using Elomoas.Application.Features.AppUsers.Query.GetUserById;
-
 using System.Linq;
 using Elomoas.Application.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,8 @@ using System.Threading.Tasks;
 using System;
 using Elomoas.Application.Features.Groups.Query.GetSubscribedGroups;
 using Elomoas.Application.Features.Courses.Query.GetSubscribedCourses;
-
+using Microsoft.AspNetCore.SignalR;
+using Elomoas.Hubs;
 
 namespace Elomoas.Controllers
 {
@@ -30,6 +30,7 @@ namespace Elomoas.Controllers
         private readonly IFriendshipService _friendshipService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IAppUserRepository _userRepository;
+        private readonly IHubContext<FriendshipHub> _hubContext;
 
         public UsersController(
             ILogger<UsersController> logger, 
@@ -37,7 +38,8 @@ namespace Elomoas.Controllers
             UserManager<IdentityUser> userManager, 
             IFriendshipService friendshipService,
             ICurrentUserService currentUserService,
-            IAppUserRepository userRepository)
+            IAppUserRepository userRepository,
+            IHubContext<FriendshipHub> hubContext)
         {
             _logger = logger;
             _mediator = mediator;
@@ -45,6 +47,7 @@ namespace Elomoas.Controllers
             _friendshipService = friendshipService;
             _currentUserService = currentUserService;
             _userRepository = userRepository;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Users(string search)
@@ -164,18 +167,48 @@ namespace Elomoas.Controllers
                 {
                     case "add":
                         success = await _friendshipService.SendFriendRequestAsync(currentUser.Id, targetUserId);
+                        if (success)
+                        {
+                            await _hubContext.Clients.Group(targetUserId).SendAsync("ReceiveFriendRequest", new
+                            {
+                                SenderId = currentUser.Id,
+                                SenderName = currentUser.UserName
+                            });
+                        }
                         message = success ? "Запрос в друзья отправлен" : "Не удалось отправить запрос в друзья";
                         break;
                     case "accept":
                         success = await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, targetUserId);
+                        if (success)
+                        {
+                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRequestAccepted", new
+                            {
+                                AcceptorId = currentUser.Id,
+                                AcceptorName = currentUser.UserName
+                            });
+                        }
                         message = success ? "Запрос в друзья принят" : "Не удалось принять запрос в друзья";
                         break;
                     case "reject":
                         success = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, targetUserId);
+                        if (success)
+                        {
+                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRequestRejected", new
+                            {
+                                RejectorId = currentUser.Id
+                            });
+                        }
                         message = success ? "Запрос в друзья отклонен" : "Не удалось отклонить запрос в друзья";
                         break;
                     case "remove":
                         success = await _friendshipService.RemoveFriendAsync(currentUser.Id, targetUserId);
+                        if (success)
+                        {
+                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRemoved", new
+                            {
+                                RemoverId = currentUser.Id
+                            });
+                        }
                         message = success ? "Пользователь удален из друзей" : "Не удалось удалить пользователя из друзей";
                         break;
                     default:
