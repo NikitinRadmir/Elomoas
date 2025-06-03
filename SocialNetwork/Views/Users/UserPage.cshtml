@@ -5,6 +5,31 @@
     ViewData["Title"] = "UserPage";
 }
 
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<style>
+    .btn-profile {
+        transition: all 0.3s ease;
+        margin: 0 5px;
+        border-radius: 15px !important;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-profile:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    
+</style>
+
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
         <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden mb-3">
@@ -14,13 +39,17 @@
                 <div class="clearfix"></div>
                 <div class="row">
                     <div class="col-xl-6 md-mb-2">
-                        <h4 class="fw-700 font-xs mt-3 mb-1">@Model.User.Name</h4>
+                        <h4 class="fw-700 font-xs mt-3 mb-1">
+                            @Model.User.Name
+                            @if (Model.User.IsFriend)
+                            {
+                                <i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>
+                            }
+                        </h4>
                         <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">@Model.User.Email</span>
                         <span class="dot ml-2 mr-2 d-inline-block btn-round-xss bg-grey"></span>
-                        
                     </div>
                     <div class="col-xl-3 md-mb-2">
-
                         @*Соц сети*@
                         <ul class="d-flex align-items-center mt-2 float-left">
                             <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
@@ -31,8 +60,41 @@
                         </ul>
                     </div>
                     <div class="col-xl-3 md-mb-2 pl-xl-4">
-                        <a href="#" class="mt-2 p-0 btn p-2 lh-24 w100 ml-1 ls-3 float-left d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white">ADD FRIEND</a>
-                        <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                        <div class="d-flex justify-content-center friend-actions" data-user-id="@Model.User.IdentityId">
+                            @if (Model.User.IsFriend)
+                            {
+                                <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="@Model.User.IdentityId">
+                                    <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                                </a>
+                            }
+                            else if (Model.User.FriendshipStatus == Elomoas.Domain.Entities.Enums.FriendshipStatus.Pending)
+                            {
+                                if (Model.User.IsSentByMe)
+                                {
+                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white btn-profile">
+                                        <i class="feather-clock mr-1"></i> PENDING
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="d-flex">
+                                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-success font-xsssss fw-700 ls-lg text-white btn-profile accept-friend-btn" data-user-id="@Model.User.IdentityId">
+                                            <i class="feather-check mr-1"></i> ACCEPT
+                                        </a>
+                                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile reject-friend-btn" data-user-id="@Model.User.IdentityId">
+                                            <i class="feather-x mr-1"></i> REJECT
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="@Model.User.IdentityId">
+                                    <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                                </a>
+                            }
+                            <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                        </div>
                     </div>
                     
                     <div class="col-11">
@@ -40,9 +102,199 @@
                         <p class="font-xssss fw-600 lh-28 text-grey-500 mb-0 pl-0">@(string.IsNullOrEmpty(Model.User?.Description) ? "The user has no description" : Model.User.Description)</p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>     
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Обработка событий SignalR через глобальные события документа
+            $(document).on("friendRequest", function(e, data) {
+                if (data.senderId === '@Model.User.IdentityId') {
+                    const buttonContainer = $('.friend-actions');
+                    buttonContainer.html(`
+                        <div class="d-flex">
+                            <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-success font-xsssss fw-700 ls-lg text-white btn-profile accept-friend-btn" data-user-id="${data.senderId}">
+                                <i class="feather-check mr-1"></i> ACCEPT
+                            </a>
+                            <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile reject-friend-btn" data-user-id="${data.senderId}">
+                                <i class="feather-x mr-1"></i> REJECT
+                            </a>
+                        </div>
+                        <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                    `);
+                }
+                toastr.info(`${data.senderName} отправил(а) вам запрос в друзья`);
+            });
+
+            $(document).on("friendRequestAccepted", function(e, data) {
+                if (data.acceptorId === '@Model.User.IdentityId') {
+                    const userName = $('.fw-700.font-xs');
+                    if (!userName.find('.feather-user-check').length) {
+                        userName.append('<i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>');
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+
+                    const buttonContainer = $('.friend-actions');
+                    buttonContainer.html(`
+                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="${data.acceptorId}">
+                            <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                        </a>
+                        <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                    `);
+                }
+                toastr.success(`${data.acceptorName} принял(а) ваш запрос в друзья`);
+            });
+
+            $(document).on("friendRequestRejected", function(e, data) {
+                if (data.rejectorId === '@Model.User.IdentityId') {
+                    const buttonContainer = $('.friend-actions');
+                    buttonContainer.html(`
+                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${data.rejectorId}">
+                            <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                        </a>
+                        <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                    `);
+                }
+                toastr.warning('Ваш запрос в друзья был отклонен');
+            });
+
+            $(document).on("friendRemoved", function(e, data) {
+                if (data.removerId === '@Model.User.IdentityId') {
+                    $('.feather-user-check').remove();
+                    const buttonContainer = $('.friend-actions');
+                    buttonContainer.html(`
+                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${data.removerId}">
+                            <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                        </a>
+                        <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                    `);
+                }
+                toastr.warning('Пользователь удалил вас из друзей');
+            });
+        });
+
+        function handleFriendAction(userId, action, button) {
+            console.log("Handling friend action:", action, "for user:", userId);
+            
+            // Добавляем состояние загрузки
+            button.prop('disabled', true);
+            const originalHtml = button.html();
+            button.html('<i class="feather-loader mr-1 spinner"></i> ' + button.text());
+
+            // Получаем контейнер
+            const buttonContainer = button.closest('.friend-actions');
+            const targetUserId = userId;
+
+            $.ajax({
+                url: '/Users/HandleFriendRequest',
+                type: 'POST',
+                data: {
+                    targetUserId: targetUserId,
+                    action: action,
+                    __RequestVerificationToken: $('#antiForgeryForm input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    console.log("Friend action response:", response);
+                    if (response.success) {
+                        switch(action) {
+                            case 'add':
+                                toastr.success(response.message || 'Запрос в друзья отправлен');
+                                buttonContainer.html(`
+                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white btn-profile">
+                                        <i class="feather-clock mr-1"></i> PENDING
+                                    </a>
+                                    <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                                `);
+                                break;
+                            case 'accept':
+                                toastr.success(response.message || 'Запрос в друзья принят');
+                                const userName = $('.fw-700.font-xs');
+                                if (!userName.find('.feather-user-check').length) {
+                                    userName.append('<i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>');
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                }
+                                buttonContainer.html(`
+                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="${targetUserId}">
+                                        <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                                    </a>
+                                    <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                                `);
+                                break;
+                            case 'reject':
+                                toastr.success(response.message || 'Запрос в друзья отклонен');
+                                buttonContainer.html(`
+                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
+                                        <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                                    </a>
+                                    <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                                `);
+                                break;
+                            case 'remove':
+                                toastr.success(response.message || 'Пользователь удален из друзей');
+                                $('.feather-user-check').remove();
+                                buttonContainer.html(`
+                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
+                                        <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                                    </a>
+                                    <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
+                                `);
+                                break;
+                        }
+                    } else {
+                        // Восстанавливаем кнопку в случае ошибки
+                        button.prop('disabled', false);
+                        button.html(originalHtml);
+                        toastr.error(response.message || 'Не удалось выполнить действие');
+                    }
+                },
+                error: function(xhr) {
+                    // Восстанавливаем кнопку в случае ошибки
+                    button.prop('disabled', false);
+                    button.html(originalHtml);
+                    toastr.error(xhr.responseJSON?.message || 'Произошла ошибка при выполнении действия');
+                }
+            });
+        }
+
+        // Обработчики событий для кнопок
+        $(document).ready(function() {
+            // Обработка добавления в друзья
+            $(document).on('click', '.add-friend-btn', function(e) {
+                e.preventDefault();
+                const userId = $(this).data('user-id');
+                console.log("Add friend clicked for user:", userId);
+                handleFriendAction(userId, 'add', $(this));
+            });
+
+            // Обработка принятия запроса в друзья
+            $(document).on('click', '.accept-friend-btn', function(e) {
+                e.preventDefault();
+                const userId = $(this).data('user-id');
+                console.log("Accept friend clicked for user:", userId);
+                handleFriendAction(userId, 'accept', $(this));
+            });
+
+            // Обработка отклонения запроса в друзья
+            $(document).on('click', '.reject-friend-btn', function(e) {
+                e.preventDefault();
+                const userId = $(this).data('user-id');
+                console.log("Reject friend clicked for user:", userId);
+                handleFriendAction(userId, 'reject', $(this));
+            });
+
+            // Обработка удаления из друзей
+            $(document).on('click', '.remove-friend-btn', function(e) {
+                e.preventDefault();
+                const userId = $(this).data('user-id');
+                console.log("Remove friend clicked for user:", userId);
+                handleFriendAction(userId, 'remove', $(this));
+            });
+        });
+    </script>
+}
   

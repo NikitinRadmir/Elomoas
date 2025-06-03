@@ -31,6 +31,7 @@ namespace Elomoas.Controllers
         private readonly ICurrentUserService _currentUserService;
         private readonly IAppUserRepository _userRepository;
         private readonly IHubContext<FriendshipHub> _hubContext;
+        private readonly IFriendshipRepository _friendshipRepository;
 
         public UsersController(
             ILogger<UsersController> logger, 
@@ -39,7 +40,8 @@ namespace Elomoas.Controllers
             IFriendshipService friendshipService,
             ICurrentUserService currentUserService,
             IAppUserRepository userRepository,
-            IHubContext<FriendshipHub> hubContext)
+            IHubContext<FriendshipHub> hubContext,
+            IFriendshipRepository friendshipRepository)
         {
             _logger = logger;
             _mediator = mediator;
@@ -48,6 +50,7 @@ namespace Elomoas.Controllers
             _currentUserService = currentUserService;
             _userRepository = userRepository;
             _hubContext = hubContext;
+            _friendshipRepository = friendshipRepository;
         }
 
         public async Task<IActionResult> Users(string search)
@@ -73,6 +76,12 @@ namespace Elomoas.Controllers
         {
             try
             {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+
                 var query = new GetUserByIdQuery(id);
                 var user = await _mediator.Send(query);
 
@@ -80,6 +89,15 @@ namespace Elomoas.Controllers
                 {
                     _logger.LogWarning($"User with ID {id} not found");
                     return NotFound();
+                }
+
+                // Получаем статус дружбы
+                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
+                if (friendship != null)
+                {
+                    user.FriendshipStatus = friendship.Status;
+                    user.IsFriend = friendship.Status == Domain.Entities.Enums.FriendshipStatus.Accepted;
+                    user.IsSentByMe = friendship.UserId == currentUser.Id;
                 }
 
                 var viewModel = new UserVM
