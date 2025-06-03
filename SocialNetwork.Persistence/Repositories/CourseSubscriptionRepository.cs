@@ -28,6 +28,12 @@ namespace Elomoas.Persistence.Repositories
                 .AnyAsync(x => x.UserId == userId && x.CourseId == courseId);
         }
 
+        public async Task<CourseSubscription> GetSubscription(int userId, int courseId)
+        {
+            return await _repository.Entities
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.CourseId == courseId);
+        }
+
         public async Task Subscribe(int userId, int courseId, int durationInMonths)
         {
             if (!await IsSubscribed(userId, courseId))
@@ -72,8 +78,7 @@ namespace Elomoas.Persistence.Repositories
 
         public async Task Unsubscribe(int userId, int courseId)
         {
-            var subscription = await _repository.Entities
-                .FirstOrDefaultAsync(x => x.UserId == userId && x.CourseId == courseId);
+            var subscription = await GetSubscription(userId, courseId);
             
             if (subscription != null)
             {

@@ -23,22 +23,19 @@ namespace Elomoas.Controllers
         private readonly IAppUserRepository _userRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ICourseSubscriptionRepository _subscriptionRepository;
-        private readonly IGenericRepository<CourseSubscription> _subscriptionGenericRepository;
 
         public CourseController(
             ILogger<CourseController> logger,
             IMediator mediator,
             IAppUserRepository userRepository,
             UserManager<IdentityUser> userManager,
-            ICourseSubscriptionRepository subscriptionRepository,
-            IGenericRepository<CourseSubscription> subscriptionGenericRepository)
+            ICourseSubscriptionRepository subscriptionRepository)
         {
             _logger = logger;
             _mediator = mediator;
             _userRepository = userRepository;
             _userManager = userManager;
             _subscriptionRepository = subscriptionRepository;
-            _subscriptionGenericRepository = subscriptionGenericRepository;
         }
 
         public async Task<IActionResult> Course(int id)
@@ -66,8 +63,7 @@ namespace Elomoas.Controllers
 
                     if (viewModel.IsSubscribed)
                     {
-                        var subscription = await _subscriptionGenericRepository.Entities
-                            .FirstOrDefaultAsync(s => s.UserId == currentAppUser.Id && s.CourseId == id);
+                        var subscription = await _subscriptionRepository.GetSubscription(currentAppUser.Id, id);
 
                         if (subscription != null)
                         {
