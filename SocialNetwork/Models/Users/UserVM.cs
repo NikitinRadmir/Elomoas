@@ -10,6 +10,7 @@ namespace Elomoas.mvc.Models.Users
         public AppUserDto User { get; set; }
         public IEnumerable<Group> SubscribedGroups { get; set; }
         public IEnumerable<Course> SubscribedCourses { get; set; }
+        public IEnumerable<AppUserDto> Friends { get; set; }
         public string SearchTerm { get; set; }
     }
 }

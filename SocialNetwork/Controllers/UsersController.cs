@@ -138,11 +138,15 @@ namespace Elomoas.Controllers
             var subscribedCoursesQuery = new GetSubscribedCoursesQuery(currentAppUser.Id);
             var subscribedCourses = await _mediator.Send(subscribedCoursesQuery);
 
+            // Получаем список друзей
+            var friends = await _friendshipService.GetUserFriendsAsync(identityUser.Id);
+
             var viewModel = new UserVM
             {
                 User = user,
                 SubscribedGroups = subscribedGroups,
-                SubscribedCourses = subscribedCourses
+                SubscribedCourses = subscribedCourses,
+                Friends = friends
             };
 
             return View(viewModel);
@@ -241,6 +245,39 @@ namespace Elomoas.Controllers
             }
 
             return Json(new { success = success, message = message });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RemoveFriend(string friendId)
+        {
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return Json(new { success = false, message = "Пользователь не авторизован" });
+                }
+
+                var success = await _friendshipService.RemoveFriendAsync(currentUser.Id, friendId);
+                if (success)
+                {
+                    await _hubContext.Clients.Group(friendId).SendAsync("FriendRemoved", new
+                    {
+                        RemoverId = currentUser.Id
+                    });
+                    return Json(new { success = true, message = "Друг успешно удален" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Не удалось удалить друга" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении друга");
+                return Json(new { success = false, message = "Произошла ошибка при удалении друга" });
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -36,6 +36,9 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="tab" href="#navtabs2">Groups</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs3">Friends</a>
+                </li>
             </ul>
         </div>
 
@@ -145,6 +148,52 @@
                     </div>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="navtabs3">
+                <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
+                    <div class="card-body mb-3 pb-0">
+                        <h2 class="fw-400 font-lg d-block"><b>My Friends</b></h2>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row">
+                            @if (Model.Friends != null && Model.Friends.Any())
+                            {
+                                @foreach (var friend in Model.Friends)
+                                {
+                                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" data-user-id="@friend.IdentityId">
+                                        <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
+                                            <a asp-controller="Users" asp-action="UserPage" asp-route-id="@friend.Id" 
+                                               class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
+                                                <img src="@(friend.Img ?? "/images/user-12.png")" alt="@friend.Name" class="p-0 w100 shadow-xss">
+                                            </a>
+                                            <h4 class="fw-700 font-xs mt-3 mb-1">
+                                                @friend.Name
+                                                <i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>
+                                            </h4>
+                                            <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@friend.Email</p>
+                                            <div class="clearfix"></div>
+                                            <div class="d-flex justify-content-center friend-actions">
+                                                <a asp-controller="Users" asp-action="UserPage" asp-route-id="@friend.Id" 
+                                                   class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
+                                                <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" 
+                                                   data-user-id="@friend.IdentityId">
+                                                    <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <p class="text-center text-grey-500">У вас пока нет друзей.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div> 
@@ -161,29 +210,80 @@
     });
 </script>
 
+<style>
+    .user-card {
+        transition: all 0.3s ease;
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1),
+                   0 0 15px rgba(0,0,0,0.05) !important;
+        padding: 25px !important;
+        background: white;
+    }
+
+    .user-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 25px rgba(0,0,0,0.15),
+                   0 0 20px rgba(0,0,0,0.08) !important;
+    }
+
+    .user-image {
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: none;
+        box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    }
+
+    .user-image img {
+        transition: all 0.3s ease;
+        border-radius: 18px;
+    }
+
+    .user-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .btn-profile {
+        transition: all 0.3s ease;
+        margin: 0 5px;
+        border-radius: 15px !important;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-profile:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+</style>
+
 @section Scripts {
     <script>
         $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+
             function handleSubscriptionError() {
-                alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+                toastr.error('Произошла ошибка. Пожалуйста, попробуйте позже.');
             }
 
-            // Обработка отписки от группы
-            function handleGroupUnsubscribe(btn) {
-                var groupId = btn.data('group-id');
+            // Обработка удаления друга
+            function handleRemoveFriend(btn) {
+                var friendId = btn.data('user-id');
                 btn.prop('disabled', true);
 
-                $.post('/Groups/Unsubscribe', { groupId: groupId })
+                $.post('/Users/RemoveFriend', { friendId: friendId })
                     .done(function(response) {
                         if (response.success) {
-                            btn.closest('.col-xl-4').fadeOut(300, function() {
+                            toastr.success(response.message);
+                            btn.closest('.user-item').fadeOut(300, function() {
                                 $(this).remove();
-                                if ($('.unsubscribe-btn').length === 0) {
+                                if ($('.remove-friend-btn').length === 0) {
                                     location.reload();
                                 }
                             });
                         } else {
-                            handleSubscriptionError();
+                            toastr.error(response.message);
                         }
                     })
                     .fail(handleSubscriptionError)
@@ -192,38 +292,9 @@
                     });
             }
 
-            // Обработка отписки от курса
-            function handleCourseUnsubscribe(btn) {
-                var courseId = btn.data('course-id');
-                btn.prop('disabled', true);
-
-                $.post('/Course/Unsubscribe', { courseId: courseId })
-                    .done(function(response) {
-                        if (response.success) {
-                            btn.closest('.col-xl-4').fadeOut(300, function() {
-                                $(this).remove();
-                                if ($('.unsubscribe-course-btn').length === 0) {
-                                    location.reload();
-                                }
-                            });
-                        } else {
-                            handleSubscriptionError();
-                        }
-                    })
-                    .fail(handleSubscriptionError)
-                    .always(function() {
-                        btn.prop('disabled', false);
-                    });
-            }
-
-            $('.unsubscribe-btn').click(function(e) {
+            $('.remove-friend-btn').click(function(e) {
                 e.preventDefault();
-                handleGroupUnsubscribe($(this));
-            });
-
-            $('.unsubscribe-course-btn').click(function(e) {
-                e.preventDefault();
-                handleCourseUnsubscribe($(this));
+                handleRemoveFriend($(this));
             });
         });
     </script>

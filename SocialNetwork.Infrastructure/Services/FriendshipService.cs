@@ -7,6 +7,9 @@ using System;
 using System.Threading.Tasks;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using Elomoas.Application.Features.AppUsers.Query;
 
 namespace Elomoas.Infrastructure.Services
 {
@@ -168,6 +171,42 @@ namespace Elomoas.Infrastructure.Services
             {
                 _logger.LogError(ex, "Error checking friendship status between {UserId} and {FriendId}", userId, friendId);
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<AppUserDto>> GetUserFriendsAsync(string userId)
+        {
+            try
+            {
+                var friendships = await _context.Friendships
+                    .Where(f => (f.UserId == userId || f.FriendId == userId) && 
+                               f.Status == FriendshipStatus.Accepted)
+                    .ToListAsync();
+
+                var friendIds = friendships
+                    .Select(f => f.UserId == userId ? f.FriendId : f.UserId)
+                    .ToList();
+
+                var friends = await _context.AppUsers
+                    .Where(u => friendIds.Contains(u.IdentityId))
+                    .Select(u => new AppUserDto
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Description = u.Description,
+                        Img = u.Img,
+                        IdentityId = u.IdentityId
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation("Retrieved {Count} friends for user {UserId}", friends.Count, userId);
+                return friends;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving friends for user {UserId}", userId);
+                return Enumerable.Empty<AppUserDto>();
             }
         }
     }
