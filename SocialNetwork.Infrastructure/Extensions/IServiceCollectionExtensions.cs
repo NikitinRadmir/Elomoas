@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Elomoas.Domain.Entities;
 
+
 namespace Elomoas.Infrastructure.Extensions
 {
     public static class IServiceCollectionExtensions
@@ -22,6 +23,8 @@ namespace Elomoas.Infrastructure.Extensions
             services
                 .AddTransient<IMediator, Mediator>()
                 .AddTransient<IFriendshipService, FriendshipService>()
+                .AddTransient<ISubscriptionExpirationService, SubscriptionExpirationService>()
+                .AddHostedService<SubscriptionExpirationService>()
                 //.AddTransient<IMessageService, MessageService>()
                 .AddTransient<ICurrentUserService, CurrentUserService>()
                 .AddHttpContextAccessor()

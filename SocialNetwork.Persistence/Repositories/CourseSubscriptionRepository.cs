@@ -2,6 +2,7 @@ using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Elomoas.Persistence.Repositories
@@ -32,6 +33,19 @@ namespace Elomoas.Persistence.Repositories
         {
             return await _repository.Entities
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.CourseId == courseId);
+        }
+
+        public async Task<IEnumerable<CourseSubscription>> GetExpiredSubscriptions()
+        {
+            var now = DateTime.UtcNow;
+            return await _repository.Entities
+                .Where(x => x.ExpirationDate <= now)
+                .ToListAsync();
+        }
+
+        public async Task DeleteAsync(CourseSubscription subscription)
+        {
+            await _repository.DeleteAsync(subscription);
         }
 
         public async Task Subscribe(int userId, int courseId, int durationInMonths)
@@ -82,7 +96,7 @@ namespace Elomoas.Persistence.Repositories
             
             if (subscription != null)
             {
-                await _repository.DeleteAsync(subscription);
+                await DeleteAsync(subscription);
                 await _unitOfWork.Save(CancellationToken.None);
             }
         }
