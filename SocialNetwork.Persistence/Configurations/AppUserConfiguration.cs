@@ -3,29 +3,31 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Elomoas.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Elomoas.Persistence.Configurations;
-
-public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
+namespace Elomoas.Persistence.Configurations
 {
-    public void Configure(EntityTypeBuilder<AppUser> builder)
+    public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     {
-        builder.HasKey(x => x.Id);
+        public void Configure(EntityTypeBuilder<AppUser> builder)
+        {
+            builder.HasKey(x => x.Id);
 
-        builder.HasOne(u => u.IdentityUser)
-            .WithOne()
-            .HasForeignKey<AppUser>(u => u.IdentityId)
-            .OnDelete(DeleteBehavior.Cascade);
+            // Настраиваем связь один-к-одному между AppUser и IdentityUser
+            builder.HasOne<IdentityUser>()
+                .WithOne()
+                .HasForeignKey<AppUser>(au => au.IdentityId)
+                .OnDelete(DeleteBehavior.Cascade); // Каскадное удаление
 
-        builder.Property(x => x.Name)
-            .HasMaxLength(100);
+            builder.Property(x => x.Name)
+                .HasMaxLength(100);
 
-        builder.Property(x => x.Email)
-            .HasMaxLength(100);
+            builder.Property(x => x.Email)
+                .HasMaxLength(100);
 
-        builder.Property(x => x.Description)
-            .HasMaxLength(500);
+            builder.Property(x => x.Description)
+                .HasMaxLength(500);
 
-        builder.Property(x => x.Img)
-            .HasMaxLength(1000);
+            builder.Property(x => x.Img)
+                .HasMaxLength(1000);
+        }
     }
 } 

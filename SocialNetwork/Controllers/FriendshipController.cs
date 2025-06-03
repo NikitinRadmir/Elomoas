@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities.Enums;
 using Elomoas.Hubs;
-using Microsoft.Extensions.Logging;
-using Elomoas.Application.Interfaces.Repositories;
-using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Controllers
 {
@@ -15,26 +12,17 @@ namespace Elomoas.Controllers
     [AutoValidateAntiforgeryToken]
     public class FriendshipController : Controller
     {
-        private readonly ILogger<FriendshipController> _logger;
-        private readonly IFriendshipRepository _friendshipRepository;
-        private readonly IAppUserRepository _userRepository;
+        private readonly IFriendshipService _friendshipService;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly INotificationService _notificationService;
         private readonly IHubContext<FriendshipHub> _hubContext;
 
         public FriendshipController(
-            ILogger<FriendshipController> logger,
-            IFriendshipRepository friendshipRepository,
-            IAppUserRepository userRepository,
+            IFriendshipService friendshipService, 
             UserManager<IdentityUser> userManager,
-            INotificationService notificationService,
             IHubContext<FriendshipHub> hubContext)
         {
-            _logger = logger;
-            _friendshipRepository = friendshipRepository;
-            _userRepository = userRepository;
+            _friendshipService = friendshipService;
             _userManager = userManager;
-            _notificationService = notificationService;
             _hubContext = hubContext;
         }
 
@@ -50,7 +38,7 @@ namespace Elomoas.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
-            var result = await _friendshipRepository.SendFriendRequestAsync(currentUser.Id, friendId);
+            var result = await _friendshipService.SendFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
                 return Json(new { success = false, message = "Не удалось отправить запрос в друзья" });
@@ -83,7 +71,7 @@ namespace Elomoas.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
-            var result = await _friendshipRepository.AcceptFriendRequestAsync(currentUser.Id, friendId);
+            var result = await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
                 return Json(new { success = false, message = "Не удалось принять запрос в друзья" });
@@ -116,7 +104,7 @@ namespace Elomoas.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
-            var result = await _friendshipRepository.RejectFriendRequestAsync(currentUser.Id, friendId);
+            var result = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
                 return Json(new { success = false, message = "Не удалось отклонить запрос в друзья" });
@@ -149,7 +137,7 @@ namespace Elomoas.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
-            var result = await _friendshipRepository.RemoveFriendAsync(currentUser.Id, friendId);
+            var result = await _friendshipService.RemoveFriendAsync(currentUser.Id, friendId);
             if (!result)
             {
                 return Json(new { success = false, message = "Не удалось удалить из друзей" });

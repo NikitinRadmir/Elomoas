@@ -27,6 +27,7 @@ namespace Elomoas.Controllers
             var query = new GetAllQuery();
             var allGroups = await _mediator.Send(query);
             
+            // Разделяем группы на подписанные и остальные
             var subscribedGroups = allGroups.Where(g => g.IsCurrentUserSubscribed);
             var otherGroups = allGroups.Where(g => !g.IsCurrentUserSubscribed);
             
@@ -61,7 +62,7 @@ namespace Elomoas.Controllers
                 return Json(new { success = false });
             }
 
-            await _mediator.Send(new GetAllQuery());
+            await _mediator.Send(new GetAllQuery()); // Обновляем кэш
             return Json(new { success = true });
         }
 
@@ -80,7 +81,7 @@ namespace Elomoas.Controllers
                 return Json(new { success = false });
             }
 
-            await _mediator.Send(new GetAllQuery());
+            await _mediator.Send(new GetAllQuery()); // Обновляем кэш
             return Json(new { success = true });
         }
 

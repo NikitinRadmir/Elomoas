@@ -10,53 +10,71 @@ using Elomoas.Application.Features.AppUsers.Query;
 using Elomoas.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Elomoas.Domain.Entities;
-using System.Threading;
 
 namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
 {
-    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<GetAllUsersDto>>
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<AppUserDto>>
     {
         private readonly IAppUserRepository _userRepository;
-        private readonly IFriendshipRepository _friendshipRepository;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IFriendshipRepository _friendshipRepository;
 
         public GetAllUsersQueryHandler(
             IAppUserRepository userRepository,
-            IFriendshipRepository friendshipRepository,
-            ICurrentUserService currentUserService)
+            UserManager<IdentityUser> userManager,
+            ICurrentUserService currentUserService,
+            IFriendshipRepository friendshipRepository)
         {
             _userRepository = userRepository;
-            _friendshipRepository = friendshipRepository;
+            _userManager = userManager;
             _currentUserService = currentUserService;
+            _friendshipRepository = friendshipRepository;
         }
 
-        public async Task<IEnumerable<GetAllUsersDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<AppUserDto>> Handle(GetAllUsersQuery query, CancellationToken ct)
         {
             var users = await _userRepository.GetAllUsersAsync();
-            var currentUserId = _currentUserService.UserId;
-            if (!currentUserId.HasValue)
-                return Enumerable.Empty<GetAllUsersDto>();
+            var currentUser = await _userManager.GetUserAsync(_currentUserService.User);
 
-            var result = new List<GetAllUsersDto>();
+            if (currentUser == null)
+                return new List<AppUserDto>();
+
+            var dtos = new List<AppUserDto>();
+
             foreach (var user in users)
             {
-                if (user.Id == currentUserId.Value)
-                    continue;
+                if (user.IdentityId == currentUser.Id)
+                    continue; // Skip current user
 
-                var friendshipStatus = await _friendshipRepository.GetFriendshipStatusAsync(currentUserId.Value, user.Id);
-
-                result.Add(new GetAllUsersDto
+                var dto = MapToDto(user);
+                
+                // Получаем статус дружбы
+                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
+                if (friendship != null)
                 {
-                    Id = user.Id,
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Description = user.Description,
-                    ProfileImage = user.ProfileImage,
-                    FriendshipStatus = friendshipStatus
-                });
+                    dto.FriendshipStatus = friendship.Status;
+                    dto.IsFriend = friendship.Status == Domain.Entities.Enums.FriendshipStatus.Accepted;
+                    dto.IsSentByMe = friendship.UserId == currentUser.Id;
+                }
+
+                dtos.Add(dto);
             }
 
-            return result;
+            return dtos;
+        }
+
+        private AppUserDto MapToDto(AppUser user)
+        {
+            return new AppUserDto
+            {
+                Id = user.Id,
+                IdentityId = user.IdentityId,
+                Name = user.Name,
+                Email = user.Email,
+                Img = user.Img ?? "/images/user-12.png",
+                Description = user.Description
+            };
         }
     }
 }

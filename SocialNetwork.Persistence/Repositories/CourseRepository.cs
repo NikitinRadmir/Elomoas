@@ -1,37 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Elomoas.Application.Interfaces.Repositories;
+﻿using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Elomoas.Persistence.Repositories;
-
-public class CourseRepository : ICourseRepository
+namespace Elomoas.Persistence.Repositories
 {
-    private readonly IGenericRepository<Course> _repository;
-
-    public CourseRepository(IGenericRepository<Course> repository)
+    public class CourseRepository : ICourseRepository
     {
-        _repository = repository;
-    }
+        private readonly IGenericRepository<Course> _repository;
 
-    public async Task<IEnumerable<Course>> GetAllCoursesAsync()
-    {
-        return await _repository.Entities.ToListAsync();
-    }
+        public CourseRepository(IGenericRepository<Course> repository)
+        {
+            _repository = repository;
+        }
 
-    public async Task<Course> GetCourseById(int id)
-    {
-        return await _repository.Entities.FirstOrDefaultAsync(c => c.Id == id);
-    }
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        {
+            return await _repository.Entities.ToListAsync();
+        }
 
-    public async Task<Dictionary<string, int>> GetCoursesCountByPL()
-    {
-        return await _repository.Entities
-            .GroupBy(x => x.PL)
-            .ToDictionaryAsync(
-                g => g.Key.ToString(),
-                g => g.Count()
-            );
+        public async Task<Course> GetCourseById(int id)
+        {
+            return await _repository.Entities.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Dictionary<string, int>> GetCoursesCountByPL()
+        {
+            return await _repository.Entities
+                .GroupBy(x => x.PL)
+                .ToDictionaryAsync(
+                    g => g.Key.ToString(),
+                    g => g.Count()
+                );
+        }
+
+        //Task<IEnumerable<Course>> GetAllCoursesAsync ();
+        //Task<Course> GetCourseById(int id);
     }
 }
