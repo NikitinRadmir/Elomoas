@@ -65,7 +65,7 @@
                         @Html.SidebarLink("Users", "Users", "Users", "feather-shopping-bag", "friends")
                         @Html.SidebarLink("Groups", "Groups", "Groups", "feather-globe", "favorites")
                         
-                            @Html.SidebarLink("Users", "MyProfile", "My Courses", "feather-video", "archived")
+                            @Html.SidebarLink("Users", "MyProfile", "My Profile", "feather-video", "archived")
                         
                     </ul>
                     <div class="nav-caption fw-600 font-xssss text-grey-500"><span></span> Account</div>
@@ -88,7 +88,7 @@
                         <i class="feather-search font-lg text-grey-400"></i>
                         <input type="text" 
                                name="searchTerm"
-                               placeholder="Поиск курсов..." 
+                               placeholder="Search courses..." 
                                class="bg-transparent border-0 lh-32 pt-2 pb-2 pl-5 pr-3 font-xsss fw-500 rounded-xl w350">
                     </div>
                 </form>
@@ -213,7 +213,7 @@
                 </ul>
             </div>
 
-            <!-- Контейнер для уведомлений -->
+            <!-- Notification container -->
             <div id="notificationContainer" class="notification-container"></div>
 
             @RenderBody()

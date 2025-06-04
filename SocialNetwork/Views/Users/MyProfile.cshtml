@@ -19,7 +19,7 @@
                         </figure>
                     </div>
                     <div class="col-xl-4 col-lg-6 pl-xl-5 pb-xl-5 pb-3">
-                        <h4 class="fw-700 font-md text-white mt-3 mb-1">@(user?.Name ?? "Пользователь")</h4>
+                        <h4 class="fw-700 font-md text-white mt-3 mb-1">@(user?.Name ?? "User")</h4>
                         <span class="font-xssss fw-600 text-grey-500 d-inline-block ml-0">@(user?.Email ?? "email@example.com")</span>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                             <div class="col-xl-12">
                                 <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">@(string.IsNullOrEmpty(user?.Description) ? "The user has no description" : user.Description)</p>
                                 <ul class="d-flex align-items-center mt-2 mb-3 float-left">
-                                    @*соц сети*@
+                                    @*SOCIAL NETWORKS*@
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-linkedin"><i class="font-xs ti-linkedin text-white"></i></a></li>
@@ -92,7 +92,7 @@
                                                 <h4 class="fw-700 font-xss mt-3 lh-28 mt-0">
                                                     <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="text-dark text-grey-900">@course.Name</a>
                                                 </h4>
-                                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-course-btn" data-course-id="@course.Id">ОТПИСАТЬСЯ</a>
+                                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-course-btn" data-course-id="@course.Id">UNSUBSCRIBE</a>
                                             </div>
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                                             <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
                                             <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@group.PL</span>
                                             <div class="clearfix"></div>
-                                            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">ОТПИСАТЬСЯ</a>
+                                            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">UNSUBSCRIBE</a>
                                         </div>
                                     </div>
                                 }
@@ -187,7 +187,7 @@
                             else
                             {
                                 <div class="col-12">
-                                    <p class="text-center text-grey-500">У вас пока нет друзей.</p>
+                                    <p class="text-center text-grey-500">You don't have any friends yet.</p>
                                 </div>
                             }
                         </div>
@@ -264,10 +264,10 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             function handleSubscriptionError() {
-                toastr.error('Произошла ошибка. Пожалуйста, попробуйте позже.');
+                toastr.error('An error occurred. Please try again later.');
             }
 
-            // Обработка удаления друга
+            // Handle friend removal
             function handleRemoveFriend(btn) {
                 var friendId = btn.data('user-id');
                 btn.prop('disabled', true);

@@ -70,7 +70,7 @@
                                name="search"
                                value="@Model.SearchTerm"
                                class="form-control search-input" 
-                               placeholder="🔍 Поиск групп по названию..."
+                               placeholder="🔍 Search groups by name..."
                                autocomplete="off">
                     </div>
                 </form>
@@ -83,7 +83,7 @@
                 <div class="col-12 mb-4">
                     <div class="card section-header">
                         <div class="card-body">
-                            <h3 class="fw-700 mb-0">Мои группы</h3>
+                            <h3 class="fw-700 mb-0">My Groups</h3>
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                 <div class="col-12 mb-4 mt-4">
                     <div class="card section-header">
                         <div class="card-body">
-                            <h3 class="fw-700 mb-0">Другие группы</h3>
+                            <h3 class="fw-700 mb-0">Other Groups</h3>
                         </div>
                     </div>
                 </div>
@@ -122,12 +122,12 @@
                 .done(function (response) {
                     $('#groupsContainer').html($(response).find('#groupsContainer').html());
                     
-                    // Обновляем URL без перезагрузки страницы
+                    // Update URL without page reload
                     const url = new URL(window.location);
                     url.searchParams.set('search', searchTerm || '');
                     history.pushState({}, '', url);
 
-                    // Переподключаем обработчики событий после обновления DOM
+                    // Reattach event handlers after DOM update
                     initializeSubscriptionHandlers();
                 });
         }
@@ -138,20 +138,20 @@
             clearTimeout(searchTimeout);
             const searchTerm = $(this).val();
             
-            // Добавляем задержку 300мс перед отправкой запроса
+            // Add 300ms delay before sending request
             searchTimeout = setTimeout(function() {
                 updateGroups(searchTerm);
             }, 300);
         });
 
-        // Предотвращаем стандартную отправку формы
+        // Prevent default form submission
         $('#searchForm').on('submit', function(e) {
             e.preventDefault();
             const searchTerm = $('#groupSearch').val();
             updateGroups(searchTerm);
         });
 
-        // Обрабатываем навигацию по истории браузера
+        // Handle browser history navigation
         $(window).on('popstate', function() {
             const url = new URL(window.location);
             const searchTerm = url.searchParams.get('search') || '';
@@ -160,9 +160,9 @@
             updateGroups(searchTerm);
         });
 
-        // Функционал подписки/отписки
+        // Subscription/unsubscription functionality
         function handleSubscriptionError() {
-            alert('Произошла ошибка. Пожалуйста, попробуйте позже.');
+            alert('An error occurred. Please try again later.');
         }
 
         function initializeSubscriptionHandlers() {
@@ -177,7 +177,7 @@
                         if (response.success) {
                             btn.removeClass('bg-current subscribe-btn')
                                .addClass('bg-danger unsubscribe-btn')
-                               .text('ОТПИСАТЬСЯ')
+                               .text('UNSUBSCRIBE')
                                .off('click')
                                .on('click', function(e) {
                                     e.preventDefault();
@@ -208,7 +208,7 @@
                     if (response.success) {
                         btn.removeClass('bg-danger unsubscribe-btn')
                            .addClass('bg-current subscribe-btn')
-                           .text('ПОДПИСАТЬСЯ')
+                           .text('SUBSCRIBE')
                            .off('click')
                            .on('click', function(e) {
                                e.preventDefault();
@@ -224,7 +224,7 @@
                 });
         }
 
-        // Инициализируем обработчики при загрузке страницы
+        // Initialize handlers on page load
         $(document).ready(function() {
             initializeSubscriptionHandlers();
         });

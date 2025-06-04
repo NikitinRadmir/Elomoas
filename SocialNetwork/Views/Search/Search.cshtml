@@ -14,7 +14,7 @@
                             <form id="searchForm" method="get" asp-controller="Search" asp-action="Search">
                                 <div class="row">
                                     <div class="col-lg-5">
-                                        @*ПОИСК*@
+                                        @*SEARCH*@
                                         <div class="form-group icon-input mb-0">
                                             <i class="ti-search font-xs text-grey-400"></i>
                                             <input type="text" 
@@ -22,7 +22,7 @@
                                                    name="searchTerm"
                                                    value="@Model.SearchTerm"
                                                    class="style1-input border-0 pl-5 font-xsss mb-0 text-grey-500 fw-500 bg-transparent" 
-                                                   placeholder="Поиск курсов...">
+                                                   placeholder="Search courses...">
                                         </div>
                                     </div>
 
@@ -30,7 +30,7 @@
                                         <div class="form-group icon-input mb-0">
                                             <i class="ti-package font-xs text-grey-400"></i>
                                             <select id="categorySelect" name="category" class="style1-select bg-transparent border-0 pl-5">
-                                                <option value="">Все категории</option>
+                                                <option value="">All categories</option>
                                                 @{
                                                     var categories = new[]
                                                     {
@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
-                                        <button type="submit" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase">Поиск</button>
+                                        <button type="submit" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase">Search</button>
                                     </div>
                                 </div>
                             </form>
@@ -71,8 +71,8 @@
             <div id="searchResults" class="col-lg-12">
                 <div class="row">
                     <div class="col-lg-12 pt-2 mb-4">
-                        <h2 class="fw-400 font-lg">Результаты <b>поиска</b> 
-                            <span class="fw-500 ml-2 text-grey-500 font-xssss">(@Model.PopularCourses.Count() курсов найдено)</span>
+                        <h2 class="fw-400 font-lg">Search <b>Results</b> 
+                            <span class="fw-500 ml-2 text-grey-500 font-xssss">(@Model.PopularCourses.Count() courses found)</span>
                         </h2>
                     </div>
 
@@ -110,7 +110,7 @@
                 .done(function (response) {
                     $('#searchResults').html($(response).find('#searchResults').html());
                     
-                    // Обновляем URL без перезагрузки страницы
+                    // Update URL without page reload
                     const url = new URL(window.location);
                     url.searchParams.set('searchTerm', searchTerm || '');
                     url.searchParams.set('category', category || '');
@@ -125,7 +125,7 @@
             const searchTerm = $(this).val();
             const category = $('#categorySelect').val();
             
-            // Добавляем задержку 300мс перед отправкой запроса
+            // Add 300ms delay before sending request
             searchTimeout = setTimeout(function() {
                 updateSearchResults(searchTerm, category);
             }, 300);
@@ -137,7 +137,7 @@
             updateSearchResults(searchTerm, category);
         });
 
-        // Предотвращаем стандартную отправку формы
+        // Prevent default form submission
         $('#searchForm').on('submit', function(e) {
             e.preventDefault();
             const searchTerm = $('#searchInput').val();
@@ -145,7 +145,7 @@
             updateSearchResults(searchTerm, category);
         });
 
-        // Обрабатываем навигацию по истории браузера
+        // Handle browser history navigation
         $(window).on('popstate', function() {
             const url = new URL(window.location);
             const searchTerm = url.searchParams.get('searchTerm') || '';

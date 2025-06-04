@@ -50,7 +50,7 @@
                         <span class="dot ml-2 mr-2 d-inline-block btn-round-xss bg-grey"></span>
                     </div>
                     <div class="col-xl-3 md-mb-2">
-                        @*Соц сети*@
+                        @*SOCIAL NETWORKS*@
                         <ul class="d-flex align-items-center mt-2 float-left">
                             <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
                             <li class="mr-2"><a href="#" class="btn-round-md bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
@@ -112,7 +112,7 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
 
-            // Обработка событий SignalR через глобальные события документа
+            // Handle SignalR events through global document events
             $(document).on("friendRequest", function(e, data) {
                 if (data.senderId === '@Model.User.IdentityId') {
                     const buttonContainer = $('.friend-actions');
@@ -128,7 +128,7 @@
                         <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
                     `);
                 }
-                toastr.info(`${data.senderName} отправил(а) вам запрос в друзья`);
+                toastr.info(`${data.senderName} sent you a friend request`);
             });
 
             $(document).on("friendRequestAccepted", function(e, data) {
@@ -147,7 +147,7 @@
                         <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
                     `);
                 }
-                toastr.success(`${data.acceptorName} принял(а) ваш запрос в друзья`);
+                toastr.success(`${data.acceptorName} accepted your friend request`);
             });
 
             $(document).on("friendRequestRejected", function(e, data) {
@@ -160,7 +160,7 @@
                         <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
                     `);
                 }
-                toastr.warning('Ваш запрос в друзья был отклонен');
+                toastr.warning('Your friend request was rejected');
             });
 
             $(document).on("friendRemoved", function(e, data) {
@@ -174,19 +174,19 @@
                         <a href="#" class="btn-round-md ml-3 mt-2 d-inline-block float-left rounded-lg bg-greylight"><i class="feather-message-square font-sm text-grey-900"></i></a>
                     `);
                 }
-                toastr.warning('Пользователь удалил вас из друзей');
+                toastr.warning('The user removed you from their friends');
             });
         });
 
         function handleFriendAction(userId, action, button) {
             console.log("Handling friend action:", action, "for user:", userId);
             
-            // Добавляем состояние загрузки
+            // Add loading state
             button.prop('disabled', true);
             const originalHtml = button.html();
             button.html('<i class="feather-loader mr-1 spinner"></i> ' + button.text());
 
-            // Получаем контейнер
+            // Get container
             const buttonContainer = button.closest('.friend-actions');
             const targetUserId = userId;
 
@@ -203,7 +203,7 @@
                     if (response.success) {
                         switch(action) {
                             case 'add':
-                                toastr.success(response.message || 'Запрос в друзья отправлен');
+                                toastr.success(response.message || 'Friend request sent');
                                 buttonContainer.html(`
                                     <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white btn-profile">
                                         <i class="feather-clock mr-1"></i> PENDING
@@ -212,7 +212,7 @@
                                 `);
                                 break;
                             case 'accept':
-                                toastr.success(response.message || 'Запрос в друзья принят');
+                                toastr.success(response.message || 'Friend request accepted');
                                 const userName = $('.fw-700.font-xs');
                                 if (!userName.find('.feather-user-check').length) {
                                     userName.append('<i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>');
@@ -226,7 +226,7 @@
                                 `);
                                 break;
                             case 'reject':
-                                toastr.success(response.message || 'Запрос в друзья отклонен');
+                                toastr.success(response.message || 'Friend request rejected');
                                 buttonContainer.html(`
                                     <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
                                         <i class="feather-user-plus mr-1"></i> ADD FRIEND
@@ -235,7 +235,7 @@
                                 `);
                                 break;
                             case 'remove':
-                                toastr.success(response.message || 'Пользователь удален из друзей');
+                                toastr.success(response.message || 'User removed from friends');
                                 $('.feather-user-check').remove();
                                 buttonContainer.html(`
                                     <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
@@ -246,24 +246,24 @@
                                 break;
                         }
                     } else {
-                        // Восстанавливаем кнопку в случае ошибки
+                        // Restore button on error
                         button.prop('disabled', false);
                         button.html(originalHtml);
-                        toastr.error(response.message || 'Не удалось выполнить действие');
+                        toastr.error(response.message || 'Failed to perform action');
                     }
                 },
                 error: function(xhr) {
-                    // Восстанавливаем кнопку в случае ошибки
+                    // Restore button on error
                     button.prop('disabled', false);
                     button.html(originalHtml);
-                    toastr.error(xhr.responseJSON?.message || 'Произошла ошибка при выполнении действия');
+                    toastr.error(xhr.responseJSON?.message || 'An error occurred while performing the action');
                 }
             });
         }
 
-        // Обработчики событий для кнопок
+        // Event handlers for buttons
         $(document).ready(function() {
-            // Обработка добавления в друзья
+            // Handle add friend action
             $(document).on('click', '.add-friend-btn', function(e) {
                 e.preventDefault();
                 const userId = $(this).data('user-id');
@@ -271,7 +271,7 @@
                 handleFriendAction(userId, 'add', $(this));
             });
 
-            // Обработка принятия запроса в друзья
+            // Handle accept friend request action
             $(document).on('click', '.accept-friend-btn', function(e) {
                 e.preventDefault();
                 const userId = $(this).data('user-id');
@@ -279,7 +279,7 @@
                 handleFriendAction(userId, 'accept', $(this));
             });
 
-            // Обработка отклонения запроса в друзья
+            // Handle reject friend request action
             $(document).on('click', '.reject-friend-btn', function(e) {
                 e.preventDefault();
                 const userId = $(this).data('user-id');
@@ -287,7 +287,7 @@
                 handleFriendAction(userId, 'reject', $(this));
             });
 
-            // Обработка удаления из друзей
+            // Handle remove friend action
             $(document).on('click', '.remove-friend-btn', function(e) {
                 e.preventDefault();
                 const userId = $(this).data('user-id');
