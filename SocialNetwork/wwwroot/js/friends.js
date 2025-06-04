@@ -25,9 +25,14 @@ $(document).ready(function () {
                     <i class="feather-clock font-xss"></i> PENDING
                 </a>`,
             'friend': isUserPage ? `
-                <a href="#" class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white remove-friend-btn" data-user-id="${userId}">
-                    <i class="feather-user-minus font-xss"></i> REMOVE FRIEND
-                </a>` : `
+                <div class="d-flex align-items-center">
+                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="${userId}">
+                        <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                    </a>
+                    <a href="#" class="btn-round-md ml-2 mt-2 d-inline-block float-right bg-greylight" data-toggle="tooltip" title="Send message">
+                        <i class="feather-message-square font-sm text-grey-900"></i>
+                    </a>
+                </div>` : `
                 <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
                 </a>
@@ -45,13 +50,13 @@ $(document).ready(function () {
                     <i class="feather-user-plus font-xss"></i> ADD FRIEND
                 </button>`,
             'request': isUserPage ? `
-                <div class="d-flex justify-content-center">
-                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white accept-friend-btn" data-user-id="${userId}">
-                        <i class="feather-user-plus font-xss"></i> ACCEPT
-                    </button>
-                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white reject-friend-btn" data-user-id="${userId}">
-                        <i class="feather-user-minus font-xss"></i> REJECT
-                    </button>
+                <div class="d-flex">
+                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-success font-xsssss fw-700 ls-lg text-white btn-profile accept-friend-btn" data-user-id="${userId}">
+                        <i class="feather-check mr-1"></i> ACCEPT
+                    </a>
+                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile reject-friend-btn" data-user-id="${userId}">
+                        <i class="feather-x mr-1"></i> REJECT
+                    </a>
                 </div>` : `
                 <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
@@ -85,17 +90,7 @@ $(document).ready(function () {
                             <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">${senderData.senderEmail}</p>
                             <div class="clearfix"></div>
                             <div class="friend-actions" data-user-id="${senderData.senderId}">
-                                <a href="/Users/UserPage/${senderData.senderId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
-                                    <i class="feather-user font-xss"></i> PROFILE
-                                </a>
-                                <div class="d-flex justify-content-center">
-                                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white accept-friend-btn" data-user-id="${senderData.senderId}">
-                                        <i class="feather-user-plus font-xss"></i> ACCEPT
-                                    </button>
-                                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white reject-friend-btn" data-user-id="${senderData.senderId}">
-                                        <i class="feather-user-minus font-xss"></i> REJECT
-                                    </button>
-                                </div>
+                                ${actions['request']}
                             </div>
                         </div>
                     </div>
@@ -117,9 +112,17 @@ $(document).ready(function () {
             if (actionHtml) {
                 if (element.hasClass('friend-actions')) {
                     element.html(actionHtml);
+                    // Reinitialize tooltips after updating content
+                    if (status === 'friend' && isUserPage) {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
                 } else {
                     const actionsContainer = element.find('.friend-actions');
                     actionsContainer.html(actionHtml);
+                    // Reinitialize tooltips after updating content
+                    if (status === 'friend' && isUserPage) {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
                 }
             }
 
