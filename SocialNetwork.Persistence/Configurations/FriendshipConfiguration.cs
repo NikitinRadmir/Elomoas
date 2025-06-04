@@ -9,7 +9,7 @@ namespace Elomoas.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Friendship> builder)
         {
-            builder.HasKey(x => x.FriendshipId);
+            builder.HasKey(x => x.Id);
 
             builder.HasOne<IdentityUser>()
                 .WithMany()

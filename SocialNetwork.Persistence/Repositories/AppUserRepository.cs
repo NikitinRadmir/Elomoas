@@ -33,5 +33,11 @@ namespace Elomoas.Persistence.Repositories
             return await _repository.Entities.FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<AppUser>> GetUsersByIdentityIdsAsync(IEnumerable<string> identityIds)
+        {
+            return await _repository.Entities
+                .Where(u => identityIds.Contains(u.IdentityId))
+                .ToListAsync();
+        }
     }
 }

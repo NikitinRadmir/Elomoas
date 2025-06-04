@@ -234,11 +234,15 @@
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Custom Scripts -->
     <script src="~/js/plugin.js"></script>
     <script src="~/js/scripts.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/friends.js" asp-append-version="true"></script>
+
+    @Html.AntiForgeryToken()
 
     <script>
         // Инициализация toastr
@@ -265,6 +269,11 @@
 
         // Функция для инициализации SignalR
         function initializeSignalR() {
+            if (window.signalRConnection) {
+                console.log("SignalR connection already exists");
+                return;
+            }
+
             console.log("Initializing SignalR connection...");
             
             // Создаем подключение
@@ -291,29 +300,45 @@
 
             window.signalRConnection.onclose(error => {
                 console.log("Connection closed. Error:", error);
+                window.signalRConnection = null;
                 // Пытаемся переподключиться через 5 секунд
                 setTimeout(initializeSignalR, 5000);
             });
 
-            // Обработчики событий дружбы
+            // Создаем глобальный объект для событий дружбы если он еще не создан
+            if (!window.friendshipEvents) {
+                window.friendshipEvents = {
+                    triggerEvent: function(eventName, data) {
+                        $(document).trigger(eventName, [data]);
+                    }
+                };
+            }
+
+            // Очищаем все существующие обработчики перед добавлением новых
+            window.signalRConnection.off("ReceiveFriendRequest");
+            window.signalRConnection.off("FriendRequestAccepted");
+            window.signalRConnection.off("FriendRequestRejected");
+            window.signalRConnection.off("FriendRemoved");
+
+            // Регистрируем обработчики SignalR
             window.signalRConnection.on("ReceiveFriendRequest", function (data) {
                 console.log("SignalR: Received friend request event", data);
-                $(document).trigger("friendRequest", data);
+                window.friendshipEvents.triggerEvent("friendRequest", data);
             });
 
             window.signalRConnection.on("FriendRequestAccepted", function (data) {
                 console.log("SignalR: Friend request accepted event", data);
-                $(document).trigger("friendRequestAccepted", data);
+                window.friendshipEvents.triggerEvent("friendRequestAccepted", data);
             });
 
             window.signalRConnection.on("FriendRequestRejected", function (data) {
                 console.log("SignalR: Friend request rejected event", data);
-                $(document).trigger("friendRequestRejected", data);
+                window.friendshipEvents.triggerEvent("friendRequestRejected", data);
             });
 
             window.signalRConnection.on("FriendRemoved", function (data) {
                 console.log("SignalR: Friend removed event", data);
-                $(document).trigger("friendRemoved", data);
+                window.friendshipEvents.triggerEvent("friendRemoved", data);
             });
 
             // Запускаем соединение
@@ -330,6 +355,7 @@
                 })
                 .catch(function (err) {
                     console.error("SignalR Connection Error:", err);
+                    window.signalRConnection = null;
                 });
         }
 
@@ -338,11 +364,6 @@
             initializeSignalR();
         });
     </script>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -3,16 +3,21 @@ using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Elomoas.Persistence.Repositories
 {
     public class FriendshipRepository : IFriendshipRepository
     {
         private readonly IGenericRepository<Friendship> _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public FriendshipRepository(IGenericRepository<Friendship> repository)
+        public FriendshipRepository(
+            IGenericRepository<Friendship> repository,
+            IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> SendFriendRequestAsync(string userId, string friendId)
@@ -29,10 +34,12 @@ namespace Elomoas.Persistence.Repositories
             {
                 UserId = userId,
                 FriendId = friendId,
-                Status = FriendshipStatus.Pending
+                Status = FriendshipStatus.Pending,
+                AddedAt = DateTime.UtcNow
             };
 
             await _repository.AddAsync(friendship);
+            await _unitOfWork.Save(CancellationToken.None);
             return true;
         }
 
@@ -46,6 +53,7 @@ namespace Elomoas.Persistence.Repositories
 
             request.Status = FriendshipStatus.Accepted;
             await _repository.UpdateAsync(request);
+            await _unitOfWork.Save(CancellationToken.None);
             return true;
         }
 
@@ -57,8 +65,8 @@ namespace Elomoas.Persistence.Repositories
 
             if (request == null) return false;
 
-            request.Status = FriendshipStatus.Rejected;
-            await _repository.UpdateAsync(request);
+            await _repository.DeleteAsync(request);
+            await _unitOfWork.Save(CancellationToken.None);
             return true;
         }
 
@@ -71,6 +79,7 @@ namespace Elomoas.Persistence.Repositories
             if (friendship == null) return false;
 
             await _repository.DeleteAsync(friendship);
+            await _unitOfWork.Save(CancellationToken.None);
             return true;
         }
 

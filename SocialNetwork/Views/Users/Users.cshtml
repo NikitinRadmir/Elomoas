@@ -48,68 +48,24 @@
         padding: 15px 20px;
     }
 
-    .user-card {
-        transition: all 0.3s ease;
-        border: none !important;
-        border-radius: 20px !important;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1),
-                   0 0 15px rgba(0,0,0,0.05) !important;
-        padding: 25px !important;
-        background: white;
-    }
-
-    .user-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0 25px rgba(0,0,0,0.15),
-                   0 0 20px rgba(0,0,0,0.08) !important;
-    }
-
-    .user-image {
-        border-radius: 18px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        border: none;
-        box-shadow: 0 0 15px rgba(0,0,0,0.08);
-    }
-
-    .user-image img {
-        transition: all 0.3s ease;
-        border-radius: 18px;
-    }
-
-    .user-image:hover img {
-        transform: scale(1.05);
-    }
-
-    .btn-profile {
-        transition: all 0.3s ease;
-        margin: 0 5px;
-        border-radius: 15px !important;
-        box-shadow: 0 0 12px rgba(0,0,0,0.1);
-    }
-
-    .btn-profile:hover {
-        opacity: 0.95;
-        transform: translateY(-2px);
-        box-shadow: 0 0 15px rgba(0,0,0,0.15);
-    }
-
-    .spinner {
-        animation: spin 1s linear infinite;
-    }
-
     .section-header {
-        background: linear-gradient(45deg, #f3f3f3, #ffffff);
         border: none;
         border-radius: 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
     .section-header h3 {
-        color: #333;
         font-size: 1.5rem;
         margin: 0;
         padding: 10px 0;
+    }
+
+    .users-container {
+        margin: 0 -15px;
+    }
+
+    .user-item {
+        padding: 0 15px;
     }
 </style>
 
@@ -130,332 +86,129 @@
                 </form>
             </div>
         </div>
-        
-        <div id="usersContainer" class="row">
+
+        <div class="row users-container">
             @if (Model.PendingFriendRequests != null && Model.PendingFriendRequests.Any())
             {
-                <div class="col-12 mb-4">
-                    <div class="card section-header">
-                        <div class="card-body">
-                            <h3 class="fw-700 mb-0">Incoming Friend Requests</h3>
+                <div class="col-12 mb-4 pending-requests-section">
+                    <div class="card mb-4">
+                        <div class="card-body p-4">
+                            <h3 class="fw-700 text-grey-900">
+                                <i class="feather-users text-current mr-2"></i> Incoming Friend Requests
+                            </h3>
                         </div>
                     </div>
-                </div>
-                @foreach (var user in Model.PendingFriendRequests)
-                {
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" 
-                         data-user-name="@user.Name.ToLower()" 
-                         data-user-id="@user.IdentityId">
-                        @await Html.PartialAsync("_UserCard", user)
+                    <div class="row pending-requests-container">
+                        @foreach (var user in Model.PendingFriendRequests)
+                        {
+                            <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-id="@user.IdentityId">
+                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
+                                    <a href="/Users/UserPage/@user.IdentityId" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
+                                        <img src="@(user.Img ?? "/images/user-12.png")" alt="@user.Name" class="p-0 w100 shadow-xss">
+                                    </a>
+                                    <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
+                                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                                    <div class="clearfix"></div>
+                                    <div class="friend-actions" data-user-id="@user.IdentityId">
+                                        <a href="/Users/UserPage/@user.IdentityId" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-success font-xsssss fw-700 ls-lg text-white">
+                                            <i class="feather-user-check font-xss"></i> PROFILE
+                                        </a>
+                                        <div class="d-flex justify-content-center">
+                                            <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white accept-friend-btn" data-user-id="@user.IdentityId">
+                                                <i class="feather-user-plus font-xss"></i> ACCEPT
+                                            </button>
+                                            <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white reject-friend-btn" data-user-id="@user.IdentityId">
+                                                <i class="feather-user-minus font-xss"></i> REJECT
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                }
+                </div>
             }
 
             @if (Model.Friends != null && Model.Friends.Any())
             {
-                <div class="col-12 mb-4 mt-4">
-                    <div class="card section-header">
-                        <div class="card-body">
-                            <h3 class="fw-700 mb-0">My Friends</h3>
+                <div class="col-12 mb-4 friends-section">
+                    <div class="card mb-4">
+                        <div class="card-body p-4">
+                            <h3 class="fw-700 text-grey-900">
+                                <i class="feather-user-check text-current mr-2"></i> Friends
+                            </h3>
                         </div>
                     </div>
-                </div>
-                @foreach (var user in Model.Friends)
-                {
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" 
-                         data-user-name="@user.Name.ToLower()" 
-                         data-user-id="@user.IdentityId">
-                        @await Html.PartialAsync("_UserCard", user)
+                    <div class="row friends-container">
+                        @foreach (var user in Model.Friends)
+                        {
+                            <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-id="@user.IdentityId">
+                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
+                                    <a href="/Users/UserPage/@user.IdentityId" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
+                                        <img src="@(user.Img ?? "/images/user-12.png")" alt="@user.Name" class="p-0 w100 shadow-xss">
+                                    </a>
+                                    <h4 class="fw-700 font-xs mt-3 mb-1">
+                                        @user.Name
+                                        <i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>
+                                    </h4>
+                                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                                    <div class="clearfix"></div>
+                                    <div class="friend-actions" data-user-id="@user.IdentityId">
+                                        <a href="/Users/UserPage/@user.IdentityId" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-success font-xsssss fw-700 ls-lg text-white">
+                                            <i class="feather-user-check font-xss"></i> PROFILE
+                                        </a>
+                                        <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white remove-friend-btn" data-user-id="@user.IdentityId">
+                                            <i class="feather-user-minus font-xss"></i> REMOVE FRIEND
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                }
+                </div>
             }
 
-            @{
-                var otherUsers = Model.Users.Where(u => 
-                    (Model.PendingFriendRequests == null || !Model.PendingFriendRequests.Any(f => f.IdentityId == u.IdentityId)) &&
-                    (Model.Friends == null || !Model.Friends.Any(f => f.IdentityId == u.IdentityId)));
-            }
-
-            @if (otherUsers.Any())
-            {
-                <div class="col-12 mb-4 mt-4">
-                    <div class="card section-header">
-                        <div class="card-body">
-                            <h3 class="fw-700 mb-0">Other Users</h3>
+            <div class="col-12 mb-4 other-users-section">
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="fw-700 text-grey-900">
+                            <i class="feather-users text-current mr-2"></i> Suggested Friends
+                        </h3>
+                    </div>
+                </div>
+                <div class="row other-users-container">
+                    @foreach (var user in Model.Users.Where(u => !Model.Friends.Any(f => f.IdentityId == u.IdentityId) && !Model.PendingFriendRequests.Any(p => p.IdentityId == u.IdentityId)))
+                    {
+                        <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-id="@user.IdentityId">
+                            <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center">
+                                <a href="/Users/UserPage/@user.IdentityId" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block">
+                                    <img src="@(user.Img ?? "/images/user-12.png")" alt="@user.Name" class="p-0 w100 shadow-xss">
+                                </a>
+                                <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
+                                <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                                <div class="clearfix"></div>
+                                <div class="friend-actions" data-user-id="@user.IdentityId">
+                                    <a href="/Users/UserPage/@user.IdentityId" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-success font-xsssss fw-700 ls-lg text-white">
+                                        <i class="feather-user-check font-xss"></i> PROFILE
+                                    </a>
+                                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="@user.IdentityId">
+                                        <i class="feather-user-plus font-xss"></i> ADD FRIEND
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
-                @foreach (var user in otherUsers)
-                {
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" 
-                         data-user-name="@user.Name.ToLower()" 
-                         data-user-id="@user.IdentityId">
-                        @await Html.PartialAsync("_UserCard", user)
-                    </div>
-                }
-            }
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="~/js/friends.js"></script>
     <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-
-            // Обработка событий SignalR через глобальные события документа
-            $(document).on("friendRequest", function(e, data) {
-                console.log("Processing friend request event:", data);
-                const userCard = $(`.user-item[data-user-id="${data.senderId}"]`);
-                console.log("Found user card:", userCard.length > 0);
-                
-                if (userCard.length) {
-                    const buttonContainer = userCard.find('.friend-actions');
-                    console.log("Found button container:", buttonContainer.length > 0);
-                    
-                    buttonContainer.html(`
-                        <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                        <div class="d-flex">
-                            <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-success font-xsssss fw-700 ls-lg text-white btn-profile accept-friend-btn" data-user-id="${data.senderId}">
-                                <i class="feather-check mr-1"></i> ACCEPT
-                            </a>
-                            <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile reject-friend-btn" data-user-id="${data.senderId}">
-                                <i class="feather-x mr-1"></i> REJECT
-                            </a>
-                        </div>
-                    `);
-                    console.log("Updated button container HTML");
-                }
-                toastr.info(`${data.senderName} sent you a friend request`);
-            });
-
-            $(document).on("friendRequestAccepted", function(e, data) {
-                console.log("Processing friend request accepted event:", data);
-                const userCard = $(`.user-item[data-user-id="${data.acceptorId}"]`);
-                console.log("Found user card:", userCard.length > 0);
-                
-                if (userCard.length) {
-                    const userName = userCard.find('.fw-700.font-xs');
-                    if (!userName.find('.feather-user-check').length) {
-                        userName.append('<i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>');
-                        $('[data-toggle="tooltip"]').tooltip();
-                    }
-
-                    const buttonContainer = userCard.find('.friend-actions');
-                    console.log("Found button container:", buttonContainer.length > 0);
-                    
-                    buttonContainer.html(`
-                        <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="${data.acceptorId}">
-                            <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
-                        </a>
-                    `);
-                    console.log("Updated button container HTML");
-                }
-                toastr.success(`${data.acceptorName} accepted your friend request`);
-            });
-
-            $(document).on("friendRequestRejected", function(e, data) {
-                console.log("Processing friend request rejected event:", data);
-                const userCard = $(`.user-item[data-user-id="${data.rejectorId}"]`);
-                console.log("Found user card:", userCard.length > 0);
-                
-                if (userCard.length) {
-                    const buttonContainer = userCard.find('.friend-actions');
-                    console.log("Found button container:", buttonContainer.length > 0);
-                    
-                    buttonContainer.html(`
-                        <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${data.rejectorId}">
-                            <i class="feather-user-plus mr-1"></i> ADD FRIEND
-                        </a>
-                    `);
-                    console.log("Updated button container HTML");
-                }
-                toastr.warning('Your friend request was rejected');
-            });
-
-            $(document).on("friendRemoved", function(e, data) {
-                console.log("Processing friend removed event:", data);
-                const userCard = $(`.user-item[data-user-id="${data.removerId}"]`);
-                console.log("Found user card:", userCard.length > 0);
-                
-                if (userCard.length) {
-                    userCard.find('.feather-user-check').remove();
-                    const buttonContainer = userCard.find('.friend-actions');
-                    console.log("Found button container:", buttonContainer.length > 0);
-                    
-                    buttonContainer.html(`
-                        <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                        <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${data.removerId}">
-                            <i class="feather-user-plus mr-1"></i> ADD FRIEND
-                        </a>
-                    `);
-                    console.log("Updated button container HTML");
-                }
-                toastr.warning('User removed you from friends');
-            });
-        });
-
-        function updateUsers(searchTerm) {
-            $.get('/Users/Users', { search: searchTerm })
-                .done(function (response) {
-                    $('#usersContainer').html($(response).find('#usersContainer').html());
-                    $('[data-toggle="tooltip"]').tooltip();
-                    
-                    // Update URL without page reload
-                    const url = new URL(window.location);
-                    url.searchParams.set('search', searchTerm || '');
-                    history.pushState({}, '', url);
-                });
-        }
-
-        let searchTimeout;
-        
-        $('#userSearch').on('input', function() {
-            clearTimeout(searchTimeout);
-            const searchTerm = $(this).val();
-            
-            // Add 300ms delay before sending request
-            searchTimeout = setTimeout(function() {
-                updateUsers(searchTerm);
-            }, 300);
-        });
-
-        // Prevent default form submission
-        $('#searchForm').on('submit', function(e) {
-            e.preventDefault();
-            const searchTerm = $('#userSearch').val();
-            updateUsers(searchTerm);
-        });
-
-        // Handle browser history navigation
-        $(window).on('popstate', function() {
-            const url = new URL(window.location);
-            const searchTerm = url.searchParams.get('search') || '';
-            
-            $('#userSearch').val(searchTerm);
-            updateUsers(searchTerm);
-        });
-
-        function handleFriendAction(userId, action, button) {
-            console.log("Handling friend action:", action, "for user:", userId);
-            
-            // Add loading state
-            button.prop('disabled', true);
-            const originalHtml = button.html();
-            button.html('<i class="feather-loader mr-1 spinner"></i> ' + button.text());
-
-            // Get container and user card
-            const buttonContainer = button.closest('.friend-actions');
-            const userCard = button.closest('.user-item');
-            const targetUserId = userId; // Use passed userId
-
-            $.ajax({
-                url: '/Users/HandleFriendRequest',
-                type: 'POST',
-                data: {
-                    targetUserId: targetUserId,
-                    action: action,
-                    __RequestVerificationToken: $('#antiForgeryForm input[name="__RequestVerificationToken"]').val()
-                },
-                success: function(response) {
-                    console.log("Friend action response:", response);
-                    if (response.success) {
-                        switch(action) {
-                            case 'add':
-                                toastr.success(response.message || 'Friend request sent');
-                                buttonContainer.html(`
-                                    <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white btn-profile">
-                                        <i class="feather-clock mr-1"></i> PENDING
-                                    </a>
-                                `);
-                                break;
-                            case 'accept':
-                                toastr.success(response.message || 'Friend request accepted');
-                                const userName = userCard.find('.fw-700.font-xs');
-                                if (!userName.find('.feather-user-check').length) {
-                                    userName.append('<i class="feather-user-check text-success ml-1" data-toggle="tooltip" title="Friend"></i>');
-                                    $('[data-toggle="tooltip"]').tooltip();
-                                }
-                                buttonContainer.html(`
-                                    <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="${targetUserId}">
-                                        <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
-                                    </a>
-                                `);
-                                break;
-                            case 'reject':
-                                toastr.success(response.message || 'Friend request rejected');
-                                buttonContainer.html(`
-                                    <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
-                                        <i class="feather-user-plus mr-1"></i> ADD FRIEND
-                                    </a>
-                                `);
-                                break;
-                            case 'remove':
-                                toastr.success(response.message || 'User removed from friends');
-                                userCard.find('.feather-user-check').remove();
-                                buttonContainer.html(`
-                                    <a href="/Users/UserPage/${userCard.data('user-id')}" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
-                                    <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="${targetUserId}">
-                                        <i class="feather-user-plus mr-1"></i> ADD FRIEND
-                                    </a>
-                                `);
-                                break;
-                        }
-                    } else {
-                        // Restore button in case of error
-                        button.prop('disabled', false);
-                        button.html(originalHtml);
-                        toastr.error(response.message || 'Failed to perform action');
-                    }
-                },
-                error: function(xhr) {
-                    // Restore button in case of error
-                    button.prop('disabled', false);
-                    button.html(originalHtml);
-                    toastr.error(xhr.responseJSON?.message || 'An error occurred while performing the action');
-                }
-            });
-        }
-
-        // Event handlers for buttons
         $(document).ready(function() {
-            // Handle add friend action
-            $(document).on('click', '.add-friend-btn', function(e) {
-                e.preventDefault();
-                const userId = $(this).data('user-id');
-                console.log("Add friend clicked for user:", userId);
-                handleFriendAction(userId, 'add', $(this));
-            });
-
-            // Handle accept friend request action
-            $(document).on('click', '.accept-friend-btn', function(e) {
-                e.preventDefault();
-                const userId = $(this).data('user-id');
-                console.log("Accept friend clicked for user:", userId);
-                handleFriendAction(userId, 'accept', $(this));
-            });
-
-            // Handle reject friend request action
-            $(document).on('click', '.reject-friend-btn', function(e) {
-                e.preventDefault();
-                const userId = $(this).data('user-id');
-                console.log("Reject friend clicked for user:", userId);
-                handleFriendAction(userId, 'reject', $(this));
-            });
-
-            // Handle remove friend action
-            $(document).on('click', '.remove-friend-btn', function(e) {
-                e.preventDefault();
-                const userId = $(this).data('user-id');
-                console.log("Remove friend clicked for user:", userId);
-                handleFriendAction(userId, 'remove', $(this));
-            });
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
-} 
 } 
