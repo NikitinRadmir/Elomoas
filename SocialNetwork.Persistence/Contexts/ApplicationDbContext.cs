@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Configurations;
-//using Elomoas.Domain.Entities;
+
 
 namespace Elomoas.Persistence.Contexts
 {

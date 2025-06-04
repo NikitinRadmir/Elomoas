@@ -32,7 +32,7 @@ namespace Elomoas.Controllers
         {
             if (string.IsNullOrEmpty(friendId))
             {
-                return Json(new { success = false, message = "Пользователь не найден" });
+                return Json(new { success = false, message = "User do not founded" });
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
@@ -41,7 +41,7 @@ namespace Elomoas.Controllers
             var result = await _friendshipService.SendFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
-                return Json(new { success = false, message = "Не удалось отправить запрос в друзья" });
+                return Json(new { success = false, message = "Failed to send a request to friends" });
             }
 
             // Отправляем уведомление получателю запроса
@@ -65,7 +65,7 @@ namespace Elomoas.Controllers
         {
             if (string.IsNullOrEmpty(friendId))
             {
-                return Json(new { success = false, message = "Пользователь не найден" });
+                return Json(new { success = false, message = "User do not founded" });
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
@@ -74,7 +74,7 @@ namespace Elomoas.Controllers
             var result = await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
-                return Json(new { success = false, message = "Не удалось принять запрос в друзья" });
+                return Json(new { success = false, message = "Failed to accept a request to friends" });
             }
 
             // Отправляем уведомление отправителю запроса
@@ -98,7 +98,7 @@ namespace Elomoas.Controllers
         {
             if (string.IsNullOrEmpty(friendId))
             {
-                return Json(new { success = false, message = "Пользователь не найден" });
+                return Json(new { success = false, message = "User do not founded" });
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
@@ -107,7 +107,7 @@ namespace Elomoas.Controllers
             var result = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, friendId);
             if (!result)
             {
-                return Json(new { success = false, message = "Не удалось отклонить запрос в друзья" });
+                return Json(new { success = false, message = "Failed to reject the request for friends" });
             }
 
             // Отправляем уведомление отправителю запроса
@@ -131,7 +131,7 @@ namespace Elomoas.Controllers
         {
             if (string.IsNullOrEmpty(friendId))
             {
-                return Json(new { success = false, message = "Пользователь не найден" });
+                return Json(new { success = false, message = "User do not founded" });
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
@@ -140,7 +140,7 @@ namespace Elomoas.Controllers
             var result = await _friendshipService.RemoveFriendAsync(currentUser.Id, friendId);
             if (!result)
             {
-                return Json(new { success = false, message = "Не удалось удалить из друзей" });
+                return Json(new { success = false, message = "Failed to remove from friends" });
             }
 
             // Отправляем уведомление удаленному другу

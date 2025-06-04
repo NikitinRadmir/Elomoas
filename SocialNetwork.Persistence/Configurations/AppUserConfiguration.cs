@@ -11,11 +11,10 @@ namespace Elomoas.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            // Настраиваем связь один-к-одному между AppUser и IdentityUser
             builder.HasOne<IdentityUser>()
                 .WithOne()
                 .HasForeignKey<AppUser>(au => au.IdentityId)
-                .OnDelete(DeleteBehavior.Cascade); // Каскадное удаление
+                .OnDelete(DeleteBehavior.Cascade); 
 
             builder.Property(x => x.Name)
                 .HasMaxLength(100);

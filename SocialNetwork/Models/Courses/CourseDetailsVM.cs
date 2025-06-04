@@ -46,8 +46,8 @@ namespace Elomoas.mvc.Models.Courses
         public string GetDisplayText()
         {
             return DiscountPercent > 0 
-                ? $"{Months} месяцев (-{DiscountPercent}%)"
-                : $"{Months} месяц";
+                ? $"{Months} months (-{DiscountPercent}%)"
+                : $"{Months} month";
         }
     }
 } 

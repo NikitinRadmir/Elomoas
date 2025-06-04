@@ -45,11 +45,10 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
             foreach (var user in users)
             {
                 if (user.IdentityId == currentUser.Id)
-                    continue; // Skip current user
+                    continue; 
 
                 var dto = MapToDto(user);
-                
-                // Получаем статус дружбы
+
                 var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
                 if (friendship != null)
                 {

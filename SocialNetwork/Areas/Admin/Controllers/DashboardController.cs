@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Elomoas.mvc.Areas.Admin.Controllers;
 
-[Area("Admin")] // Указываем, что этот контроллер принадлежит области Admin
+[Area("Admin")] 
 [Authorize]
 public class DashboardController : Controller
 {

@@ -76,7 +76,7 @@ namespace Elomoas.Controllers
                 return RedirectToAction("Feed", "Home");
             }
 
-            ModelState.AddModelError(string.Empty, "Неверный email или пароль");
+            ModelState.AddModelError(string.Empty, "Wrong email or password");
             return View(model);
         }
 

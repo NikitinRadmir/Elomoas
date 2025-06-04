@@ -34,7 +34,7 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ошибка при отправке письма: {ex.Message}");
+            Console.WriteLine($"Error when sending a letter: {ex.Message}");
             throw;
         }
     }

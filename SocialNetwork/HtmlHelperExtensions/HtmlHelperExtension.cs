@@ -12,14 +12,11 @@ namespace Elomoas.Helpers
             var currentController = routeData.Values["controller"]?.ToString();
             var currentAction = routeData.Values["action"]?.ToString();
 
-            // Проверяем, является ли текущий элемент активным
             var isActive = currentController == controller && currentAction == action;
             var activeClass = isActive ? "active" : "";
 
-            // Генерируем URL
             var url = $"/{controller}/{action}";
 
-            // Формируем HTML для элемента списка
             var link = $@"
             <li>
                 <a href=""{url}"" class=""nav-content-bttn open-font {activeClass}"" data-tab=""{dataTab}"">

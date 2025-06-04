@@ -57,13 +57,13 @@ namespace Elomoas.Infrastructure.Services
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext == null || !httpContext.User.Identity.IsAuthenticated)
             {
-                throw new UnauthorizedAccessException("Пользователь не авторизован.");
+                throw new UnauthorizedAccessException("The user is not authorized.");
             }
 
             var identityUser = await _userManager.GetUserAsync(httpContext.User);
             if (identityUser == null)
             {
-                throw new InvalidOperationException("Пользователь не найден.");
+                throw new InvalidOperationException("The user was not found.");
             }
 
             var appUser = await _context.AppUsers
@@ -71,7 +71,7 @@ namespace Elomoas.Infrastructure.Services
 
             if (appUser == null)
             {
-                throw new InvalidOperationException("Профиль пользователя не найден.");
+                throw new InvalidOperationException("The user profile was not found.");
             }
 
             return appUser;

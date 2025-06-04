@@ -63,29 +63,25 @@ namespace Elomoas.Controllers
 
             var query = new GetAllUsersQuery();
             var allUsers = await _mediator.Send(query);
-            
-            // Получаем входящие заявки в друзья
+
             var pendingFriendships = await _friendshipRepository.GetPendingFriendshipsAsync(currentUser.Id);
             var pendingFriendIds = pendingFriendships
-                .Where(f => f.FriendId == currentUser.Id) // Только входящие заявки
+                .Where(f => f.FriendId == currentUser.Id) 
                 .Select(f => f.UserId)
                 .ToList();
 
-            // Получаем список друзей
             var friendships = await _friendshipRepository.GetAcceptedFriendshipsAsync(currentUser.Id);
             var friendIds = friendships
                 .SelectMany(f => new[] { f.UserId, f.FriendId })
                 .Where(id => id != currentUser.Id)
                 .ToList();
 
-            // Фильтруем и группируем пользователей
             var pendingRequests = allUsers.Where(u => pendingFriendIds.Contains(u.IdentityId));
             var friends = allUsers.Where(u => friendIds.Contains(u.IdentityId));
             var otherUsers = allUsers.Where(u => !pendingFriendIds.Contains(u.IdentityId) && 
                                                 !friendIds.Contains(u.IdentityId) && 
                                                 u.IdentityId != currentUser.Id);
 
-            // Применяем поиск, если указан
             if (!string.IsNullOrEmpty(search))
             {
                 var searchLower = search.ToLower();
@@ -97,7 +93,6 @@ namespace Elomoas.Controllers
                                                  u.Email.ToLower().Contains(searchLower));
             }
 
-            // Объединяем результаты в нужном порядке
             var orderedUsers = pendingRequests.Concat(friends).Concat(otherUsers);
             
             var viewModel = new UserVM
@@ -130,7 +125,6 @@ namespace Elomoas.Controllers
                     return NotFound();
                 }
 
-                // Получаем статус дружбы
                 var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
                 if (friendship != null)
                 {
@@ -177,7 +171,6 @@ namespace Elomoas.Controllers
             var subscribedCoursesQuery = new GetSubscribedCoursesQuery(currentAppUser.Id);
             var subscribedCourses = await _mediator.Send(subscribedCoursesQuery);
 
-            // Получаем список друзей
             var friends = await _friendshipService.GetUserFriendsAsync(identityUser.Id);
 
             var viewModel = new UserVM
@@ -236,7 +229,7 @@ namespace Elomoas.Controllers
                                 SenderName = currentUser.UserName
                             });
                         }
-                        message = success ? "Запрос в друзья отправлен" : "Не удалось отправить запрос в друзья";
+                        message = success ? "Request to friends sent " : " Friends failed to send a request";
                         break;
                     case "accept":
                         success = await _friendshipService.AcceptFriendRequestAsync(currentUser.Id, targetUserId);
@@ -248,7 +241,7 @@ namespace Elomoas.Controllers
                                 AcceptorName = currentUser.UserName
                             });
                         }
-                        message = success ? "Запрос в друзья принят" : "Не удалось принять запрос в друзья";
+                        message = success ? "A request for friends is accepted " : " Friends failed to accept a request";
                         break;
                     case "reject":
                         success = await _friendshipService.RejectFriendRequestAsync(currentUser.Id, targetUserId);
@@ -259,7 +252,7 @@ namespace Elomoas.Controllers
                                 RejectorId = currentUser.Id
                             });
                         }
-                        message = success ? "Запрос в друзья отклонен" : "Не удалось отклонить запрос в друзья";
+                        message = success ? "Related request is rejected " : " Friends failed to reject a request";
                         break;
                     case "remove":
                         success = await _friendshipService.RemoveFriendAsync(currentUser.Id, targetUserId);
@@ -270,17 +263,17 @@ namespace Elomoas.Controllers
                                 RemoverId = currentUser.Id
                             });
                         }
-                        message = success ? "Пользователь удален из друзей" : "Не удалось удалить пользователя из друзей";
+                        message = success ? "The user is removed from friends " : " Failed to remove the user from friends";
                         break;
                     default:
                         _logger.LogWarning($"HandleFriendRequest: Unknown action {action}");
-                        return Json(new { success = false, message = "Неизвестное действие" });
+                        return Json(new { success = false, message = "Unknown action" });
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "HandleFriendRequest: Error processing friend request");
-                return Json(new { success = false, message = "Произошла ошибка при обработке запроса" });
+                return Json(new { success = false, message = "There was an error when processing a request" });
             }
 
             return Json(new { success = success, message = message });
@@ -295,7 +288,7 @@ namespace Elomoas.Controllers
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser == null)
                 {
-                    return Json(new { success = false, message = "Пользователь не авторизован" });
+                    return Json(new { success = false, message = "The user is not authorized" });
                 }
 
                 var success = await _friendshipService.RemoveFriendAsync(currentUser.Id, friendId);
@@ -305,17 +298,17 @@ namespace Elomoas.Controllers
                     {
                         RemoverId = currentUser.Id
                     });
-                    return Json(new { success = true, message = "Друг успешно удален" });
+                    return Json(new { success = true, message = "A friend is successfully removed" });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Не удалось удалить друга" });
+                    return Json(new { success = false, message = "Failed to remove a friend" });
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при удалении друга");
-                return Json(new { success = false, message = "Произошла ошибка при удалении друга" });
+                _logger.LogError(ex, "An error when removing a friend");
+                return Json(new { success = false, message = "An error occurred when removing a friend" });
             }
         }
 

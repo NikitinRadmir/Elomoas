@@ -10,8 +10,8 @@ public class Friendship : BaseAuditableEntity
     [Key]
     public int FriendshipId { get; set; }
 
-    public string UserId { get; set; }         // IdentityUser.Id
-    public string FriendId { get; set; }       // IdentityUser.Id другого пользователя
+    public string UserId { get; set; }         
+    public string FriendId { get; set; }       
 
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 

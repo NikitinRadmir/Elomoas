@@ -44,7 +44,6 @@ public class AuthService : IAuthService
 
         await _signInManager.SignInAsync(identityUser, isPersistent: false);
 
-        // Создаем доменную сущность User
         var user = new AppUser
         {
             IdentityId = identityUser.Id,
@@ -52,7 +51,7 @@ public class AuthService : IAuthService
             Email = email,
             Img = "/images/user-12.png",
             Description = "",
-            Password = password // Примечание: в реальном приложении не стоит хранить пароль в открытом виде
+            Password = password 
         };
 
         await _context.AppUsers.AddAsync(user);
