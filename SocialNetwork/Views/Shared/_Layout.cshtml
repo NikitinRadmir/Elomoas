@@ -520,6 +520,7 @@
         // Инициализируем SignalR и мобильный поиск при загрузке страницы
         $(document).ready(function() {
             initializeSignalR();
+            initializeThemeSettings();
 
             // Открытие поиска на мобильных
             $('.menu-search-icon').on('click', function(e) {
@@ -546,6 +547,100 @@
             $('.mobile-search-form').on('click', function(e) {
                 e.stopPropagation();
             });
+
+            // Инициализация настроек темы
+            function initializeThemeSettings() {
+                // Загрузка сохраненных настроек
+                const savedColor = localStorage.getItem('themeColor');
+                const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+                const savedHeaderBg = localStorage.getItem('headerBackground') === 'true';
+                const savedStickyHeader = localStorage.getItem('stickyHeader') === 'true';
+                const savedFullScreen = localStorage.getItem('fullScreen') === 'true';
+                const savedMenuPosition = localStorage.getItem('menuPosition') === 'true';
+
+                // Применение сохраненного цвета темы
+                if (savedColor) {
+                    $('input[name="color-radio"][value="' + savedColor + '"]').prop('checked', true);
+                    applyThemeColor(savedColor);
+                }
+
+                // Применение других сохраненных настроек
+                if (savedDarkMode) {
+                    $('.toggle-dark input').prop('checked', true);
+                    $('body').addClass('theme-dark');
+                }
+
+                if (savedHeaderBg) {
+                    $('.toggle-menu-color input').prop('checked', true);
+                    $('body').addClass('header-solid');
+                }
+
+                if (savedStickyHeader) {
+                    $('.toggle-sticky input').prop('checked', true);
+                    $('body').addClass('sticky-header');
+                }
+
+                if (savedFullScreen) {
+                    $('.toggle-screen input').prop('checked', true);
+                    $('body').addClass('full-screen');
+                }
+
+                if (savedMenuPosition) {
+                    $('.toggle-menu input').prop('checked', true);
+                    $('body').addClass('menu-position');
+                }
+
+                // Обработчики изменения настроек
+                $('input[name="color-radio"]').on('change', function() {
+                    const color = $(this).val();
+                    localStorage.setItem('themeColor', color);
+                    applyThemeColor(color);
+                });
+
+                $('.toggle-dark input').on('change', function() {
+                    const isDark = $(this).prop('checked');
+                    localStorage.setItem('darkMode', isDark);
+                    $('body').toggleClass('theme-dark', isDark);
+                });
+
+                $('.toggle-menu-color input').on('change', function() {
+                    const hasHeaderBg = $(this).prop('checked');
+                    localStorage.setItem('headerBackground', hasHeaderBg);
+                    $('body').toggleClass('header-solid', hasHeaderBg);
+                });
+
+                $('.toggle-sticky input').on('change', function() {
+                    const isSticky = $(this).prop('checked');
+                    localStorage.setItem('stickyHeader', isSticky);
+                    $('body').toggleClass('sticky-header', isSticky);
+                });
+
+                $('.toggle-screen input').on('change', function() {
+                    const isFullScreen = $(this).prop('checked');
+                    localStorage.setItem('fullScreen', isFullScreen);
+                    $('body').toggleClass('full-screen', isFullScreen);
+                });
+
+                $('.toggle-menu input').on('change', function() {
+                    const menuPosition = $(this).prop('checked');
+                    localStorage.setItem('menuPosition', menuPosition);
+                    $('body').toggleClass('menu-position', menuPosition);
+                });
+            }
+
+            // Функция применения цвета темы
+            function applyThemeColor(color) {
+                // Удаляем все существующие классы цветов
+                const colorClasses = ['color-theme-red', 'color-theme-green', 'color-theme-blue', 
+                                   'color-theme-pink', 'color-theme-yellow', 'color-theme-orange', 
+                                   'color-theme-gray', 'color-theme-brown', 'color-theme-darkgreen', 
+                                   'color-theme-deeppink', 'color-theme-cadetblue', 'color-theme-darkorchid'];
+                
+                $('body').removeClass(colorClasses.join(' '));
+                
+                // Добавляем новый класс цвета
+                $('body').addClass('color-theme-' + color);
+            }
         });
     </script>
 
