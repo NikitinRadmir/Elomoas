@@ -118,7 +118,6 @@ namespace Elomoas.Controllers
                     return RedirectToAction("Login", "Auth");
                 }
 
-                // Найти пользователя по IdentityId
                 var appUser = await _userRepository.GetAllUsersAsync();
                 var targetUser = appUser.FirstOrDefault(u => u.IdentityId == id);
 

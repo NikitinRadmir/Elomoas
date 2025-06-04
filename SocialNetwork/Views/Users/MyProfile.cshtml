@@ -258,44 +258,15 @@
     }
 </style>
 
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
 @section Scripts {
+    <script src="~/js/friends.js"></script>
     <script>
         $(document).ready(function() {
             $('[data-toggle="tooltip"]').tooltip();
-
-            function handleSubscriptionError() {
-                toastr.error('An error occurred. Please try again later.');
-            }
-
-            // Handle friend removal
-            function handleRemoveFriend(btn) {
-                var friendId = btn.data('user-id');
-                btn.prop('disabled', true);
-
-                $.post('/Users/RemoveFriend', { friendId: friendId })
-                    .done(function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            btn.closest('.user-item').fadeOut(300, function() {
-                                $(this).remove();
-                                if ($('.remove-friend-btn').length === 0) {
-                                    location.reload();
-                                }
-                            });
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    })
-                    .fail(handleSubscriptionError)
-                    .always(function() {
-                        btn.prop('disabled', false);
-                    });
-            }
-
-            $('.remove-friend-btn').click(function(e) {
-                e.preventDefault();
-                handleRemoveFriend($(this));
-            });
         });
     </script>
 }

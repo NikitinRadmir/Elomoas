@@ -106,6 +106,19 @@ $(document).ready(function () {
                 }
             } else {
                 checkIcon.remove();
+                // If we're on MyProfile page and this was the last friend, show the empty message
+                if (status === 'none' && window.location.pathname.includes('/Users/MyProfile')) {
+                    element.closest('.user-item').fadeOut(300, function() {
+                        $(this).remove();
+                        if ($('.user-item').length === 0) {
+                            const emptyMessage = `
+                                <div class="col-12">
+                                    <p class="text-center text-grey-500">You don't have any friends yet.</p>
+                                </div>`;
+                            $('.row:has(.user-item)').html(emptyMessage);
+                        }
+                    });
+                }
             }
         });
 
