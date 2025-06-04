@@ -2,34 +2,116 @@
     ViewData["Title"] = "Messanger";
 }
 
+<style>
+    #friendsModal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 99999 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        display: none;
+    }
+
+    .friends-modal-content {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        background: white !important;
+        padding: 20px !important;
+        border-radius: 8px !important;
+        width: 90% !important;
+        max-width: 500px !important;
+        z-index: 100000 !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+    }
+
+    .friends-modal-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 20px !important;
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        padding-bottom: 10px !important;
+        border-bottom: 1px solid #eee !important;
+    }
+
+    .friends-modal-close {
+        cursor: pointer !important;
+        font-size: 24px !important;
+        color: #666 !important;
+    }
+
+    .friend-item {
+        cursor: pointer !important;
+        transition: background-color 0.2s ease !important;
+    }
+
+    .friend-item:hover {
+        background-color: #f8f9fa !important;
+    }
+
+    .friend-search {
+        position: sticky !important;
+        top: 60px !important;
+        background: white !important;
+        padding: 10px 0 !important;
+        z-index: 1 !important;
+    }
+
+    .no-results {
+        text-align: center !important;
+        padding: 20px !important;
+        color: #666 !important;
+    }
+
+    .friends-list {
+        margin-top: 10px !important;
+    }
+
+    .friend-search-wrapper {
+        position: relative !important;
+    }
+
+    .friend-search-icon {
+        position: absolute !important;
+        left: 10px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        color: #666 !important;
+    }
+
+    .friend-search input {
+        padding-left: 35px !important;
+        border-radius: 20px !important;
+    }
+
+    .friend-search input:focus {
+        box-shadow: none !important;
+        border-color: #007bff !important;
+    }
+</style>
+
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left bg-white dark-bg-transparent mr-3 pr-0">
         <div class="row">
             <div class="col-lg-6 col-xl-4 col-md-6 chat-left scroll-bar border-right-light pl-4 pr-4">
-                <form action="message.html#" class="mt-0 pl-3 pt-3">
-                    <div class="search-form">
+                <div class="d-flex justify-content-between align-items-center mt-0 pl-3 pt-3">
+                    <div class="search-form flex-grow-1 mr-2">
                         <i class="ti-search font-xs"></i>
                         <input type="text" class="form-control text-grey-500 mb-0 bg-greylight border-0" placeholder="Search here.">
                     </div>
-                </form>
+                    <button class="btn btn-primary rounded-circle" onclick="showFriendsModal()">
+                        <i class="ti-plus"></i>
+                    </button>
+                </div>
                 <div class="section full mt-2 mb-2 pl-3">
                     <ul class="list-group list-group-flush">
-                        <li class="bg-transparent list-group-item no-icon pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-8.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Hurin Seary</a></h3> <span class="d-block">What's up, how are you?</span> <span class="badge mt-0 text-grey-500 badge-pill">4:09 pm</span><div class="snippet float-right" data-title=".dot-typing"><div class="stage"><div class="dot-typing"></div></div></div></li>
-                        <li class="bg-transparent list-group-item no-icon pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-7.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Victor Exrixon</a></h3> <span class="d-block">What's up, how are you?</span> <span class="badge badge-primary text-white badge-pill">2</span></li>
-                        <li class="bg-transparent list-group-item no-icon pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-12.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Surfiya Zakir</a></h3> <span class="d-block">What's up, how are you?</span> <span class="badge badge-danger text-white badge-pill">6</span></li>
-                        <li class="bg-transparent list-group-item no-icon pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-4.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Goria Coast</a></h3> <span class="d-block">What's up, how are you?</span> <span class="badge badge-primary text-white badge-pill">8</span></li>
-
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-3.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Hurin Seary</a></h3> <span class="d-block">What's up, how are you?</span></li>
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-2.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Victor Exrixon</a></h3> <span class="d-block">What's up, how are you?</span></li>
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-8.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Surfiya Zakir</a></h3> <span class="d-block">What's up, how are you?</span></li>
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-4.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Goria Coast</a></h3> <span class="d-block">What's up, how are you?</span></li>
-
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-3.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Hurin Seary</a></h3> <span class="d-block">What's up, how are you?</span></li>
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-8.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Surfiya Zakir</a></h3> <span class="d-block">What's up, how are you?</span></li>
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-4.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Goria Coast</a></h3> <span class="d-block">What's up, how are you?</span></li>
-
-                        <li class="bg-transparent list-group-item pl-0"><figure class="avatar float-left mb-0 mr-3"><img src="~/images/user-3.png" alt="image" class="w45"></figure><h3 class="fw-700 mb-0 mt-1"><a class="font-xsss text-grey-900 text-dark d-block" href="https://uitheme.shop/elomoas/chat.html">Hurin Seary</a></h3> <span class="d-block">What's up, how are you?</span></li>
-
                     </ul>
                 </div>
             </div>
@@ -102,8 +184,6 @@
                                 <figure>
                                     <img src="~/images/bb-9.jpg" class="w-25 img-fluid rounded-lg" alt="image">
                                 </figure>
-
-
                             </div>
 
                             <div class="message-item outgoing-message">
@@ -117,11 +197,8 @@
                                     </div>
                                 </div>
                                 <div class="message-wrap" style="margin-bottom: 90px;">Hey mate! How are things going ?</div>
-
                             </div>
                             <div class="clearfix"></div>
-
-
                         </div>
                     </div>
                 </div>
@@ -135,4 +212,116 @@
             </div>
         </div>
     </div>
-</div>  
+</div>
+
+<!-- Модальное окно со списком друзей -->
+<div id="friendsModal">
+    <div class="friends-modal-content">
+        <div class="friends-modal-header">
+            <h5>Выберите друга для чата</h5>
+            <span class="friends-modal-close" onclick="hideFriendsModal()">&times;</span>
+        </div>
+        <div class="friend-search">
+            <div class="friend-search-wrapper">
+                <i class="ti-search friend-search-icon"></i>
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Поиск по имени или email..." 
+                       id="friendSearchInput"
+                       autocomplete="off">
+            </div>
+        </div>
+        <div class="friends-list">
+            <!-- Список друзей будет загружен динамически -->
+        </div>
+        <div class="no-results" style="display: none;">
+            <p>Друзья не найдены</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let allFriends = []; // Храним полный список друзей
+
+        $(document).ready(function() {
+            // Закрытие модального окна при клике вне его содержимого
+            $('#friendsModal').click(function(e) {
+                if (e.target.id === 'friendsModal') {
+                    hideFriendsModal();
+                }
+            });
+
+            // Улучшенный поиск по друзьям
+            let searchTimeout;
+            $('#friendSearchInput').on('input', function() {
+                clearTimeout(searchTimeout);
+                const searchText = $(this).val().toLowerCase();
+                
+                searchTimeout = setTimeout(() => {
+                    filterFriends(searchText);
+                }, 300);
+            });
+        });
+
+        function filterFriends(searchText) {
+            const filteredFriends = allFriends.filter(friend => 
+                friend.name.toLowerCase().includes(searchText) || 
+                friend.email.toLowerCase().includes(searchText)
+            );
+            
+            displayFriends(filteredFriends);
+        }
+
+        function displayFriends(friends) {
+            const friendsList = $('.friends-list');
+            const noResults = $('.no-results');
+            friendsList.empty();
+            
+            if (friends.length === 0) {
+                noResults.show();
+                return;
+            }
+            
+            noResults.hide();
+            friends.forEach(friend => {
+                const friendHtml = `
+                    <div class="friend-item d-flex align-items-center p-2 border-bottom" onclick="startChat(${friend.id})">
+                        <img src="${friend.img || '/images/user-12.png'}" 
+                             alt="${friend.name}" 
+                             class="rounded-circle mr-2" 
+                             style="width: 40px; height: 40px; object-fit: cover;">
+                        <div>
+                            <h6 class="mb-0 friend-name">${friend.name}</h6>
+                            <small class="text-muted">${friend.email}</small>
+                        </div>
+                    </div>
+                `;
+                friendsList.append(friendHtml);
+            });
+        }
+
+        function showFriendsModal() {
+            $('#friendsModal').fadeIn(300);
+            $('#friendSearchInput').val(''); // Очищаем поле поиска
+            loadFriends();
+        }
+
+        function hideFriendsModal() {
+            $('#friendsModal').fadeOut(300);
+            $('.no-results').hide();
+        }
+
+        function loadFriends() {
+            $.get('/Messanger/GetFriends', function(friends) {
+                allFriends = friends; // Сохраняем полный список
+                displayFriends(friends);
+            });
+        }
+
+        function startChat(friendId) {
+            // Здесь будет логика создания чата
+            hideFriendsModal();
+        }
+    </script>
+}  
