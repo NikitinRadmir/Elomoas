@@ -202,27 +202,53 @@
                     </div>
                 </div>
                 <div class="row other-users-container">
-                    @foreach (var user in Model.Users.Where(u => !Model.Friends.Any(f => f.IdentityId == u.IdentityId) && !Model.PendingFriendRequests.Any(p => p.IdentityId == u.IdentityId)))
-                {
-                        <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-name="@user.Name.ToLower()" data-user-email="@user.Email.ToLower()">
-                            <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
-                                <a href="/Users/UserPage/@user.IdentityId" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
-                                    <img src="@(user.Img ?? "/images/user-12.png")" alt="@user.Name" class="p-0 w100 shadow-xss">
-                                </a>
-                                <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
-                                <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
-                                <div class="clearfix"></div>
-                                <div class="friend-actions d-flex flex-column" data-user-id="@user.IdentityId">
-                                    <a href="/Users/UserPage/@user.IdentityId" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
-                                        <i class="feather-user font-xss"></i> PROFILE
-                                    </a>
-                                    <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="@user.IdentityId">
-                                        <i class="feather-user-plus font-xss"></i> ADD FRIEND
-                                    </button>
+                    @{
+                        var filteredUsers = Model.Users.Where(u => !Model.Friends.Any(f => f.IdentityId == u.IdentityId) && 
+                                                                  !Model.PendingFriendRequests.Any(p => p.IdentityId == u.IdentityId));
+                    }
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm) && 
+                         !Model.Friends.Any() && 
+                         !Model.PendingFriendRequests.Any() && 
+                         !filteredUsers.Any())
+                    {
+                        <div class="col-12">
+                            <div class="card w-100 text-center shadow-xss rounded-xxl border-0 p-4 mb-3">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <i class="feather-search text-current display-4 mb-3"></i>
+                                            <h2 class="fw-700 text-grey-900 font-xss mt-3">Users with this name or email were not found</h2>
+                                            <p class="text-grey-500 font-xssss mt-2">Try searching with different keywords</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                    </div>
-                }
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var user in filteredUsers)
+                        {
+                            <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-name="@user.Name.ToLower()" data-user-email="@user.Email.ToLower()">
+                                <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
+                                    <a href="/Users/UserPage/@user.IdentityId" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
+                                        <img src="@(user.Img ?? "/images/user-12.png")" alt="@user.Name" class="p-0 w100 shadow-xss">
+                                    </a>
+                                    <h4 class="fw-700 font-xs mt-3 mb-1">@user.Name</h4>
+                                    <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">@user.Email</p>
+                                    <div class="clearfix"></div>
+                                    <div class="friend-actions d-flex flex-column" data-user-id="@user.IdentityId">
+                                        <a href="/Users/UserPage/@user.IdentityId" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                                            <i class="feather-user font-xss"></i> PROFILE
+                                        </a>
+                                        <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="@user.IdentityId">
+                                            <i class="feather-user-plus font-xss"></i> ADD FRIEND
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
         </div>

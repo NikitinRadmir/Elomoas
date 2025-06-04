@@ -111,6 +111,23 @@
                     </div>
                 }
             }
+
+            @if ((!Model.SubscribedGroups?.Any() ?? true) && (!Model.Groups?.Any() ?? true) && !string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <div class="col-12">
+                    <div class="card w-100 text-center shadow-xss rounded-xxl border-0 p-4 mb-3">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <i class="feather-search text-current display-4 mb-3"></i>
+                                    <h2 class="fw-700 text-grey-900 font-xss mt-3">Groups with this name were not found</h2>
+                                    <p class="text-grey-500 font-xssss mt-2">Try searching with a different name or browse all available groups</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
