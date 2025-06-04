@@ -184,17 +184,33 @@ $(document).ready(function () {
                     let newStatus = '';
                     switch (action) {
                         case 'add':
+                        case 'send':
                             newStatus = 'pending';
+                            // Обновляем UI для отправителя, показывая PENDING
+                            updateFriendStatus(userId, 'pending');
+                            // Сохраняем состояние в localStorage
+                            const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+                            sentRequests[userId] = true;
+                            localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
                             break;
                         case 'accept':
                             newStatus = 'friend';
+                            updateFriendStatus(userId, 'friend');
+                            // Удаляем запись о запросе при принятии в друзья
+                            const acceptedRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+                            delete acceptedRequests[userId];
+                            localStorage.setItem('sentFriendRequests', JSON.stringify(acceptedRequests));
                             break;
                         case 'reject':
                         case 'remove':
                             newStatus = 'none';
+                            updateFriendStatus(userId, 'none');
+                            // Удаляем запись о запросе при отклонении или удалении
+                            const rejectedRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+                            delete rejectedRequests[userId];
+                            localStorage.setItem('sentFriendRequests', JSON.stringify(rejectedRequests));
                             break;
                     }
-                    updateFriendStatus(userId, newStatus);
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message);
@@ -206,6 +222,28 @@ $(document).ready(function () {
             }
         });
     }
+
+    // При загрузке страницы проверяем отправленные запросы
+    function checkSentRequests() {
+        const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+        Object.keys(sentRequests).forEach(userId => {
+            // Проверяем, не являемся ли мы уже друзьями
+            const element = $(`.friend-actions[data-user-id="${userId}"]`);
+            if (element.length) {
+                // Если есть кнопка remove-friend-btn, значит мы уже друзья
+                if (element.find('.remove-friend-btn').length) {
+                    // Удаляем запись из localStorage
+                    delete sentRequests[userId];
+                    localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
+                } else {
+                    updateFriendStatus(userId, 'pending');
+                }
+            }
+        });
+    }
+
+    // Вызываем проверку при загрузке страницы
+    checkSentRequests();
 
     // Click handlers for friend-related buttons
     $(document).on('click', '.add-friend-btn', function(e) {
@@ -240,6 +278,10 @@ $(document).ready(function () {
 
     $(document).on("friendRequestAccepted", function (e, data) {
         updateFriendStatus(data.acceptorId, 'friend');
+        // Удаляем запись из localStorage при получении уведомления о принятии запроса
+        const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+        delete sentRequests[data.acceptorId];
+        localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
         toastr.success(`${data.acceptorName} accepted your friend request`);
     });
 
