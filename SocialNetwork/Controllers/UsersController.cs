@@ -41,7 +41,7 @@ namespace Elomoas.Controllers
         public UsersController(
             ILogger<UsersController> logger, 
             IMediator mediator, 
-            UserManager<IdentityUser> userManager,
+            UserManager<IdentityUser> userManager, 
             ICurrentUserService currentUserService,
             IAppUserRepository userRepository,
             IHubContext<FriendshipHub> hubContext,
@@ -70,7 +70,7 @@ namespace Elomoas.Controllers
             var pendingRequestsQuery = new GetPendingFriendRequestsQuery { UserId = currentUser.Id };
             var pendingFriendships = await _mediator.Send(pendingRequestsQuery);
             var pendingFriendIds = pendingFriendships
-                .Where(f => f.FriendId == currentUser.Id)
+                .Where(f => f.FriendId == currentUser.Id) 
                 .Select(f => f.UserId)
                 .ToList();
 
@@ -86,23 +86,26 @@ namespace Elomoas.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                var searchLower = search.ToLower();
-                pendingRequests = pendingRequests.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                                           u.Email.ToLower().Contains(searchLower));
-                friendUsers = friendUsers.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                                  u.Email.ToLower().Contains(searchLower));
-                otherUsers = otherUsers.Where(u => u.Name.ToLower().Contains(searchLower) || 
-                                                 u.Email.ToLower().Contains(searchLower));
+                search = search.ToLower();
+                pendingRequests = pendingRequests.Where(u => 
+                    u.Name.ToLower().Contains(search) || 
+                    u.Email.ToLower().Contains(search));
+                
+                friendUsers = friendUsers.Where(u => 
+                    u.Name.ToLower().Contains(search) || 
+                    u.Email.ToLower().Contains(search));
+                
+                otherUsers = otherUsers.Where(u => 
+                    u.Name.ToLower().Contains(search) || 
+                    u.Email.ToLower().Contains(search));
             }
-
-            var orderedUsers = pendingRequests.Concat(friendUsers).Concat(otherUsers);
             
             var viewModel = new UserVM
             {
-                Users = orderedUsers,
-                PendingFriendRequests = pendingRequests,
-                Friends = friendUsers,
-                SearchTerm = search
+                SearchTerm = search,
+                PendingFriendRequests = pendingRequests.ToList(),
+                Friends = friendUsers.ToList(),
+                Users = otherUsers.ToList()
             };
 
             return View(viewModel);
@@ -269,9 +272,9 @@ namespace Elomoas.Controllers
 
             var currentIdentityUser = await _userManager.GetUserAsync(User);
             if (currentIdentityUser == null)
-            {
+                {
                 return Json(new { success = false, message = "User not found" });
-            }
+                }
 
             try
             {
