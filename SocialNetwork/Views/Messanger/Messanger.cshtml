@@ -291,6 +291,32 @@
     .badge-primary {
         background-color: #007bff;
     }
+    
+    .message-date-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+        position: relative;
+    }
+
+    .message-date-divider::before,
+    .message-date-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .message-date-text {
+        padding: 0 10px;
+        color: #666;
+        font-size: 0.9rem;
+        background: white;
+        margin: 0 10px;
+        border-radius: 15px;
+        padding: 5px 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
 </style>
 
 <div class="middle-sidebar-bottom">
@@ -448,10 +474,68 @@
             messageInput.val('');
         }
 
+        function formatDate(date) {
+            const now = new Date();
+            const messageDate = new Date(date);
+            
+            // Get days difference
+            const diffTime = now - messageDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Check if date is in current week
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+            
+            if (messageDate.toDateString() === now.toDateString()) {
+                return 'Today';
+            }
+            
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (messageDate.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            }
+            
+            // If message is within current week
+            if (messageDate >= startOfWeek) {
+                return `${messageDate.toLocaleDateString('en-US', {
+                    weekday: 'long' // Day name
+                })}, ${messageDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                })}`;
+            }
+            
+            // If message is in current year
+            if (messageDate.getFullYear() === now.getFullYear()) {
+                return messageDate.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+            
+            // For older messages
+            return messageDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
         function displayMessage(message, isSent) {
-            const messageTime = message.createdDate 
-                ? new Date(message.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const messageDate = new Date(message.createdDate || new Date());
+            const messageTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateDivId = `date-${messageDate.toDateString()}`;
+
+            // Проверяем, нужно ли добавить разделитель даты
+            if (!document.getElementById(dateDivId)) {
+                const dateHtml = `
+                    <div id="${dateDivId}" class="message-date-divider">
+                        <span class="message-date-text">${formatDate(messageDate)}</span>
+                    </div>
+                `;
+                $('#messagesContainer').append(dateHtml);
+            }
 
             const messageHtml = `
                 <div class="message-item ${isSent ? 'outgoing-message' : 'incoming-message'}">
@@ -555,7 +639,12 @@
                     currentUserId = data.currentUserId;
                     
                     if (data.messages && Array.isArray(data.messages)) {
-                        data.messages.forEach(message => {
+                        // Сортируем сообщения по дате
+                        const sortedMessages = data.messages.sort((a, b) => 
+                            new Date(a.createdDate) - new Date(b.createdDate)
+                        );
+                        
+                        sortedMessages.forEach(message => {
                             displayMessage(message, message.senderId === currentUserId);
                         });
                         scrollToBottom();
