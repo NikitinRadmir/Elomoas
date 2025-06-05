@@ -111,7 +111,7 @@ namespace Elomoas.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> UserPage(string id)
+        public async Task<IActionResult> UserPage(int id)
         {
             try
             {
@@ -121,25 +121,16 @@ namespace Elomoas.Controllers
                     return RedirectToAction("Login", "Auth");
                 }
 
-                var appUser = await _userRepository.GetAllUsersAsync();
-                var targetUser = appUser.FirstOrDefault(u => u.IdentityId == id);
-
-                if (targetUser == null)
-                {
-                    _logger.LogWarning($"User with IdentityId {id} not found");
-                    return NotFound();
-                }
-
-                var query = new GetUserByIdQuery(targetUser.Id);
+                var query = new GetUserByIdQuery(id);
                 var user = await _mediator.Send(query);
 
                 if (user == null)
                 {
-                    _logger.LogWarning($"User with ID {targetUser.Id} not found");
+                    _logger.LogWarning($"User with ID {id} not found");
                     return NotFound();
                 }
 
-                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, id);
+                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
                 if (friendship != null)
                 {
                     user.FriendshipStatus = friendship.Status;
@@ -156,7 +147,7 @@ namespace Elomoas.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error while getting user with IdentityId {id}");
+                _logger.LogError(ex, $"Error while getting user with ID {id}");
                 return RedirectToAction(nameof(Users));
             }
         }
