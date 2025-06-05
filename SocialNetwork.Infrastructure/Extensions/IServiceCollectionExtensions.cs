@@ -28,6 +28,7 @@ namespace Elomoas.Infrastructure.Extensions
                 .AddHttpContextAccessor()
                 .AddTransient<IEmailService, EmailService>()
                 .AddTransient<IAuthService, AuthService>()
+                .AddTransient<IUserService, UserService>()
                 .AddTransient<IFriendshipService, FriendshipService>()
                 .AddTransient<IChatService, ChatService>()
                 .AddIdentity<IdentityUser, IdentityRole>()

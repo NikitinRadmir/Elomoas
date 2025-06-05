@@ -54,12 +54,12 @@
                                         <td>@user.Password</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">
+                                                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary btn-sm">
                                                     <i data-feather="edit-2"></i>
                                                 </a>
-                                                <a href="javascript:void(0)" class="btn btn-danger btn-sm">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(@user.Id, '@user.Name')">
                                                     <i data-feather="trash-2"></i>
-                                                </a>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -73,11 +73,41 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete user <strong id="userName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="userId" name="id" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        // Reinitialize Feather icons after the table is loaded
         $(document).ready(function() {
             feather.replace();
         });
+
+        function confirmDelete(id, name) {
+            document.getElementById('userId').value = id;
+            document.getElementById('userName').textContent = name;
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
     </script>
 } 
