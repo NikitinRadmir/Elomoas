@@ -341,11 +341,11 @@
                 <div class="chat-wrapper pt-0 w-100 position-relative scroll-bar">
                     <div class="chat-header d-flex align-items-center border-bottom p-3">
                         <figure class="avatar mr-3 mb-0">
-                            <img src="~/images/default-icon.jpg" alt="image" class="w45 rounded-circle">
+                            <img src="~/images/default-icon.jpg" alt="image" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
                         </figure>
                         <div class="chat-header-info flex-grow-1">
-                            <h6 class="mb-0 text-grey-900 fw-600">Выберите собеседника</h6>
-                            <span class="text-grey-500">Нажмите на кнопку + чтобы начать чат</span>
+                            <h6 class="mb-0 text-grey-900 fw-600">Select a chat</h6>
+                            <span class="text-grey-500">Click the + button to start a chat</span>
                         </div>
                     </div>
                     <div class="chat-body p-3">
@@ -622,7 +622,9 @@
             $('.col-lg-6.col-xl-8').removeClass('d-none');
             
             // Обновляем шапку чата
-            $('.chat-header img').attr('src', friendImg || '/images/default-icon.jpg');
+            const headerImg = $('.chat-header img');
+            headerImg.attr('src', friendImg || '/images/default-icon.jpg');
+            headerImg.attr('style', 'width: 45px; height: 45px; object-fit: cover;');
             $('.chat-header h6').text(friendName);
             $('.chat-header span').text(friendEmail);
             
@@ -723,7 +725,9 @@
             $('.col-lg-6.col-xl-8').removeClass('d-none');
             
             // Обновляем шапку чата
-            $('.chat-header img').attr('src', friendImg || '/images/default-icon.jpg');
+            const headerImg = $('.chat-header img');
+            headerImg.attr('src', friendImg || '/images/default-icon.jpg');
+            headerImg.attr('style', 'width: 45px; height: 45px; object-fit: cover;');
             $('.chat-header h6').text(friendName);
             $('.chat-header span').text(friendEmail);
             
