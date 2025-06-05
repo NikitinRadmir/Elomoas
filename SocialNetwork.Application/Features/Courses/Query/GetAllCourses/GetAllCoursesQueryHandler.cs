@@ -22,7 +22,7 @@ namespace Elomoas.Application.Features.Courses.Query.GetAllCourses
         public async Task<IEnumerable<CourseDto>> Handle(GetAllCoursesQuery query, CancellationToken ct)
         {
             var data = await _courseRepository.GetAllCoursesAsync();
-            var result = data.Select(x => new CourseDto
+            var result = data.OrderBy(x => x.Id).Select(x => new CourseDto
             {
                 Id = x.Id,
                 Name = x.Name,
