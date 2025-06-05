@@ -138,7 +138,9 @@ namespace Elomoas.Controllers
                         var uniqueFileName = $"{Guid.NewGuid()}_{model.ImageFile.FileName}";
                         var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                        if (!string.IsNullOrEmpty(appUser.Img))
+                        if (!string.IsNullOrEmpty(appUser.Img) && 
+                            !appUser.Img.EndsWith("/images/default-icon.jpg") && 
+                            !appUser.Img.EndsWith("default-icon.jpg"))
                         {
                             var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, appUser.Img.TrimStart('/'));
                             if (System.IO.File.Exists(oldFilePath))
