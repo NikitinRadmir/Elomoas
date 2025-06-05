@@ -16,6 +16,9 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetCurrentUser
         {
             var appUser = await _currentUserService.GetCurrentAppUserAsync();
             
+            if (appUser == null)
+                return null;
+
             return new AppUserDto
             {
                 Id = appUser.Id,

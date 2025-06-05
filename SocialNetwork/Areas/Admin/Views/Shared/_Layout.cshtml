@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Elomoas.Application.Interfaces.Services
+@using Elomoas.Domain.Entities
+@using MediatR
+@using Elomoas.Application.Features.AppUsers.Query.GetCurrentUser
+@inject IMediator Mediator
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -50,7 +56,7 @@
     <div class="page-wrapper compact-wrapper" id="pageWrapper">
         <header class="page-header row">
             <div class="logo-wrapper d-flex align-items-center col-auto">
-                <a href="index.html"><img class="light-logo img-fluid" src="~/assets/images/logo/logo1.png" alt="logo"><img class="dark-logo img-fluid" src="~/assets/images/logo/logo-dark.png" alt="logo"></a><a class="close-btn toggle-sidebar" href="javascript:void(0)">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><img class="light-logo img-fluid" src="~/assets/images/logo/logo1.png" alt="logo"><img class="dark-logo img-fluid" src="~/assets/images/logo/logo-dark.png" alt="logo"></a><a class="close-btn toggle-sidebar" href="javascript:void(0)">
                     <i data-feather="menu"></i>
                 </a>
             </div>
@@ -85,13 +91,20 @@
                         </li>
                         <li class="profile-nav custom-dropdown">
                             <div class="user-wrap">
-                                <div class="user-img"><img src="~/assets/images/profile.png" alt="user"></div>
+                                <div class="user-img">
+                                    @{
+                                        var currentUser = User.Identity.IsAuthenticated 
+                                            ? await Mediator.Send(new GetCurrentUserQuery()) 
+                                            : null;
+                                        var userImage = currentUser?.Img ?? "/assets/images/profile.png";
+                                    }
+                                    <img src="@userImage" alt="user">
+                                </div>
                                 <div class="user-content">
-                                    <h6>Ava Davis</h6>
+                                    <h6>@(currentUser?.Email ?? "Guest")</h6>
                                     <p class="mb-0">Admin</p>
                                 </div>
                             </div>
-                           
                         </li>
                     </ul>
                 </div>
