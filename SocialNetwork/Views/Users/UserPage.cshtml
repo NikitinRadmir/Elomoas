@@ -27,7 +27,30 @@
         animation: spin 1s linear infinite;
     }
 
-    
+    /* User Profile Image Styles */
+    .avatar {
+        position: relative;
+        display: inline-block;
+        margin-top: -70px !important;
+    }
+
+    .avatar img {
+        width: 90px !important;
+        height: 90px !important;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .avatar:hover img {
+        transform: scale(1.05);
+    }
+
+    .w90 {
+        width: 90px !important;
+    }
 </style>
 
 <div class="middle-sidebar-bottom">
@@ -35,7 +58,9 @@
         <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden mb-3">
             <div class="card-body position-relative h200 bg-gradiant-bottom bg-image-cover bg-image-center" style="background-image: url(/images/bb-16.png);"></div>
             <div class="card-body d-block w-100 pl-lg-5 pl-4 pr-4">
-                <figure class="avatar ml-0 mb-0 mt--6 position-relative w90 z-index-1"><img src="@Model.User.Img" alt="image" class="float-right p-1 bg-white rounded-circle w-100"></figure>
+                <figure class="avatar ml-0 mb-0 position-relative z-index-1">
+                    <img src="@(Model.User.Img ?? "/images/user-12.png")" alt="@Model.User.Name">
+                </figure>
                 <div class="clearfix"></div>
                 <div class="row">
                     <div class="col-xl-6 md-mb-2">

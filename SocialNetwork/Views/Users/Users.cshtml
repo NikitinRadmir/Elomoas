@@ -14,6 +14,20 @@
         background: #fff;
     }
 
+    .user-image img {
+        width: 60px !important;
+        height: 60px !important;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .user-image {
+        display: inline-block;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
     .search-card:hover {
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         border-color: #b8b8b8;
@@ -59,6 +73,10 @@
     }
 
     .user-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
         transition: all 0.3s ease;
     }
 
@@ -87,7 +105,35 @@
         animation: spin 1s linear infinite;
     }
     
-    
+    /* User image styles */
+    .user-card .user-image {
+        display: inline-block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+
+    .user-card .user-image img {
+        width: 120px !important;
+        height: 120px !important;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+    }
+
+    .user-card .user-image:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Override any existing image styles */
+    .user-card img.w100,
+    .user-card img.shadow-xss {
+        width: 120px !important;
+        height: 120px !important;
+    }
 </style>
 
 <form id="antiForgeryForm">

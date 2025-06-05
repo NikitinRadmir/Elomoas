@@ -1,0 +1,5 @@
+@model (string UserId, string ImageUrl, string Name)
+
+<a href="/Users/UserPage/@Model.UserId" class="ml-auto mr-auto user-image">
+    <img src="@(Model.ImageUrl ?? "/images/user-12.png")" alt="@Model.Name">
+</a> 

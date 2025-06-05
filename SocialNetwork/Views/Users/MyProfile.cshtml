@@ -163,8 +163,8 @@
                                     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 user-item" data-user-id="@friend.IdentityId">
                                         <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
                                             <a asp-controller="Users" asp-action="UserPage" asp-route-id="@friend.Id" 
-                                               class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
-                                                <img src="@(friend.Img ?? "/images/user-12.png")" alt="@friend.Name" class="p-0 w100 shadow-xss">
+                                               class="ml-auto mr-auto user-image">
+                                                <img src="@(friend.Img ?? "/images/user-12.png")" alt="@friend.Name">
                                             </a>
                                             <h4 class="fw-700 font-xs mt-3 mb-1">
                                                 @friend.Name
@@ -227,21 +227,33 @@
                    0 0 20px rgba(0,0,0,0.08) !important;
     }
 
-    .user-image {
-        border-radius: 18px;
+    .user-card .user-image {
+        display: inline-block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
         overflow: hidden;
-        margin-bottom: 20px;
-        border: none;
-        box-shadow: 0 0 15px rgba(0,0,0,0.08);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
     }
 
-    .user-image img {
-        transition: all 0.3s ease;
-        border-radius: 18px;
+    .user-card .user-image img {
+        width: 120px !important;
+        height: 120px !important;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
     }
 
-    .user-image:hover img {
+    .user-card .user-image:hover img {
         transform: scale(1.05);
+    }
+
+    /* Override any existing image styles */
+    .user-card img.w100,
+    .user-card img.shadow-xss {
+        width: 120px !important;
+        height: 120px !important;
     }
 
     .btn-profile {
