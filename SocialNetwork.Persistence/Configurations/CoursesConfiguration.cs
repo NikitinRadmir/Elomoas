@@ -9,6 +9,32 @@ namespace Elomoas.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Course> builder)
         {
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Name)
+                .HasColumnType("text")
+                .IsRequired();
+
+            builder.Property(c => c.Description)
+                .HasColumnType("text");
+
+            builder.Property(c => c.Img)
+                .HasColumnType("text");
+
+            builder.Property(c => c.Price)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            builder.Property(c => c.PL)
+                .HasColumnType("int")
+                .IsRequired();
+
+            builder.Property(c => c.Video)
+                .HasColumnType("text");
+
+            builder.Property(c => c.Learn)
+                .HasColumnType("text");
+
             builder.HasData(
                 new Course
                 {

@@ -9,6 +9,6 @@ public interface ICourseService
     Task<IEnumerable<Course>> GetAllCoursesAsync();
     Task<Course?> GetCourseByIdAsync(int id);
     Task<Course> CreateCourseAsync(Course course);
-    Task<Course> UpdateCourseAsync(Course course);
-    Task DeleteCourseAsync(int id);
+    Task<bool> UpdateCourseAsync(Course course);
+    Task<bool> DeleteCourseAsync(int id);
 } 

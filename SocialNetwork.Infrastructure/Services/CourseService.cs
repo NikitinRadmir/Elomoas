@@ -3,6 +3,7 @@ using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace Elomoas.Infrastructure.Services;
 
@@ -28,7 +29,7 @@ public class CourseService : ICourseService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving all courses");
-            return Enumerable.Empty<Course>();
+            throw;
         }
     }
 
@@ -41,7 +42,7 @@ public class CourseService : ICourseService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving course with id {Id}", id);
-            return null;
+            throw;
         }
     }
 
@@ -49,6 +50,7 @@ public class CourseService : ICourseService
     {
         try
         {
+            course.CreatedDate = DateTime.UtcNow;
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Created new course with id {Id}", course.Id);
@@ -61,57 +63,66 @@ public class CourseService : ICourseService
         }
     }
 
-    public async Task<Course> UpdateCourseAsync(Course course)
+    public async Task<bool> UpdateCourseAsync(Course course)
     {
         try
         {
+            _logger.LogInformation("Attempting to update course {Id}", course.Id);
+
+            // Ensure the course exists
             var existingCourse = await _context.Courses.FindAsync(course.Id);
             if (existingCourse == null)
             {
-                _logger.LogWarning("Course with id {Id} not found for update", course.Id);
-                throw new KeyNotFoundException($"Course with id {course.Id} not found");
+                _logger.LogWarning("Course {Id} not found for update", course.Id);
+                return false;
             }
 
-            // Update only allowed fields
-            existingCourse.Name = course.Name;
-            existingCourse.Description = course.Description;
-            existingCourse.Img = course.Img;
-            existingCourse.Price = course.Price;
-            existingCourse.PL = course.PL;
-            existingCourse.Video = course.Video;
-            existingCourse.Learn = course.Learn;
+            // Preserve creation info
+            course.CreatedBy = existingCourse.CreatedBy;
+            course.CreatedDate = existingCourse.CreatedDate;
 
-            _context.Courses.Update(existingCourse);
-            await _context.SaveChangesAsync();
+            // Detach existing entity to avoid tracking conflicts
+            _context.Entry(existingCourse).State = EntityState.Detached;
+
+            // Attach and mark as modified
+            _context.Courses.Attach(course);
+            _context.Entry(course).State = EntityState.Modified;
+
+            // Save changes
+            var result = await _context.SaveChangesAsync();
             
-            _logger.LogInformation("Updated course with id {Id}", course.Id);
-            return existingCourse;
+            _logger.LogInformation("Update affected {Count} records for course {Id}", result, course.Id);
+            
+            return result > 0;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating course with id {Id}", course.Id);
+            _logger.LogError(ex, "Error updating course {Id}", course.Id);
             throw;
         }
     }
 
-    public async Task DeleteCourseAsync(int id)
+    public async Task<bool> DeleteCourseAsync(int id)
     {
         try
         {
             var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
-                _logger.LogWarning("Course with id {Id} not found for deletion", id);
-                return;
+                _logger.LogWarning("Course {Id} not found for deletion", id);
+                return false;
             }
 
             _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Deleted course with id {Id}", id);
+            var result = await _context.SaveChangesAsync();
+            
+            _logger.LogInformation("Deletion affected {Count} records for course {Id}", result, id);
+            
+            return result > 0;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting course with id {Id}", id);
+            _logger.LogError(ex, "Error deleting course {Id}", id);
             throw;
         }
     }
