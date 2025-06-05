@@ -6,7 +6,7 @@ namespace Elomoas.Helpers
 {
     public static class HtmlHelperExtensions
     {
-        public static IHtmlContent SidebarLink(this IHtmlHelper htmlHelper, string controller, string action, string text, string iconClass, string dataTab)
+        public static IHtmlContent SidebarLink(this IHtmlHelper htmlHelper, string controller, string action, string text, string iconName, string dataTab)
         {
             var routeData = htmlHelper.ViewContext.RouteData;
             var currentController = routeData.Values["controller"]?.ToString();
@@ -20,7 +20,7 @@ namespace Elomoas.Helpers
             var link = $@"
             <li>
                 <a href=""{url}"" class=""nav-content-bttn open-font {activeClass}"" data-tab=""{dataTab}"">
-                    <i class=""{iconClass} mr-3""></i>
+                    <i data-feather=""{iconName}"" class=""mr-3 text-grey-500 font-sm""></i>
                     <span>{text}</span>
                 </a>
             </li>";

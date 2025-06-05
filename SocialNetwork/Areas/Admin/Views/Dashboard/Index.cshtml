@@ -1,23 +1,22 @@
-@{
-    ViewData["Title"] = "Admin Dashboard";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+﻿@{
+    ViewData["Title"] = "Welcome";
 }
 
-<style>
-    .container-fluid {
-        padding-top: 70px;
-    }
-</style>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="mb-3">Welcome to Admin Dashboard</h5>
-                    <p>Select a category from the sidebar to manage your social network.</p>
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="welcome-message">
+                            <i class="fa-solid fa-door-open fa-3x mb-4 text-primary"></i>
+                            <h1 class="display-4 mb-4">Welcome to Admin Panel</h1>
+                            <p class="lead text-muted">Please select an item from the left menu to get started</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+

@@ -11,6 +11,7 @@ using Elomoas.Extensions;
 using Microsoft.Extensions.Logging;
 using Elomoas.Logging;
 using Elomoas.Hubs;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 
 namespace Elomoas;
@@ -61,7 +62,12 @@ public class Program
         app.UseGlobalExceptionHandling();
         
         app.UseHttpsRedirection();
-        app.UseStaticFiles();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            ServeUnknownFileTypes = true,
+            
+            DefaultContentType = "application/octet-stream"
+        });
 
         app.UseRouting();
 

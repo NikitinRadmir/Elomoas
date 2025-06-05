@@ -7,9 +7,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@ViewData["Title"] - Elomoas</title>
 
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <!-- Toastr -->
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Themify Icons -->
     <link rel="stylesheet" href="~/css/themify-icons.css" asp-append-version="true">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/feather.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/video-player.css" asp-append-version="true">
@@ -131,12 +137,10 @@
                     <div class="nav-caption fw-600 font-xssss text-grey-500"><span>New </span>Feeds</div>
                     <ul class="mb-3">
                         <li class="logo d-none d-xl-block d-lg-block"></li>
-                        @Html.SidebarLink("Home", "Feed", "Course Feed", "feather-tv", "chats")
-                        @Html.SidebarLink("Users", "Users", "Users", "feather-shopping-bag", "friends")
-                        @Html.SidebarLink("Groups", "Groups", "Groups", "feather-globe", "favorites")
-                        
-                            @Html.SidebarLink("Users", "MyProfile", "My Profile", "feather-video", "archived")
-                        
+                        @Html.SidebarLink("Home", "Feed", "Course Feed", "tv", "chats")
+                        @Html.SidebarLink("Users", "Users", "Users", "users", "friends")
+                        @Html.SidebarLink("Groups", "Groups", "Groups", "globe", "favorites")
+                        @Html.SidebarLink("Users", "MyProfile", "My Profile", "user", "archived")
                     </ul>
                     <div class="nav-caption fw-600 font-xssss text-grey-500"><span></span> Account</div>
                     <ul class="mb-3">
@@ -645,5 +649,14 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener("DOMContentLoaded", function() {
+            feather.replace();
+        });
+    </script>
 </body>
 </html>
