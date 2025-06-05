@@ -111,7 +111,7 @@
                             </div>
                         </li>
                         <li class="sidebar-list">
-                            <a class="sidebar-link" href="javascript:void(0)">
+                            <a class="sidebar-link" asp-area="Admin" asp-controller="AppUsers" asp-action="Index">
                                 <i data-feather="users"></i>
                                 <h6>AppUsers</h6>
                             </a>
@@ -195,5 +195,6 @@
         // Initialize Feather Icons
         feather.replace();
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

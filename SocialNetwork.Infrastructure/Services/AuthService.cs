@@ -49,7 +49,7 @@ public class AuthService : IAuthService
             IdentityId = identityUser.Id,
             Name = name,
             Email = email,
-            Img = "/images/user-12.png",
+            Img = "/images/default-icon.jpg",
             Description = "",
             Password = password 
         };

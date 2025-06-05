@@ -24,7 +24,8 @@ namespace SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers
                 Name = user.Name,
                 Email = user.Email,
                 Img = user.Img ?? "/images/default-icon.jpg",
-                Description = user.Description
+                Description = user.Description,
+                Password = user.Password
             });
         }
     }

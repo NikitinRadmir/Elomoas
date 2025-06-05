@@ -1,0 +1,83 @@
+@using SocialNetwork.Areas.Admin.Models;
+@model AppUsersViewModel;
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>AppUsers Managing</h2>
+                    <a asp-area="Admin" asp-controller="AppUsers" asp-action="Create" class="btn btn-primary">
+                        <i data-feather="user-plus" class="me-2"></i>Add New User
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Identity ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Avatar</th>
+                                    <th>Image Path</th>
+                                    <th>Description</th>
+                                    <th>Password</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.Users)
+                                {
+                                    <tr>
+                                        <td>@user.Id</td>
+                                        <td>@user.IdentityId</td>
+                                        <td>@user.Name</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(user.Img))
+                                            {
+                                                <img src="@user.Img" alt="@user.Name" class="rounded-circle" width="40" height="40" style="object-fit: cover;" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/assets/images/profile.png" alt="@user.Name" class="rounded-circle" width="40" height="40" style="object-fit: cover;" />
+                                            }
+                                        </td>
+                                        <td>@user.Img</td>
+                                        <td>@user.Description</td>
+                                        <td>@user.Password</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">
+                                                    <i data-feather="edit-2"></i>
+                                                </a>
+                                                <a href="javascript:void(0)" class="btn btn-danger btn-sm">
+                                                    <i data-feather="trash-2"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Reinitialize Feather icons after the table is loaded
+        $(document).ready(function() {
+            feather.replace();
+        });
+    </script>
+} 
