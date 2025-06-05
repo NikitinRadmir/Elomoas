@@ -69,7 +69,7 @@ public class CourseService : ICourseService
         {
             _logger.LogInformation("Attempting to update course {Id}", course.Id);
 
-            // Ensure the course exists
+            // Ensure the course exists and get creation info
             var existingCourse = await _context.Courses.FindAsync(course.Id);
             if (existingCourse == null)
             {
@@ -81,12 +81,8 @@ public class CourseService : ICourseService
             course.CreatedBy = existingCourse.CreatedBy;
             course.CreatedDate = existingCourse.CreatedDate;
 
-            // Detach existing entity to avoid tracking conflicts
-            _context.Entry(existingCourse).State = EntityState.Detached;
-
-            // Attach and mark as modified
-            _context.Courses.Attach(course);
-            _context.Entry(course).State = EntityState.Modified;
+            // Use Update method
+            _context.Courses.Update(course);
 
             // Save changes
             var result = await _context.SaveChangesAsync();
