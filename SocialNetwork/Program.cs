@@ -61,11 +61,7 @@ public class Program
         app.UseGlobalExceptionHandling();
         
         app.UseHttpsRedirection();
-        app.UseStaticFiles(new StaticFileOptions
-        {
-            ServeUnknownFileTypes = true,
-            DefaultContentType = "application/octet-stream"
-        });
+        app.UseStaticFiles();
 
         app.UseRouting();
 
@@ -76,12 +72,12 @@ public class Program
         app.UseUserActivityLogging();
 
         app.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+        app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Feed}/{id?}");
-        app.MapControllerRoute(
-             name: "Admin",
-             pattern: "Admin/{controller=Dashboard}/{action=Dashboard}/{id?}"
-        );
 
         app.MapHub<FriendshipHub>("/friendshipHub");
         app.MapHub<ChatHub>("/chatHub");
