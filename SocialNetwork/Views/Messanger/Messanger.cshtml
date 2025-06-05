@@ -103,15 +103,23 @@
     }
 
     .message-content {
-        max-width: 70%;
+        max-width: 85%;
+        min-width: 120px;
         padding: 10px 15px;
         border-radius: 15px;
         position: relative;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+        display: inline-block;
     }
 
     .message-content p {
         margin: 0;
-        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 
     .message-time {
@@ -145,12 +153,18 @@
     #messagesContainer {
         height: calc(100vh - 300px);
         overflow-y: auto;
+        overflow-x: hidden;
         padding: 20px;
+        width: 100%;
+        max-width: 100%;
     }
 
     .chat-wrapper {
         height: calc(100vh - 100px);
         position: relative;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .chat-body {
@@ -436,8 +450,8 @@
 
         function displayMessage(message, isSent) {
             const messageTime = message.createdDate 
-                ? new Date(message.createdDate).toLocaleTimeString()
-                : new Date().toLocaleTimeString();
+                ? new Date(message.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             const messageHtml = `
                 <div class="message-item ${isSent ? 'outgoing-message' : 'incoming-message'}">
@@ -567,7 +581,7 @@
                     if (chats && Array.isArray(chats)) {
                         chats.forEach(chat => {
                             const lastMessageTime = chat.lastMessageTime 
-                                ? new Date(chat.lastMessageTime).toLocaleTimeString() 
+                                ? new Date(chat.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
                                 : '';
                             
                             const chatHtml = `
