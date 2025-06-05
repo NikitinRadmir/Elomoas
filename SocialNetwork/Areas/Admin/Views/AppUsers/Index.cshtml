@@ -1,4 +1,5 @@
-@model IEnumerable<dynamic>
+@using SocialNetwork.Areas.Admin.Models;
+@model AppUsersViewModel;
 @{
     ViewData["Title"] = "Users Management";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
@@ -7,6 +8,43 @@
 <style>
     .container-fluid {
         padding-top: 70px;
+        padding-left: 0;
+        padding-right: 0;
+        max-width: 1200px;
+        margin: 0;
+    }
+
+    .card {
+        margin: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .card-body {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .table-responsive {
+        margin: 0;
+        width: 100%;
+    }
+
+    #usersTable {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    #usersTable th, #usersTable td {
+        white-space: nowrap;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dataTables_wrapper {
+        width: 100% !important;
+        margin: 0 !important;
     }
 </style>
 
@@ -30,7 +68,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var user in Model)
+                                @foreach (var user in Model.Users)
                                 {
                                     <tr>
                                         <td>@user.Id</td>
@@ -72,9 +110,9 @@
     <script>
         $(document).ready(function() {
             $('#usersTable').DataTable({
-                dom: 'frtip',
-                pageLength: 10,
-                order: [[0, 'desc']]
+                dom: 'ft',
+                pageLength: -1,
+                order: [[0, 'asc']]
             });
         });
     </script>

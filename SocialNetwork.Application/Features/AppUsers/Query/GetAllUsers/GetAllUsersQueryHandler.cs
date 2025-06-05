@@ -71,7 +71,7 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
                 IdentityId = user.IdentityId,
                 Name = user.Name,
                 Email = user.Email,
-                Img = user.Img ?? "/images/user-12.png",
+                Img = user.Img ?? "/images/default-icon.jpg",
                 Description = user.Description
             };
         }
