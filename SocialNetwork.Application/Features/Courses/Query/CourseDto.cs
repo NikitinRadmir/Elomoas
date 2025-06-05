@@ -13,7 +13,7 @@ public class CourseDto
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? Img { get; set; }
-    public int Price { get; set; }
+    public decimal Price { get; set; }
     public ProgramLanguage PL { get; set; }
     public string? Video { get; set; }
     public string? Learn { get; set; }

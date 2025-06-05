@@ -130,7 +130,7 @@
                             </a>
                         </li>
                         <li class="sidebar-list">
-                            <a class="sidebar-link" href="javascript:void(0)">
+                            <a class="sidebar-link" asp-area="Admin" asp-controller="Courses" asp-action="Index">
                                 <i data-feather="book-open"></i>
                                 <h6>Courses</h6>
                             </a>
@@ -204,6 +204,9 @@
     <script src="~/assets/js/theme-customizer/customizer.js"></script>
     <!-- custom script -->
     <script src="~/assets/js/script.js"></script>
+    <!-- jQuery Validation -->
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script>
         // Initialize Feather Icons
         feather.replace();

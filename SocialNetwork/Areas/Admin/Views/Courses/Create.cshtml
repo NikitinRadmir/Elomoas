@@ -1,0 +1,68 @@
+@model SocialNetwork.Areas.Admin.Models.CreateCourseViewModel
+
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create Course</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter course name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter course description"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label">Price</label>
+                            <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PL" class="form-label">Programming Language</label>
+                            <select asp-for="PL" class="form-select" asp-items="@(new SelectList(Model.AvailableLanguages))">
+                                <option value="">Select a language</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Video" class="form-label">Video URL</label>
+                            <input asp-for="Video" class="form-control" placeholder="/images/video4.mp4" />
+                            <small class="form-text text-muted">Leave empty to use default video</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Learn" class="form-label">What You'll Learn</label>
+                            <textarea asp-for="Learn" class="form-control" rows="3" placeholder="Enter what students will learn"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Img" class="form-label">Image URL</label>
+                            <input asp-for="Img" class="form-control" placeholder="/images/v-1.png" />
+                            <small class="form-text text-muted">Leave empty to use default image</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
