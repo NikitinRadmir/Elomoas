@@ -11,7 +11,7 @@ namespace Elomoas.Application.Interfaces.Services
     public interface ICurrentUserService
     {
         ClaimsPrincipal User { get; }
-        string IdentityUserId { get; }
+        string IdentityId { get; }
         int? UserId { get; }
 
         Task<AppUser> GetCurrentAppUserAsync();

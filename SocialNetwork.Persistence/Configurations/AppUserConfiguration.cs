@@ -11,13 +11,19 @@ namespace Elomoas.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.HasOne<IdentityUser>()
-                .WithOne()
-                .HasForeignKey<AppUser>(au => au.IdentityId)
-                .OnDelete(DeleteBehavior.Cascade); 
-
             builder.Property(x => x.Name)
+                .IsRequired()
                 .HasMaxLength(100);
+
+            builder.Property(x => x.ProfileImage)
+                .HasMaxLength(500);
+
+            builder.Property(x => x.IdentityId)
+                .IsRequired();
+
+            builder.HasOne(x => x.IdentityUser)
+                .WithOne()
+                .HasForeignKey<AppUser>(x => x.IdentityId);
 
             builder.Property(x => x.Email)
                 .HasMaxLength(100);

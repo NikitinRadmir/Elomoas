@@ -3,6 +3,7 @@ using System;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Elomoas.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250605002150_AddChatAndMessageEntities")]
+    partial class AddChatAndMessageEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,6 @@ namespace Elomoas.Persistence.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("IdentityId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Img")
@@ -53,16 +55,11 @@ namespace Elomoas.Persistence.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Password")
                         .HasColumnType("text");
-
-                    b.Property<string>("ProfileImage")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
 
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
@@ -1214,13 +1211,10 @@ namespace Elomoas.Persistence.Migrations
 
             modelBuilder.Entity("Elomoas.Domain.Entities.AppUser", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithOne()
                         .HasForeignKey("Elomoas.Domain.Entities.AppUser", "IdentityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IdentityUser");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Elomoas.Domain.Entities.CourseSubscription", b =>

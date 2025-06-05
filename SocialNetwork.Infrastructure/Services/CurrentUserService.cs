@@ -32,7 +32,7 @@ namespace Elomoas.Infrastructure.Services
 
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
-        public string IdentityUserId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        public string IdentityId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         public int? UserId
         {
@@ -41,11 +41,11 @@ namespace Elomoas.Infrastructure.Services
                 if (_cachedUserId.HasValue)
                     return _cachedUserId;
 
-                if (string.IsNullOrEmpty(IdentityUserId))
+                if (string.IsNullOrEmpty(IdentityId))
                     return null;
 
                 var appUser = _context.AppUsers
-                    .FirstOrDefault(u => u.IdentityId == IdentityUserId);
+                    .FirstOrDefault(u => u.IdentityId == IdentityId);
 
                 _cachedUserId = appUser?.Id;
                 return _cachedUserId;

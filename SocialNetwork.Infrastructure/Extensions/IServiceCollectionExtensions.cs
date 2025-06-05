@@ -29,6 +29,7 @@ namespace Elomoas.Infrastructure.Extensions
                 .AddTransient<IEmailService, EmailService>()
                 .AddTransient<IAuthService, AuthService>()
                 .AddTransient<IFriendshipService, FriendshipService>()
+                .AddTransient<IChatService, ChatService>()
                 .AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

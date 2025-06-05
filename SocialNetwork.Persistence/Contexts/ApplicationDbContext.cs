@@ -14,6 +14,8 @@ namespace Elomoas.Persistence.Contexts
         public DbSet<GroupSubscription> GroupSubscriptions { get; set; }
         public DbSet<CourseSubscription> CourseSubscriptions { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
