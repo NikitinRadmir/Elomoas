@@ -17,4 +17,6 @@ public class CourseDto
     public ProgramLanguage PL { get; set; }
     public string? Video { get; set; }
     public string? Learn { get; set; }
+    public bool IsCurrentUserSubscribed { get; set; }
+    public SubscriptionInfoDto? SubscriptionInfo { get; set; }
 }
