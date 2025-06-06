@@ -11,7 +11,7 @@ namespace Elomoas.mvc.Models.Courses
         public bool IsSubscribed { get; set; }
         public int SelectedDuration { get; set; }
         public List<SubscriptionDurationOption> DurationOptions { get; set; }
-        public Elomoas.Application.Features.Courses.Dto.SubscriptionInfoDto SubscriptionInfo { get; set; }
+        public SubscriptionInfo SubscriptionInfo { get; set; }
 
         public CourseDetailsVM()
         {
