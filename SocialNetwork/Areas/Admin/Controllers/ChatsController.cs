@@ -9,7 +9,7 @@ using Elomoas.Application.Features.Messenger.Commands.AddMessage;
 using Elomoas.Application.Features.Messenger.Commands.UpdateMessage;
 using Elomoas.Application.Features.Messenger.Commands.DeleteMessage;
 using SocialNetwork.Areas.Admin.Models;
-using Elomoas.Application.Features.AppUsers.Query.GetAllUsers;
+using Elomoas.Application.Features.AppUsers.Query.GetAllIdentityUsers;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 
@@ -42,7 +42,7 @@ public class ChatsController : Controller
 
     public async Task<IActionResult> Create()
     {
-        ViewBag.Users = await _mediator.Send(new GetAllUsersQuery());
+        ViewBag.Users = await _mediator.Send(new GetAllIdentityUsersQuery());
         return View();
     }
 
@@ -62,7 +62,7 @@ public class ChatsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        ViewBag.Users = await _mediator.Send(new GetAllUsersQuery());
+        ViewBag.Users = await _mediator.Send(new GetAllIdentityUsersQuery());
         return View(viewModel);
     }
 
@@ -81,7 +81,7 @@ public class ChatsController : Controller
             User2Id = chat.User2Id
         };
 
-        ViewBag.Users = await _mediator.Send(new GetAllUsersQuery());
+        ViewBag.Users = await _mediator.Send(new GetAllIdentityUsersQuery());
         return View(viewModel);
     }
 
@@ -102,7 +102,7 @@ public class ChatsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        ViewBag.Users = await _mediator.Send(new GetAllUsersQuery());
+        ViewBag.Users = await _mediator.Send(new GetAllIdentityUsersQuery());
         return View(viewModel);
     }
 
