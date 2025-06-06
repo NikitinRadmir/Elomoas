@@ -15,14 +15,14 @@ namespace SocialNetwork.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize]
-public class SubscriptionsController : Controller
+public class CourseSubscriptionsController : Controller
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<SubscriptionsController> _logger;
+    private readonly ILogger<CourseSubscriptionsController> _logger;
 
-    public SubscriptionsController(
+    public CourseSubscriptionsController(
         IMediator mediator,
-        ILogger<SubscriptionsController> logger)
+        ILogger<CourseSubscriptionsController> logger)
     {
         _mediator = mediator;
         _logger = logger;
