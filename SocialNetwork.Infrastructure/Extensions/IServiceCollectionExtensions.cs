@@ -35,6 +35,7 @@ namespace Elomoas.Infrastructure.Extensions
                 .AddTransient<ICourseService, CourseService>()
                 .AddTransient<ICourseSubscriptionService, CourseSubscriptionService>()
                 .AddTransient<IGroupService, GroupService>()
+                .AddTransient<ISettingsService, SettingsService>()
                 .AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
