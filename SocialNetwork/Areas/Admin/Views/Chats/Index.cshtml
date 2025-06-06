@@ -1,0 +1,53 @@
+@model SocialNetwork.Areas.Admin.Models.ChatsViewModel
+
+@{
+    ViewData["Title"] = "Chats";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Chats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group mb-3">
+                        <a asp-action="Create" class="btn btn-primary">Create New</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User 1</th>
+                                    <th>User 2</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var chat in Model.Chats)
+                                {
+                                    <tr>
+                                        <td>@chat.Id</td>
+                                        <td>@chat.User1Id</td>
+                                        <td>@chat.User2Id</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Edit" asp-route-id="@chat.Id" class="btn btn-primary btn-sm">Edit</a>
+                                                <a asp-action="Details" asp-route-id="@chat.Id" class="btn btn-info btn-sm">Details</a>
+                                                <form asp-action="Delete" asp-route-id="@chat.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this chat?');">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

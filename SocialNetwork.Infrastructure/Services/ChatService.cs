@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Elomoas.Infrastructure.Services
 {
     public class ChatService : IChatService
@@ -19,6 +20,141 @@ namespace Elomoas.Infrastructure.Services
         {
             _context = context;
             _logger = logger;
+        }
+
+        public async Task<IEnumerable<Chat>> GetAllChatsAsync()
+        {
+            try
+            {
+                return await _context.Chats
+                    .Include(c => c.Messages)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving all chats");
+                throw;
+            }
+        }
+
+        public async Task<Chat> GetChatByIdAsync(int chatId)
+        {
+            try
+            {
+                var chat = await _context.Chats
+                    .Include(c => c.Messages)
+                    .FirstOrDefaultAsync(c => c.Id == chatId);
+
+                if (chat == null)
+                    throw new InvalidOperationException($"Chat with ID {chatId} not found");
+
+                return chat;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting chat by ID {ChatId}", chatId);
+                throw;
+            }
+        }
+
+        public async Task<Chat> CreateChatAsync(Chat chat)
+        {
+            try
+            {
+                _context.Chats.Add(chat);
+                await _context.SaveChangesAsync();
+                return chat;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating chat");
+                throw;
+            }
+        }
+
+        public async Task<Chat> UpdateChatAsync(Chat chat)
+        {
+            try
+            {
+                var existingChat = await _context.Chats.FindAsync(chat.Id);
+                if (existingChat == null)
+                {
+                    throw new KeyNotFoundException($"Chat with ID {chat.Id} not found");
+                }
+
+                existingChat.User1Id = chat.User1Id;
+                existingChat.User2Id = chat.User2Id;
+
+                await _context.SaveChangesAsync();
+                return existingChat;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating chat with id {Id}", chat.Id);
+                throw;
+            }
+        }
+
+        public async Task DeleteChatAsync(int id)
+        {
+            try
+            {
+                var chat = await _context.Chats.FindAsync(id);
+                if (chat == null)
+                {
+                    throw new KeyNotFoundException($"Chat with ID {id} not found");
+                }
+
+                _context.Chats.Remove(chat);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting chat with id {Id}", id);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId)
+        {
+            try
+            {
+                return await _context.Messages
+                    .Where(m => m.ChatId == chatId)
+                    .OrderBy(m => m.CreatedDate)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting messages for chat {ChatId}", chatId);
+                throw;
+            }
+        }
+
+        public async Task<Message> SendMessageAsync(string senderId, string recipientId, string content)
+        {
+            try
+            {
+                var chat = await GetOrCreateChatAsync(senderId, recipientId);
+
+                var message = new Message
+                {
+                    ChatId = chat.Id,
+                    SenderId = senderId,
+                    Content = content,
+                    IsRead = false
+                };
+
+                await _context.Messages.AddAsync(message);
+                await _context.SaveChangesAsync();
+
+                return message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending message from {SenderId} to {RecipientId}", senderId, recipientId);
+                throw;
+            }
         }
 
         public async Task<Chat> GetOrCreateChatAsync(string user1Id, string user2Id)
@@ -97,48 +233,6 @@ namespace Elomoas.Infrastructure.Services
             }
         }
 
-        public async Task<Message> SendMessageAsync(string senderId, string recipientId, string content)
-        {
-            try
-            {
-                var chat = await GetOrCreateChatAsync(senderId, recipientId);
-
-                var message = new Message
-                {
-                    ChatId = chat.Id,
-                    SenderId = senderId,
-                    Content = content,
-                    IsRead = false
-                };
-
-                await _context.Messages.AddAsync(message);
-                await _context.SaveChangesAsync();
-
-                return message;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending message from {SenderId} to {RecipientId}", senderId, recipientId);
-                throw;
-            }
-        }
-
-        public async Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId)
-        {
-            try
-            {
-                return await _context.Messages
-                    .Where(m => m.ChatId == chatId)
-                    .OrderBy(m => m.CreatedDate)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting messages for chat {ChatId}", chatId);
-                throw;
-            }
-        }
-
         public async Task MarkMessagesAsReadAsync(int chatId, string userId)
         {
             try
@@ -174,26 +268,6 @@ namespace Elomoas.Infrastructure.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting unread messages count for user {UserId}", userId);
-                throw;
-            }
-        }
-
-        public async Task<Chat> GetChatByIdAsync(int chatId)
-        {
-            try
-            {
-                var chat = await _context.Chats
-                    .Include(c => c.Messages)
-                    .FirstOrDefaultAsync(c => c.Id == chatId);
-
-                if (chat == null)
-                    throw new InvalidOperationException($"Chat with ID {chatId} not found");
-
-                return chat;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting chat by ID {ChatId}", chatId);
                 throw;
             }
         }

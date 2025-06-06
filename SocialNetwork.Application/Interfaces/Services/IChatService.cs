@@ -14,5 +14,9 @@ namespace Elomoas.Application.Interfaces.Services
         Task<int> GetUnreadMessagesCountAsync(string userId);
         Task<Chat> GetChatByIdAsync(int chatId);
         Task<Message> AddMessageAsync(int chatId, string senderId, string content);
+        Task<IEnumerable<Chat>> GetAllChatsAsync();
+        Task<Chat> CreateChatAsync(Chat chat);
+        Task<Chat> UpdateChatAsync(Chat chat);
+        Task DeleteChatAsync(int id);
     }
-} 
+}

@@ -1,0 +1,45 @@
+@model SocialNetwork.Areas.Admin.Models.UpdateChatViewModel
+
+@{
+    ViewData["Title"] = "Edit Chat";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Edit Chat</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <div class="form-group">
+                            <label asp-for="User1Id" class="control-label">User 1</label>
+                            <select asp-for="User1Id" class="form-control" asp-items="@(new SelectList(ViewBag.Users, "Id", "Email"))">
+                                <option value="">Select User 1</option>
+                            </select>
+                            <span asp-validation-for="User1Id" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="User2Id" class="control-label">User 2</label>
+                            <select asp-for="User2Id" class="form-control" asp-items="@(new SelectList(ViewBag.Users, "Id", "Email"))">
+                                <option value="">Select User 2</option>
+                            </select>
+                            <span asp-validation-for="User2Id" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
