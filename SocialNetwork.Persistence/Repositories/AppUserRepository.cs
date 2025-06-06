@@ -28,6 +28,13 @@ namespace Elomoas.Persistence.Repositories
             return await _repository.Entities.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<AppUser> GetUserByIdWithIdentityAsync(int id)
+        {
+            return await _repository.Entities
+                .Include(x => x.IdentityUser)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<AppUser> GetCurrentUserAsync()
         {
             return await _repository.Entities.FirstOrDefaultAsync();

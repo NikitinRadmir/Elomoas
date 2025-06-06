@@ -6,6 +6,37 @@
     var user = Model.User;
 }
 
+<style>
+    /* User Profile Image Styles */
+    .avatar {
+        display: inline-block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+
+    .avatar img {
+        width: 120px !important;
+        height: 120px !important;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+    }
+
+    .avatar:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Override any existing image styles */
+    .avatar img.w-100,
+    .avatar img.float-right {
+        width: 120px !important;
+        height: 120px !important;
+    }
+</style>
 
 <div class="middle-sidebar-bottom">
     <div class="middle-sidebar-left">
@@ -14,8 +45,8 @@
                 <div class="clearfix"></div>
                 <div class="row">
                     <div class="col-lg-12 pl-xl-5 pt-xl-5">
-                        <figure class="avatar ml-0 mb-4 position-relative w100 z-index-1">
-                            <img src="@(user?.Img ?? "/images/user-12.png")" alt="image" class="float-right p-1 bg-white rounded-circle w-100">
+                        <figure class="avatar ml-0 mb-4 position-relative z-index-1">
+                            <img src="@(user?.Img ?? "/images/user-12.png")" alt="image" class="bg-white rounded-circle">
                         </figure>
                     </div>
                     <div class="col-xl-4 col-lg-6 pl-xl-5 pb-xl-5 pb-3">
@@ -277,8 +308,72 @@
 @section Scripts {
     <script src="~/js/friends.js"></script>
     <script>
-        $(document).ready(function() {
+        $(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            // Обработчик отписки от курса
+            $('.unsubscribe-course-btn').click(function(e) {
+                e.preventDefault();
+                const button = $(this);
+                const courseId = button.data('course-id');
+
+                if (confirm('Are you sure you want to unsubscribe from this course?')) {
+                    button.prop('disabled', true);
+                    
+                    $.post('/Course/Unsubscribe', { courseId: courseId })
+                        .done(function(response) {
+                            if (response.success) {
+                                // Удаляем карточку курса
+                                button.closest('.col-xl-4').fadeOut(300, function() {
+                                    $(this).remove();
+                                    // Если это был последний курс, показываем сообщение
+                                    if ($('#navtabs1 .col-xl-4').length === 0) {
+                                        $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any courses yet.</p></div>');
+                                    }
+                                });
+                            } else {
+                                alert('Failed to unsubscribe from the course. Please try again.');
+                                button.prop('disabled', false);
+                            }
+                        })
+                        .fail(function() {
+                            alert('An error occurred while unsubscribing from the course. Please try again.');
+                            button.prop('disabled', false);
+                        });
+                }
+            });
+
+            // Обработчик отписки от группы
+            $('.unsubscribe-btn').click(function(e) {
+                e.preventDefault();
+                const button = $(this);
+                const groupId = button.data('group-id');
+
+                if (confirm('Are you sure you want to unsubscribe from this group?')) {
+                    button.prop('disabled', true);
+                    
+                    $.post('/Groups/Unsubscribe', { groupId: groupId })
+                        .done(function(response) {
+                            if (response.success) {
+                                // Удаляем карточку группы
+                                button.closest('.col-xl-4').fadeOut(300, function() {
+                                    $(this).remove();
+                                    // Если это была последняя группа, показываем сообщение
+                                    if ($('#navtabs2 .col-xl-4').length === 0) {
+                                        $('#navtabs2 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any groups yet.</p></div>');
+                                    }
+                                });
+                            } else {
+                                alert('Failed to unsubscribe from the group. Please try again.');
+                                button.prop('disabled', false);
+                            }
+                        })
+                        .fail(function() {
+                            alert('An error occurred while unsubscribing from the group. Please try again.');
+                            button.prop('disabled', false);
+                        });
+                }
+            });
         });
     </script>
 }

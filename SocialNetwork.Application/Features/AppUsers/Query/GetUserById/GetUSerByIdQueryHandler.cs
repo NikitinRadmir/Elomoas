@@ -7,6 +7,7 @@ using Elomoas.Application.Features.AppUsers.Query.GetAllUsers;
 using MediatR;
 using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Application.Features.AppUsers.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elomoas.Application.Features.AppUsers.Query.GetUserById
 {
@@ -21,7 +22,7 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetUserById
 
         public async Task<AppUserDto> Handle(GetUserByIdQuery query, CancellationToken ct)
         {
-            var data = await _userRepository.GetUserByIdAsync(query.id);
+            var data = await _userRepository.GetUserByIdWithIdentityAsync(query.id);
             
             if (data == null)
                 return null;
