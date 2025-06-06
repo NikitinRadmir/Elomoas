@@ -9,8 +9,6 @@ public class Friendship : BaseAuditableEntity
 {
     public string UserId { get; set; }         
     public string FriendId { get; set; }       
-
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
-
     public FriendshipStatus Status { get; set; } = FriendshipStatus.Pending;
 } 

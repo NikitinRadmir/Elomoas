@@ -209,5 +209,92 @@ namespace Elomoas.Infrastructure.Services
                 return Enumerable.Empty<AppUserDto>();
             }
         }
+
+        // Admin area CRUD operations
+        public async Task<IEnumerable<Friendship>> GetAllFriendshipsAsync()
+        {
+            try
+            {
+                return await _context.Friendships.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving all friendships");
+                throw;
+            }
+        }
+
+        public async Task<Friendship> GetFriendshipByIdAsync(int id)
+        {
+            try
+            {
+                return await _context.Friendships
+                    .FirstOrDefaultAsync(f => f.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving friendship with id {Id}", id);
+                throw;
+            }
+        }
+
+        public async Task<Friendship> CreateFriendshipAsync(Friendship friendship)
+        {
+            try
+            {
+                friendship.AddedAt = DateTime.UtcNow;
+                _context.Friendships.Add(friendship);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Created new friendship with id {Id}", friendship.Id);
+                return friendship;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating friendship");
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateFriendshipAsync(Friendship friendship)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to update friendship {Id}", friendship.Id);
+                _context.Friendships.Update(friendship);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Successfully updated friendship {Id}", friendship.Id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating friendship {Id}", friendship.Id);
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteFriendshipAsync(int id)
+        {
+            try
+            {
+                var friendship = await _context.Friendships.FindAsync(id);
+                if (friendship == null)
+                {
+                    _logger.LogWarning("Friendship {Id} not found for deletion", id);
+                    return false;
+                }
+
+                _context.Friendships.Remove(friendship);
+                var result = await _context.SaveChangesAsync();
+                
+                _logger.LogInformation("Deletion affected {Count} records for friendship {Id}", result, id);
+                
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting friendship {Id}", id);
+                throw;
+            }
+        }
     }
 } 
