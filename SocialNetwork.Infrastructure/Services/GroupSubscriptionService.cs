@@ -1,75 +1,81 @@
-using Elomoas.Application.Interfaces.Services;
+﻿using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Elomoas.Infrastructure.Services;
 
-public class CourseSubscriptionService : ICourseSubscriptionService
+public class GroupSubscriptionService : IGroupSubscriptionService
 {
     private readonly ApplicationDbContext _context;
-    private readonly ILogger<CourseSubscriptionService> _logger;
+    private readonly ILogger<GroupSubscriptionService> _logger;
 
-    public CourseSubscriptionService(
+    public GroupSubscriptionService(
         ApplicationDbContext context,
-        ILogger<CourseSubscriptionService> logger)
+        ILogger<GroupSubscriptionService> logger)
     {
         _context = context;
         _logger = logger;
     }
 
-    public async Task<IEnumerable<CourseSubscription>> GetAllCourseSubscriptionsAsync()
-    {
-        
-            try
-            {
-                return await _context.CourseSubscriptions.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving all courses");
-                throw;
-            }
-        
-    }
-
-    public async Task<CourseSubscription?> GetSubscriptionByIdAsync(int id)
+    public async Task<IEnumerable<GroupSubscription>> GetAllGroupSubscriptionsAsync()
     {
         try
         {
-            return await _context.CourseSubscriptions.FindAsync(id);
+            return await _context.GroupSubscriptions
+                .Include(s => s.User)
+                .Include(s => s.Group)
+                .ToListAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving course with id {Id}", id);
+            _logger.LogError(ex, "Error retrieving all group subscriptions");
             throw;
         }
     }
 
-    public async Task<CourseSubscription> CreateSubscriptionAsync(CourseSubscription subscription)
+    public async Task<GroupSubscription?> GetSubscriptionByIdAsync(int id)
+    {
+        try
+        {
+            return await _context.GroupSubscriptions.FindAsync(id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving group subscription with id {Id}", id);
+            throw;
+        }
+    }
+
+    public async Task<GroupSubscription> CreateSubscriptionAsync(GroupSubscription subscription)
     {
         try
         {
             subscription.CreatedDate = DateTime.UtcNow;
-            _context.CourseSubscriptions.Add(subscription);
+            _context.GroupSubscriptions.Add(subscription);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Created new course with id {Id}", subscription.Id);
+            _logger.LogInformation("Created new group subscription with id {Id}", subscription.Id);
             return subscription;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating course");
+            _logger.LogError(ex, "Error creating group subscription");
             throw;
         }
     }
 
-    public async Task<bool> UpdateSubscriptionAsync(CourseSubscription subscription)
+    public async Task<bool> UpdateSubscriptionAsync(GroupSubscription subscription)
     {
         try
         {
             _logger.LogInformation("Attempting to update subscription {Id}", subscription.Id);
-            _context.CourseSubscriptions.Update(subscription);
+            _context.GroupSubscriptions.Update(subscription);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Successfully updated subscription {Id}", subscription.Id);
             return true;
@@ -85,14 +91,14 @@ public class CourseSubscriptionService : ICourseSubscriptionService
     {
         try
         {
-            var subscription = await _context.CourseSubscriptions.FindAsync(id);
+            var subscription = await _context.GroupSubscriptions.FindAsync(id);
             if (subscription == null)
             {
-                _logger.LogWarning($"Subscription {id} not found for deletion", id);
+                _logger.LogWarning("Group subscription {Id} not found for deletion", id);
                 return false;
             }
 
-            _context.CourseSubscriptions.Remove(subscription);
+            _context.GroupSubscriptions.Remove(subscription);
             var result = await _context.SaveChangesAsync();
             
             _logger.LogInformation("Deletion affected {Count} records for subscription {Id}", result, id);
@@ -105,4 +111,4 @@ public class CourseSubscriptionService : ICourseSubscriptionService
             throw;
         }
     }
-} 
+}
