@@ -13,6 +13,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Elomoas.Domain.Entities;
+using Elomoas.Application.Features.Courses.Dto;
+using Elomoas.Application.Features.Courses.Query;
 
 namespace Elomoas.Controllers
 {
@@ -20,28 +22,18 @@ namespace Elomoas.Controllers
     {
         private readonly ILogger<CourseController> _logger;
         private readonly IMediator _mediator;
-        private readonly IAppUserRepository _userRepository;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ICourseSubscriptionRepository _subscriptionRepository;
 
         public CourseController(
             ILogger<CourseController> logger,
-            IMediator mediator,
-            IAppUserRepository userRepository,
-            UserManager<IdentityUser> userManager,
-            ICourseSubscriptionRepository subscriptionRepository)
+            IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
-            _userRepository = userRepository;
-            _userManager = userManager;
-            _subscriptionRepository = subscriptionRepository;
         }
 
         public async Task<IActionResult> Course(int id)
         {
             var course = await _mediator.Send(new GetCourseByIdQuery(id));
-            
             if (course == null)
                 return NotFound();
 
@@ -53,31 +45,20 @@ namespace Elomoas.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                var identityUser = await _userManager.GetUserAsync(User);
-                var appUser = await _userRepository.GetAllUsersAsync();
-                var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == identityUser.Id);
-                
-                if (currentAppUser != null)
+                var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (identityId != null)
                 {
-                    viewModel.IsSubscribed = await _subscriptionRepository.IsSubscribed(currentAppUser.Id, id);
-
-                    if (viewModel.IsSubscribed)
+                    var appUserId = await _mediator.Send(new GetCurrentAppUserIdQuery(identityId));
+                    if (appUserId.HasValue)
                     {
-                        var subscription = await _subscriptionRepository.GetSubscription(currentAppUser.Id, id);
-
-                        if (subscription != null)
+                        viewModel.IsSubscribed = await _mediator.Send(new IsSubscribedToCourseQuery(appUserId.Value, id));
+                        if (viewModel.IsSubscribed)
                         {
-                            viewModel.SubscriptionInfo = new SubscriptionInfo
-                            {
-                                DurationInMonths = subscription.DurationInMonths,
-                                SubscriptionPrice = subscription.SubscriptionPrice,
-                                ExpirationDate = subscription.ExpirationDate
-                            };
+                            viewModel.SubscriptionInfo = await _mediator.Send(new GetCourseSubscriptionInfoQuery(appUserId.Value, id));
                         }
                     }
                 }
             }
-
             return View(viewModel);
         }
 
@@ -87,22 +68,14 @@ namespace Elomoas.Controllers
         {
             try
             {
-                var identityUser = await _userManager.GetUserAsync(User);
-                if (identityUser == null)
-                {
+                var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (identityId == null)
                     return Json(new { success = false });
-                }
-
-                var appUser = await _userRepository.GetAllUsersAsync();
-                var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == identityUser.Id);
-                if (currentAppUser == null)
-                {
+                var appUserId = await _mediator.Send(new GetCurrentAppUserIdQuery(identityId));
+                if (!appUserId.HasValue)
                     return Json(new { success = false });
-                }
-
-                var command = new SubscribeToCourseCommand(currentAppUser.Id, courseId, durationInMonths);
+                var command = new SubscribeToCourseCommand(appUserId.Value, courseId, durationInMonths);
                 var result = await _mediator.Send(command);
-
                 return Json(new { success = result });
             }
             catch (Exception ex)
@@ -118,22 +91,14 @@ namespace Elomoas.Controllers
         {
             try
             {
-                var identityUser = await _userManager.GetUserAsync(User);
-                if (identityUser == null)
-                {
+                var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (identityId == null)
                     return Json(new { success = false });
-                }
-
-                var appUser = await _userRepository.GetAllUsersAsync();
-                var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == identityUser.Id);
-                if (currentAppUser == null)
-                {
+                var appUserId = await _mediator.Send(new GetCurrentAppUserIdQuery(identityId));
+                if (!appUserId.HasValue)
                     return Json(new { success = false });
-                }
-
-                var command = new UnsubscribeFromCourseCommand(currentAppUser.Id, courseId);
+                var command = new UnsubscribeFromCourseCommand(appUserId.Value, courseId);
                 var result = await _mediator.Send(command);
-
                 return Json(new { success = result });
             }
             catch (Exception ex)
@@ -149,25 +114,7 @@ namespace Elomoas.Controllers
             var course = await _mediator.Send(new GetCourseByIdQuery(courseId));
             if (course == null)
                 return Json(new { success = false });
-
-            var option = new SubscriptionDurationOption { Months = durationInMonths };
-            switch (durationInMonths)
-            {
-                case 3:
-                    option.DiscountPercent = 10;
-                    break;
-                case 6:
-                    option.DiscountPercent = 20;
-                    break;
-                case 12:
-                    option.DiscountPercent = 30;
-                    break;
-                default:
-                    option.DiscountPercent = 0;
-                    break;
-            }
-
-            var price = option.CalculatePrice(course.Price);
+            var price = await _mediator.Send(new CalculateCoursePriceQuery(course.Price, durationInMonths));
             return Json(new { success = true, price = price });
         }
 
