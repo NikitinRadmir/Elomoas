@@ -9,9 +9,8 @@ using Elomoas.Application.Features.Friends.Commands.UpdateFriendship;
 using Elomoas.Application.Features.Friends.Commands.DeleteFriendship;
 using Elomoas.Application.Features.Friends.Queries.GetAllFriendships;
 using Elomoas.Application.Features.Friends.Queries.GetFriendshipById;
-using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
+using Elomoas.Application.Features.AppUsers.Query.GetAllIdentityUsers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
 
@@ -23,16 +22,13 @@ public class FriendshipsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly ILogger<FriendshipsController> _logger;
-    private readonly UserManager<IdentityUser> _userManager;
 
     public FriendshipsController(
         IMediator mediator,
-        ILogger<FriendshipsController> logger,
-        UserManager<IdentityUser> userManager)
+        ILogger<FriendshipsController> logger)
     {
         _mediator = mediator;
         _logger = logger;
-        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
@@ -47,7 +43,7 @@ public class FriendshipsController : Controller
 
     public async Task<IActionResult> Create()
     {
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(new CreateFriendshipViewModel());
     }
@@ -70,7 +66,7 @@ public class FriendshipsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(model);
     }
@@ -83,7 +79,7 @@ public class FriendshipsController : Controller
             return NotFound();
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
 
         var viewModel = new UpdateFriendshipViewModel
@@ -119,7 +115,7 @@ public class FriendshipsController : Controller
             }
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(model);
     }
