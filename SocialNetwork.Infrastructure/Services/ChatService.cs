@@ -297,5 +297,70 @@ namespace Elomoas.Infrastructure.Services
                 throw;
             }
         }
+
+        public async Task<Message> GetMessageByIdAsync(int messageId)
+        {
+            try
+            {
+                var message = await _context.Messages
+                    .Include(m => m.Chat)
+                    .FirstOrDefaultAsync(m => m.Id == messageId);
+
+                if (message == null)
+                {
+                    throw new KeyNotFoundException($"Message with ID {messageId} not found");
+                }
+
+                return message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting message by id {MessageId}", messageId);
+                throw;
+            }
+        }
+
+        public async Task<Message> UpdateMessageAsync(Message message)
+        {
+            try
+            {
+                var existingMessage = await _context.Messages.FindAsync(message.Id);
+                if (existingMessage == null)
+                {
+                    throw new KeyNotFoundException($"Message with ID {message.Id} not found");
+                }
+
+                existingMessage.Content = message.Content;
+                existingMessage.IsRead = message.IsRead;
+
+                await _context.SaveChangesAsync();
+                return existingMessage;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating message with id {MessageId}", message.Id);
+                throw;
+            }
+        }
+
+        public async Task DeleteMessageAsync(int messageId)
+        {
+            try
+            {
+                var message = await _context.Messages.FindAsync(messageId);
+                if (message == null)
+                {
+                    throw new KeyNotFoundException($"Message with ID {messageId} not found");
+                }
+
+                _context.Messages.Remove(message);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting message with id {MessageId}", messageId);
+                throw;
+            }
+        }
     }
 } 

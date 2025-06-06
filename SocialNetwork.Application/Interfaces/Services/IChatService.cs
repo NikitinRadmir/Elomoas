@@ -18,5 +18,8 @@ namespace Elomoas.Application.Interfaces.Services
         Task<Chat> CreateChatAsync(Chat chat);
         Task<Chat> UpdateChatAsync(Chat chat);
         Task DeleteChatAsync(int id);
+        Task<Message> GetMessageByIdAsync(int messageId);
+        Task<Message> UpdateMessageAsync(Message message);
+        Task DeleteMessageAsync(int messageId);
     }
 }
