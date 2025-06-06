@@ -3,7 +3,7 @@ using Elomoas.Domain.Entities;
 using MediatR;
 using System.Collections.Generic;
 
-namespace Elomoas.Application.Features.Groups.Queries;
+namespace Elomoas.Application.Features.Groups.Query;
 
 public record GetAllGroupSubscriptionsQuery : IRequest<IEnumerable<GroupSubscription>>;
 
@@ -20,4 +20,4 @@ public class GetAllGroupSubscriptionsQueryHandler : IRequestHandler<GetAllGroupS
     {
         return await _subscriptionService.GetAllGroupSubscriptionsAsync();
     }
-} 
+}

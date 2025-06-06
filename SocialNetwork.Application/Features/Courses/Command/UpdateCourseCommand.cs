@@ -1,7 +1,7 @@
 using MediatR;
 using Elomoas.Domain.Entities.Enum;
 
-namespace Elomoas.Application.Features.Courses.Commands;
+namespace Elomoas.Application.Features.Courses.Command;
 
 public record UpdateCourseCommand : IRequest<bool>
 {
@@ -13,4 +13,4 @@ public record UpdateCourseCommand : IRequest<bool>
     public ProgramLanguage PL { get; init; }
     public string? Video { get; init; }
     public string? Learn { get; init; }
-} 
+}

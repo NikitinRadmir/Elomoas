@@ -1,5 +1,5 @@
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Commands.UnsubscribeFromGroup;
+namespace Elomoas.Application.Features.Groups.Command.UnsubscribeFromGroup;
 
-public record UnsubscribeFromGroupCommand(int GroupId) : IRequest<bool>; 
+public record UnsubscribeFromGroupCommand(int GroupId) : IRequest<bool>;

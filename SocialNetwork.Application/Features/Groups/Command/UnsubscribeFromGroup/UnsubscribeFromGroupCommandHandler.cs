@@ -2,7 +2,7 @@ using MediatR;
 using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Application.Interfaces.Services;
 
-namespace Elomoas.Application.Features.Groups.Commands.UnsubscribeFromGroup;
+namespace Elomoas.Application.Features.Groups.Command.UnsubscribeFromGroup;
 
 public class UnsubscribeFromGroupCommandHandler : IRequestHandler<UnsubscribeFromGroupCommand, bool>
 {
@@ -26,4 +26,4 @@ public class UnsubscribeFromGroupCommandHandler : IRequestHandler<UnsubscribeFro
         await _subscriptionRepository.Unsubscribe(userId.Value, request.GroupId);
         return true;
     }
-} 
+}

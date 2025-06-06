@@ -2,7 +2,7 @@ using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Queries;
+namespace Elomoas.Application.Features.Groups.Query;
 
 public record GetGroupSubscriptionByIdQuery(int Id) : IRequest<GroupSubscription>;
 
@@ -19,4 +19,4 @@ public class GetGroupSubscriptionByIdQueryHandler : IRequestHandler<GetGroupSubs
     {
         return await _subscriptionService.GetSubscriptionByIdAsync(request.Id);
     }
-} 
+}

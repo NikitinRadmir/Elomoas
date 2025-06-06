@@ -2,7 +2,7 @@ using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Commands;
+namespace Elomoas.Application.Features.Groups.Command;
 
 public record CreateGroupSubscriptionCommand : IRequest<GroupSubscription>
 {
@@ -29,4 +29,4 @@ public class CreateGroupSubscriptionCommandHandler : IRequestHandler<CreateGroup
 
         return await _subscriptionService.CreateSubscriptionAsync(subscription);
     }
-} 
+}
