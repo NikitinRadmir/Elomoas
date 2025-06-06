@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Services\NewFile1.txt" />
     <None Remove="Settings\NewFile1.txt" />
   </ItemGroup>
@@ -14,13 +18,14 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.12.1" />
     <PackageReference Include="MediatR" Version="12.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.16" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SocialNetwork.Application\Elomoas.Application.csproj" />
+    <ProjectReference Include="..\SocialNetwork.Domain\Elomoas.Domain.csproj" />
     <ProjectReference Include="..\SocialNetwork.Persistence\Elomoas.Persistence.csproj" />
   </ItemGroup>
 

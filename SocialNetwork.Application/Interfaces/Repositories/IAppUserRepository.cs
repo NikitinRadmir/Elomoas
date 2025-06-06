@@ -9,7 +9,9 @@ namespace Elomoas.Application.Interfaces.Repositories
 {
     public interface IAppUserRepository
     {
+        Task<AppUser> GetByIdentityIdAsync(string identityId);
         Task<IEnumerable<AppUser>> GetAllUsersAsync();
+        Task<AppUser> UpdateAsync(AppUser user);
         Task<AppUser> GetUserByIdAsync(int id);
         Task<AppUser> GetUserByIdWithIdentityAsync(int id);
         Task<AppUser> GetCurrentUserAsync();
