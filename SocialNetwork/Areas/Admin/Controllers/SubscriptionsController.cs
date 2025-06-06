@@ -144,6 +144,9 @@ public class SubscriptionsController : Controller
     {
         try
         {
+            // Validate expiration date
+            var expirationDate = DateTime.UtcNow.AddMonths(model.DurationInMonths);
+
             var command = new UpdateSubscriptionCommand
             {
                 Id = model.Id,
@@ -151,7 +154,7 @@ public class SubscriptionsController : Controller
                 CourseId = model.CourseId,
                 SubscriptionPrice = model.SubscriptionPrice,
                 DurationInMonths = model.DurationInMonths,
-                ExpirationDate = model.ExpirationDate
+                ExpirationDate = expirationDate
             };
 
             var success = await _mediator.Send(command);
@@ -167,7 +170,7 @@ public class SubscriptionsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating subscription {Id}", model.Id);
-            TempData["ErrorMessage"] = $"Failed to update subscription: {ex.Message}";
+            TempData["ErrorMessage"] = "Failed to update subscription. Please try again.";
         }
 
         var users = await _mediator.Send(new GetAllAllUsersQuery());

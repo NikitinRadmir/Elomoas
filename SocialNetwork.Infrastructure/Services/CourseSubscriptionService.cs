@@ -68,33 +68,32 @@ public class CourseSubscriptionService : ICourseSubscriptionService
     {
         try
         {
-            _logger.LogInformation("Attempting to update course {Id}", subscription.Id);
+            _logger.LogInformation("Attempting to update subscription {Id}", subscription.Id);
 
-            // Ensure the course exists and get creation info
-            var existingCourse = await _context.CourseSubscriptions.FindAsync(subscription.Id);
-            if (existingCourse == null)
+            var existingSubscription = await _context.CourseSubscriptions
+                .FirstOrDefaultAsync(cs => cs.Id == subscription.Id);
+
+            if (existingSubscription == null)
             {
-                _logger.LogWarning("Course {Id} not found for update", subscription.Id);
+                _logger.LogWarning("Subscription {Id} not found", subscription.Id);
                 return false;
             }
 
-            // Preserve creation info
-            subscription.CreatedBy = existingCourse.CreatedBy;
-            subscription.CreatedDate = existingCourse.CreatedDate;
+            // Update properties
+            existingSubscription.UserId = subscription.UserId;
+            existingSubscription.CourseId = subscription.CourseId;
+            existingSubscription.SubscriptionPrice = subscription.SubscriptionPrice;
+            existingSubscription.DurationInMonths = subscription.DurationInMonths;
+            existingSubscription.ExpirationDate = subscription.ExpirationDate;
 
-            // Use Update method
-            _context.CourseSubscriptions.Update(subscription);
-
-            // Save changes
-            var result = await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Update affected {Count} records for course {Id}", result, subscription.Id);
-
-            return result > 0;
+            await _context.SaveChangesAsync();
+            
+            _logger.LogInformation("Successfully updated subscription {Id}", subscription.Id);
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating course {subscription.Id}", subscription.Id);
+            _logger.LogError(ex, "Error updating subscription {Id}", subscription.Id);
             throw;
         }
     }
