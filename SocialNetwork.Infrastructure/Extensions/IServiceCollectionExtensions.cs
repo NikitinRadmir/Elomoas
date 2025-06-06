@@ -32,6 +32,7 @@ namespace Elomoas.Infrastructure.Extensions
                 .AddTransient<IFriendshipService, FriendshipService>()
                 .AddTransient<IChatService, ChatService>()
                 .AddTransient<ICourseService, CourseService>()
+                .AddTransient<ICourseSubscriptionService, CourseSubscriptionService>()
                 .AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
