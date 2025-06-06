@@ -1,90 +1,173 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using MediatR;
-using Elomoas.Application.Features.Settings.Queries;
-using Elomoas.Application.Features.Settings.Commands;
-using Elomoas.Application.Features.Settings.Dto;
-using Elomoas.mvc.Models.Settings;
 using Elomoas.Models;
+using Microsoft.AspNetCore.Identity;
+using Elomoas.mvc.Models.Settings;
+using Microsoft.AspNetCore.Authorization;
+using Elomoas.Domain.Entities;
+using Elomoas.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Controllers
 {
     [Authorize]
     public class SettingsController : Controller
     {
-        private readonly ILogger<SettingsController> _logger;
-        private readonly IMediator _mediator;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IAuthService _authService;
 
-        public SettingsController(ILogger<SettingsController> logger, IMediator mediator, IWebHostEnvironment webHostEnvironment)
+        public SettingsController(
+            UserManager<IdentityUser> userManager, 
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment,
+            IAuthService authService)
         {
-            _logger = logger;
-            _mediator = mediator;
+            _userManager = userManager;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _authService = authService;
+        }
+
+        public IActionResult Settings()
+        {
+            return View();
         }
 
         public async Task<IActionResult> AccountInfo()
         {
-            var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (identityId == null)
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
                 return RedirectToAction("Login", "Auth");
 
-            var dto = await _mediator.Send(new GetAccountInfoQuery(identityId));
-            if (dto == null)
+            var appUser = await _context.AppUsers
+                .FirstOrDefaultAsync(u => u.IdentityId == identityUser.Id);
+
+            if (appUser == null)
                 return RedirectToAction("Login", "Auth");
 
-            var model = new AccountInfoVM
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                Description = dto.Description,
-                Img = dto.Img
-            };
+            var model = new AccountInfoVM();
+
+            var nameParts = appUser.Name?.Split(' ') ?? new string[0];
+            model.FirstName = nameParts.Length > 0 ? nameParts[0] : "";
+            model.LastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
+
+            model.Email = appUser.Email;
+            model.Description = appUser.Description;
+            model.Img = appUser.Img;
+
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AccountInfo(AccountInfoVM model)
         {
-            var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (identityId == null)
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
                 return RedirectToAction("Login", "Auth");
 
-            var dto = new AccountInfoDto
+            if (!string.IsNullOrEmpty(model.Email) && identityUser.Email != model.Email)
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Description = model.Description,
-                Img = model.Img
-            };
-
-            string? base64Image = null;
-            if (model.ImageFile != null && model.ImageFile.Length > 0)
-            {
-                using (var ms = new MemoryStream())
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
                 {
-                    await model.ImageFile.CopyToAsync(ms);
-                    base64Image = Convert.ToBase64String(ms.ToArray());
+                    ModelState.AddModelError("Email", "This Email is already exist");
+                    return View(model);
+                }
+
+                identityUser.Email = model.Email;
+                identityUser.UserName = model.Email;
+                var identityResult = await _userManager.UpdateAsync(identityUser);
+
+                if (!identityResult.Succeeded)
+                {
+                    foreach (var error in identityResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model);
                 }
             }
 
-            var result = await _mediator.Send(new UpdateAccountInfoCommand(identityId, dto, base64Image, _webHostEnvironment.WebRootPath));
-            if (!result)
-            {
-                ModelState.AddModelError(string.Empty, "Ошибка при обновлении данных пользователя");
-                return View(model);
-            }
-            TempData["SuccessMessage"] = "The data is successfully updated";
-            return RedirectToAction(nameof(Settings));
-        }
+            var appUser = await _context.AppUsers
+                .FirstOrDefaultAsync(u => u.IdentityId == identityUser.Id);
 
-        public IActionResult Settings()
-        {
-            return View();
+            if (appUser != null)
+            {
+                if (!string.IsNullOrEmpty(model.FirstName) || !string.IsNullOrEmpty(model.LastName))
+                {
+                    var fullName = string.IsNullOrWhiteSpace(model.LastName)
+                        ? model.FirstName
+                        : $"{model.FirstName} {model.LastName}";
+                    appUser.Name = fullName?.Trim();
+                }
+
+                if (!string.IsNullOrEmpty(model.Email))
+                {
+                    appUser.Email = model.Email;
+                }
+
+                if (model.Description != null) 
+                {
+                    appUser.Description = model.Description;
+                }
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
+                    if (!allowedTypes.Contains(model.ImageFile.ContentType.ToLower()))
+                    {
+                        ModelState.AddModelError("ImageFile", "Only images in JPEG and PNG formats are allowed");
+                        return View(model);
+                    }
+
+                    if (model.ImageFile.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ImageFile", "The file size should not exceed 5MB");
+                        return View(model);
+                    }
+
+                    try
+                    {
+                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        var uniqueFileName = $"{Guid.NewGuid()}_{model.ImageFile.FileName}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        if (!string.IsNullOrEmpty(appUser.Img) && 
+                            !appUser.Img.EndsWith("/images/default-icon.jpg") && 
+                            !appUser.Img.EndsWith("default-icon.jpg"))
+                        {
+                            var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, appUser.Img.TrimStart('/'));
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        appUser.Img = $"/uploads/profiles/{uniqueFileName}";
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("ImageFile", "Error when loading the image. Please try again.");
+                        return View(model);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "The data is successfully updated";
+            }
+
+            return RedirectToAction(nameof(Settings));
         }
 
         public IActionResult Password()
@@ -98,18 +181,38 @@ namespace Elomoas.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var identityId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (identityId == null)
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
                 return RedirectToAction("Login", "Auth");
 
-            var result = await _mediator.Send(new ChangePasswordCommand(identityId, model.CurrentPassword, model.NewPassword));
-            if (!result)
+            var result = await _userManager.ChangePasswordAsync(identityUser, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, "Ошибка при смене пароля");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
                 return View(model);
             }
+
+            var appUser = await _context.AppUsers
+                .FirstOrDefaultAsync(u => u.IdentityId == identityUser.Id);
+
+            if (appUser != null)
+            {
+                appUser.Password = model.NewPassword;
+                await _context.SaveChangesAsync();
+            }
+
             TempData["SuccessMessage"] = "The password is successfully changed";
             return RedirectToAction(nameof(Settings));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.LogoutAsync();
+            return RedirectToAction("Login", "Auth");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
