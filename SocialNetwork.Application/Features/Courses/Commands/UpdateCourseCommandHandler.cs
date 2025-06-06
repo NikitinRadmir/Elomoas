@@ -3,7 +3,7 @@ using Elomoas.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Elomoas.Application.Features.Courses.Command;
+namespace Elomoas.Application.Features.Courses.Commands;
 
 public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, bool>
 {
@@ -42,7 +42,7 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             existingCourse.UpdatedDate = DateTime.UtcNow;
 
             var success = await _courseService.UpdateCourseAsync(existingCourse);
-
+            
             if (success)
             {
                 _logger.LogInformation("Successfully updated course {Id}", request.Id);
@@ -51,7 +51,7 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             {
                 _logger.LogWarning("Failed to update course {Id}", request.Id);
             }
-
+            
             return success;
         }
         catch (Exception ex)
@@ -60,4 +60,4 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             throw;
         }
     }
-}
+} 

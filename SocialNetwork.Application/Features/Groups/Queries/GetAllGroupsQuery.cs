@@ -2,7 +2,7 @@ using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Query;
+namespace Elomoas.Application.Features.Groups.Queries;
 
 public record GetAllGroupsQuery : IRequest<IEnumerable<Group>>;
 
@@ -19,4 +19,4 @@ public class GetAllGroupsQueryHandler : IRequestHandler<GetAllGroupsQuery, IEnum
     {
         return await _groupService.GetAllGroupsAsync();
     }
-}
+} 

@@ -1,5 +1,5 @@
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Command.SubscribeToGroup;
+namespace Elomoas.Application.Features.Groups.Commands.SubscribeToGroup;
 
-public record SubscribeToGroupCommand(int GroupId) : IRequest<bool>;
+public record SubscribeToGroupCommand(int GroupId) : IRequest<bool>; 

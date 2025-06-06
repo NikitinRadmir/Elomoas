@@ -2,7 +2,7 @@ using MediatR;
 using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Application.Interfaces.Services;
 
-namespace Elomoas.Application.Features.Groups.Command.SubscribeToGroup;
+namespace Elomoas.Application.Features.Groups.Commands.SubscribeToGroup;
 
 public class SubscribeToGroupCommandHandler : IRequestHandler<SubscribeToGroupCommand, bool>
 {
@@ -26,4 +26,4 @@ public class SubscribeToGroupCommandHandler : IRequestHandler<SubscribeToGroupCo
         await _subscriptionRepository.Subscribe(userId.Value, request.GroupId);
         return true;
     }
-}
+} 

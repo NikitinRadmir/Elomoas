@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SocialNetwork.Areas.Admin.Models;
+using Elomoas.Application.Features.Groups.Commands;
+using Elomoas.Application.Features.Groups.Queries;
 using SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups;
 using Elomoas.Domain.Entities;
-using Elomoas.Application.Features.Groups.Command;
-using Elomoas.Application.Features.Groups.Query;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 

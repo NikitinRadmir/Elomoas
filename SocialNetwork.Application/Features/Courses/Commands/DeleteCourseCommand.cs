@@ -1,7 +1,7 @@
 using Elomoas.Application.Interfaces.Services;
 using MediatR;
 
-namespace Elomoas.Application.Features.Courses.Command;
+namespace Elomoas.Application.Features.Courses.Commands;
 
 public record DeleteCourseCommand(int Id) : IRequest<bool>;
 
@@ -19,4 +19,4 @@ public class DeleteCourseCommandHandler : IRequestHandler<DeleteCourseCommand, b
         await _courseService.DeleteCourseAsync(request.Id);
         return true;
     }
-}
+} 

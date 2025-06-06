@@ -3,14 +3,14 @@ using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enum;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Command;
+namespace Elomoas.Application.Features.Groups.Commands;
 
 public record CreateGroupCommand : IRequest<Group>
 {
     public string Name { get; init; }
     public string Description { get; init; }
-    public string Img { get; init; }
-    public ProgramLanguage PL { get; init; }
+    public string Img{ get; init; }
+    public ProgramLanguage PL   { get; init; }
 }
 
 public class CreateGroupCommandHandler : IRequestHandler<CreateGroupCommand, Group>
@@ -33,4 +33,4 @@ public class CreateGroupCommandHandler : IRequestHandler<CreateGroupCommand, Gro
 
         return await _groupService.CreateGroupAsync(group);
     }
-}
+} 

@@ -1,7 +1,7 @@
 using Elomoas.Application.Interfaces.Services;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Command;
+namespace Elomoas.Application.Features.Groups.Commands;
 
 public record DeleteGroupSubscriptionCommand(int Id) : IRequest<bool>;
 
@@ -18,4 +18,4 @@ public class DeleteGroupSubscriptionCommandHandler : IRequestHandler<DeleteGroup
     {
         return await _subscriptionService.DeleteSubscriptionAsync(request.Id);
     }
-}
+} 

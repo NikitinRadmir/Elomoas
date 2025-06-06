@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SocialNetwork.Areas.Admin.Models;
+using Elomoas.Application.Features.Courses.Commands;
 using Elomoas.Application.Features.Courses.Query.GetAllCourses;
 using Elomoas.Application.Features.Courses.Query.GetCourseById;
 using Elomoas.Domain.Entities.Enum;
-using Elomoas.Application.Features.Courses.Command;
 
 namespace SocialNetwork.Areas.Admin.Controllers
 {

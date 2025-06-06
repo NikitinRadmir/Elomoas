@@ -8,8 +8,8 @@ using Elomoas.Application.Features.Messenger.Commands.DeleteChat;
 using Elomoas.Application.Features.Messenger.Commands.AddMessage;
 using Elomoas.Application.Features.Messenger.Commands.UpdateMessage;
 using Elomoas.Application.Features.Messenger.Commands.DeleteMessage;
+using Elomoas.Application.Features.AppUsers.Queries.GetAllUsers;
 using SocialNetwork.Areas.Admin.Models;
-using Elomoas.Application.Features.AppUsers.Query.GetAllUsers;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 

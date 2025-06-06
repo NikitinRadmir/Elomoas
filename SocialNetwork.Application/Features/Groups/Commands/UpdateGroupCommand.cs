@@ -1,11 +1,11 @@
-using Elomoas.Application.Features.Courses.Command;
+using Elomoas.Application.Features.Courses.Commands;
 using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enum;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Elomoas.Application.Features.Groups.Command;
+namespace Elomoas.Application.Features.Groups.Commands;
 
 public record UpdateGroupCommand : IRequest<bool>
 {
@@ -44,7 +44,7 @@ public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, boo
             existingCourse.Name = request.Name ?? existingCourse.Name;
             existingCourse.Description = request.Description;
             existingCourse.Img = request.Img;
-
+  
             existingCourse.PL = request.PL;
 
 
@@ -67,4 +67,4 @@ public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, boo
             throw;
         }
     }
-}
+} 

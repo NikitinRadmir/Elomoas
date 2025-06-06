@@ -2,7 +2,7 @@ using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using MediatR;
 
-namespace Elomoas.Application.Features.Groups.Command;
+namespace Elomoas.Application.Features.Groups.Commands;
 
 public record UpdateGroupSubscriptionCommand : IRequest<bool>
 {
@@ -31,4 +31,4 @@ public class UpdateGroupSubscriptionCommandHandler : IRequestHandler<UpdateGroup
 
         return await _subscriptionService.UpdateSubscriptionAsync(subscription);
     }
-}
+} 

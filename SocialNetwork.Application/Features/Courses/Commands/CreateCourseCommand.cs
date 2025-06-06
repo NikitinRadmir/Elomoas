@@ -3,7 +3,7 @@ using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enum;
 using Elomoas.Application.Interfaces.Services;
 
-namespace Elomoas.Application.Features.Courses.Command;
+namespace Elomoas.Application.Features.Courses.Commands;
 
 public record CreateCourseCommand : IRequest<Course>
 {
@@ -40,4 +40,4 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
 
         return await _courseService.CreateCourseAsync(course);
     }
-}
+} 

@@ -5,9 +5,8 @@ using Elomoas.Models;
 using Elomoas.Application.Features.Groups.Query.GetAll;
 using Elomoas.mvc.Models.Groups;
 using Microsoft.AspNetCore.Authorization;
-using Elomoas.Application.Features.Groups.Command.SubscribeToGroup;
-using Elomoas.Application.Features.Groups.Command.UnsubscribeFromGroup;
-
+using Elomoas.Application.Features.Groups.Commands.SubscribeToGroup;
+using Elomoas.Application.Features.Groups.Commands.UnsubscribeFromGroup;
 
 namespace Elomoas.Controllers
 {
