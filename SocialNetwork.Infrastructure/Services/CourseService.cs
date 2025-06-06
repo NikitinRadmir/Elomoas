@@ -50,7 +50,6 @@ public class CourseService : ICourseService
     {
         try
         {
-            course.CreatedDate = DateTime.UtcNow;
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             _logger.LogInformation("Created new course with id {Id}", course.Id);
