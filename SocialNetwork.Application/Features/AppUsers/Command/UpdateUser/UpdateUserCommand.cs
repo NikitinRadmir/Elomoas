@@ -9,4 +9,5 @@ public class UpdateUserCommand : IRequest<bool>
     public string Email { get; set; }
     public string Description { get; set; }
     public string Img { get; set; }
+    public string NewPassword { get; set; }
 } 

@@ -20,5 +20,9 @@ namespace SocialNetwork.Areas.Admin.Models
 
         [Display(Name = "Image URL")]
         public string? Img { get; set; }
+
+        [Display(Name = "New Password")]
+        public string? NewPassword { get; set; }
+
     }
 } 

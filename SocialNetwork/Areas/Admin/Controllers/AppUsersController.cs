@@ -83,20 +83,32 @@ namespace SocialNetwork.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var command = new UpdateUserCommand
+                try
                 {
-                    Id = model.Id,
-                    Name = model.Name,
-                    Email = model.Email,
-                    Description = model.Description,
-                    Img = model.Img
-                };
+                    var command = new UpdateUserCommand
+                    {
+                        Id = model.Id,
+                        Name = model.Name,
+                        Email = model.Email,
+                        Description = model.Description,
+                        Img = model.Img,
+                        NewPassword = model.NewPassword
+                    };
 
-                var result = await _mediator.Send(command);
-                if (result)
-                    return RedirectToAction(nameof(Index));
-                
-                ModelState.AddModelError("", "Unable to update user. Email might already be in use.");
+                    var result = await _mediator.Send(command);
+                    if (result)
+                    {
+                        TempData["SuccessMessage"] = "User updated successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    ModelState.AddModelError("", "Unable to update user. Please check if the password meets the requirements or if the email is already in use.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error updating user {UserId}", model.Id);
+                    ModelState.AddModelError("", "An error occurred while updating the user. Please try again.");
+                }
             }
             return View(model);
         }

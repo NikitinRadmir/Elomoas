@@ -504,30 +504,30 @@
 
                         // Обновляем UI без перезагрузки
                         const subscriptionHtml = `
-                            <div class="bg-white p-3 rounded-lg mb-3">
-                                <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
-                                <div class="subscription-info">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="font-xssss fw-600 text-grey-600">Duration:</span>
+                        <div class="bg-white p-3 rounded-lg mb-3">
+                            <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                            <div class="subscription-info">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="font-xssss fw-600 text-grey-600">Duration:</span>
                                         <span class="font-xssss fw-700 text-primary">${duration} month${duration > 1 ? 's' : ''}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="font-xssss fw-600 text-grey-600">Price:</span>
                                         <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
                                         <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
                                     </div>
-                                </div>
                             </div>
-                            <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
-
+                        </div>
+                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
+                    
                         $('.subscription-container').html(subscriptionHtml);
                         
                         // Переинициализируем обработчик отписки
                         initUnsubscribeHandler();
-                    } else {
+                } else {
                         throw new Error('Failed to subscribe');
                     }
                 } catch (error) {
@@ -583,9 +583,9 @@
 
                                 // Update UI to show subscription options
                                 const subscriptionOptionsHtml = `
-                                    <div class="subscription-options bg-white p-3 rounded-lg">
-                                        <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
-                                        <div class="duration-options">
+                        <div class="subscription-options bg-white p-3 rounded-lg">
+                            <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
+                            <div class="duration-options">
                                             @foreach (var option in Model.DurationOptions)
                                             {
                                                 <div class="duration-option mb-2" data-months="@option.Months" data-base-price="@Model.Course.Price">
@@ -603,12 +603,12 @@
                                                     </div>
                                                 </div>
                                             }
-                                        </div>
-                                        <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="${courseId}" data-duration="1">
-                                            SUBSCRIBE
-                                        </button>
-                                    </div>`;
-
+                            </div>
+                            <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="${courseId}" data-duration="1">
+                                SUBSCRIBE
+                            </button>
+                        </div>`;
+                    
                                 $('.subscription-container').html(subscriptionOptionsHtml);
                                 
                                 // Reinitialize all handlers
@@ -648,7 +648,7 @@
                     
                     // Обновляем кнопку подписки
                     $('#subscribeButton').data('duration', months);
-
+                    
                     // Анимация цены
                     const priceElement = $(this).find('.subscription-price');
                     priceElement.addClass('highlight');
@@ -675,15 +675,15 @@
                     
                     try {
                         isProcessing = true;
-                        button.prop('disabled', true);
+                    button.prop('disabled', true);
                         button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
-
+                    
                         const response = await $.ajax({
                             url: '/Course/Subscribe',
                             method: 'POST',
                             data: {
-                                courseId: courseId,
-                                durationInMonths: duration
+                        courseId: courseId,
+                        durationInMonths: duration
                             }
                         });
 
