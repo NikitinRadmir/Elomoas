@@ -93,9 +93,7 @@
                             <div class="user-wrap">
                                 <div class="user-img">
                                     @{
-                                        var currentUser = User.Identity.IsAuthenticated 
-                                            ? await Mediator.Send(new GetCurrentUserQuery()) 
-                                            : null;
+                                       var currentUser = await Mediator.Send(new GetCurrentUserQuery());
                                         var userImage = currentUser?.Img ?? "/assets/images/profile.png";
                                     }
                                     <img src="@userImage" alt="user">

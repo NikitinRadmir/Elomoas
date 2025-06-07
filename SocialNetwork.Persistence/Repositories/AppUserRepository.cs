@@ -27,7 +27,9 @@ namespace Elomoas.Persistence.Repositories
 
         public async Task<IEnumerable<AppUser>> GetAllUsersAsync()
         {
-            return await _context.AppUsers.ToListAsync();
+            return await _context.AppUsers
+                .OrderBy(u => u.Id)
+                .ToListAsync();
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)

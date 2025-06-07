@@ -9,11 +9,24 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2>AppUsers Managing</h2>
-                    <a asp-area="Admin" asp-controller="AppUsers" asp-action="Create" class="btn btn-primary">
-                        <i data-feather="user-plus" class="me-2"></i>Add New User
-                    </a>
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>AppUsers Managing</h2>
+                        <a asp-area="Admin" asp-controller="AppUsers" asp-action="Create" class="btn btn-primary">
+                            <i data-feather="user-plus" class="me-2"></i>Add New User
+                        </a>
+                    </div>
+                    <div class="search-wrapper">
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary">
+                                <i data-feather="search" class="text-white"></i>
+                            </span>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search by name, email, or description..." />
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -31,14 +44,14 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="usersTableBody">
                                 @foreach (var user in Model.Users)
                                 {
-                                    <tr>
-                                        <td>@user.Id</td>
-                                        <td>@user.IdentityId</td>
-                                        <td>@user.Name</td>
-                                        <td>@user.Email</td>
+                                    <tr class="user-row">
+                                        <td class="user-id">@user.Id</td>
+                                        <td class="user-identity-id">@user.IdentityId</td>
+                                        <td class="user-name">@user.Name</td>
+                                        <td class="user-email">@user.Email</td>
                                         <td>
                                             @if (!string.IsNullOrEmpty(user.Img))
                                             {
@@ -49,9 +62,9 @@
                                                 <img src="~/assets/images/profile.png" alt="@user.Name" class="rounded-circle" width="40" height="40" style="object-fit: cover;" />
                                             }
                                         </td>
-                                        <td>@user.Img</td>
-                                        <td>@user.Description</td>
-                                        <td>@user.Password</td>
+                                        <td class="user-img">@user.Img</td>
+                                        <td class="user-description">@user.Description</td>
+                                        <td class="user-password">@user.Password</td>
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary btn-sm">
@@ -101,6 +114,26 @@
     <script>
         $(document).ready(function() {
             feather.replace();
+
+            // Real-time search functionality
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#usersTableBody tr").filter(function() {
+                    var id = $(this).find(".user-id").text().toLowerCase();
+                    var identityId = $(this).find(".user-identity-id").text().toLowerCase();
+                    var name = $(this).find(".user-name").text().toLowerCase();
+                    var email = $(this).find(".user-email").text().toLowerCase();
+                    var description = $(this).find(".user-description").text().toLowerCase();
+                    
+                    var matches = id.includes(value) ||
+                        identityId.includes(value) ||
+                        name.includes(value) ||
+                        email.includes(value) ||
+                        description.includes(value);
+                        
+                    $(this).toggle(matches);
+                });
+            });
         });
 
         function confirmDelete(id, name) {
@@ -110,4 +143,37 @@
             modal.show();
         }
     </script>
+
+    <style>
+        .search-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-wrapper .input-group-text {
+            border: none;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .search-wrapper .form-control {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            border-left: none;
+        }
+
+        .search-wrapper .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        .search-wrapper .input-group-text i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+        }
+    </style>
 } 
