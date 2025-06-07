@@ -5,71 +5,103 @@
 }
 
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Group Subscriptions</h1>
-    <p class="mb-4">Manage group subscriptions here.</p>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Group Subscriptions List</h6>
-                <a asp-action="Create" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Add New
-                </a>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>Group Subscriptions Managing</h4>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i data-feather="plus"></i> Add New Subscription
+                        </a>
+                    </div>
+                    <div class="search-wrapper">
+                        <div class="input-group" style="max-width: 600px; margin: 0 auto;">
+                            <span class="input-group-text bg-primary">
+                                <i data-feather="search" class="text-white"></i>
+                            </span>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search by ID, user, or group..." />
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User ID</th>
+                                    <th>User Email</th>
+                                    <th>Group ID</th>
+                                    <th>Group Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subscriptionsTableBody">
+                                @foreach (var subscription in Model.Subscriptions)
+                                {
+                                    <tr class="subscription-row">
+                                        <td class="subscription-id">@subscription.Id</td>
+                                        <td class="subscription-user-id">@subscription.UserId</td>
+                                        <td class="subscription-user">@(subscription.User?.Email ?? "-")</td>
+                                        <td class="subscription-group-id">@subscription.GroupId</td>
+                                        <td class="subscription-group">@(subscription.Group?.Name ?? "-")</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Edit" asp-route-id="@subscription.Id" class="btn btn-primary">
+                                                    <i data-feather="edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-danger" onclick="confirmDelete(@subscription.Id)">
+                                                    <i data-feather="trash-2"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>UserId</th>
-                            <th>User</th>
-                            <th>GroupId</th>
-                            <th>Group</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var subscription in Model.Subscriptions)
-                        {
-                            <tr>
-                                <td>@subscription.Id</td>
-                                <td>@subscription.UserId</td>
-                                <td>@(subscription.User?.Email ?? "-")</td>
-                                <td>@subscription.GroupId</td>
-                                <td>@(subscription.Group?.Name ?? "-")</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a asp-action="Edit" asp-route-id="@subscription.Id" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form asp-action="Delete" asp-route-id="@subscription.Id" method="post" class="d-inline" 
-                                              onsubmit="return confirm('Are you sure you want to delete this subscription?');">
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this subscription?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" id="subscriptionId" name="id" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
         </div>
     </div>
@@ -77,8 +109,33 @@
 
 @section Scripts {
     <script>
+        function confirmDelete(id) {
+            $('#subscriptionId').val(id);
+            $('#deleteModal').modal('show');
+        }
+
+        // Search functionality
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#subscriptionsTableBody tr").filter(function() {
+                    var id = $(this).find(".subscription-id").text().toLowerCase();
+                    var userId = $(this).find(".subscription-user-id").text().toLowerCase();
+                    var user = $(this).find(".subscription-user").text().toLowerCase();
+                    var groupId = $(this).find(".subscription-group-id").text().toLowerCase();
+                    var group = $(this).find(".subscription-group").text().toLowerCase();
+                    var createdDate = $(this).find(".subscription-created-date").text().toLowerCase();
+                    
+                    var matches = id.includes(value) ||
+                                userId.includes(value) ||
+                                user.includes(value) ||
+                                groupId.includes(value) ||
+                                group.includes(value) ||
+                                createdDate.includes(value);
+                                
+                    $(this).toggle(matches);
+                });
+            });
         });
     </script>
 } 

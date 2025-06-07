@@ -1,6 +1,7 @@
 using MediatR;
 using Elomoas.Application.Features.Groups.Query.GetAll;
 using Elomoas.Application.Interfaces.Repositories;
+using System.Linq;
 
 namespace SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups
 {
@@ -17,15 +18,17 @@ namespace SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups
         {
             var groups = await _groupRepository.GetAllAsync();
             
-            return groups.Select(group => new GetAllDto
-            {
-                Id = group.Id,
-                Name = group.Name,
-                Description = group.Description,
-                Img = group.Img ?? "/images/default-icon.jpg",
-                PL = group.PL,
-                IsCurrentUserSubscribed = false // В админке это поле не используется
-            });
+            return groups
+                .OrderBy(g => g.Id)
+                .Select(group => new GetAllDto
+                {
+                    Id = group.Id,
+                    Name = group.Name,
+                    Description = group.Description,
+                    Img = group.Img ?? "/images/default-icon.jpg",
+                    PL = group.PL,
+                    IsCurrentUserSubscribed = false // В админке это поле не используется
+                });
         }
     }
 } 
