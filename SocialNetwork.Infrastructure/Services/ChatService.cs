@@ -142,7 +142,8 @@ namespace Elomoas.Infrastructure.Services
                     ChatId = chat.Id,
                     SenderId = senderId,
                     Content = content,
-                    IsRead = false
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
                 };
 
                 await _context.Messages.AddAsync(message);
@@ -283,7 +284,8 @@ namespace Elomoas.Infrastructure.Services
                     ChatId = chatId,
                     SenderId = senderId,
                     Content = content,
-                    IsRead = false
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
                 };
 
                 await _context.Messages.AddAsync(message);
