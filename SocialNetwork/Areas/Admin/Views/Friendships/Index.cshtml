@@ -4,74 +4,86 @@
 }
 
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Friendships Management</h1>
-    <p class="mb-4">Manage user friendships in the system</p>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>Friendships Managing</h4>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i data-feather="plus"></i> Add New Friendship
+                        </a>
+                    </div>
+                    <div class="search-wrapper">
+                        <div class="input-group" style="max-width: 600px; margin: 0 auto;">
+                            <span class="input-group-text bg-primary">
+                                <i class="fas fa-search text-white"></i>
+                            </span>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search by ID, user, friend or status..." />
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    }
-
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Friendships List</h6>
-                <a asp-action="Create" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Add New
-                </a>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Friend</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var friendship in Model.Friendships)
-                        {
-                            <tr>
-                                <td>@friendship.Id</td>
-                                <td>@friendship.UserId</td>
-                                <td>@friendship.FriendId</td>
-                                <td>@friendship.Status</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a asp-action="Edit" asp-route-id="@friendship.Id" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form asp-action="Delete" asp-route-id="@friendship.Id" method="post" class="d-inline">
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this friendship?');">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Friend</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var friendship in Model.Friendships)
+                                {
+                                    <tr class="friendship-row">
+                                        <td class="friendship-id">@friendship.Id</td>
+                                        <td class="friendship-user">@friendship.UserId</td>
+                                        <td class="friendship-friend">@friendship.FriendId</td>
+                                        <td class="friendship-status">@friendship.Status</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Edit" asp-route-id="@friendship.Id" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form asp-action="Delete" asp-route-id="@friendship.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this friendship?');">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -79,8 +91,22 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('#dataTable').DataTable();
+        $(document).ready(function() {
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".friendship-row").filter(function() {
+                    var id = $(this).find(".friendship-id").text().toLowerCase();
+                    var user = $(this).find(".friendship-user").text().toLowerCase();
+                    var friend = $(this).find(".friendship-friend").text().toLowerCase();
+                    var status = $(this).find(".friendship-status").text().toLowerCase();
+                    $(this).toggle(
+                        id.indexOf(value) > -1 || 
+                        user.indexOf(value) > -1 || 
+                        friend.indexOf(value) > -1 || 
+                        status.indexOf(value) > -1
+                    );
+                });
+            });
         });
     </script>
 } 

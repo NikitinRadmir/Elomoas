@@ -9,11 +9,22 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Chats</h5>
+                    <h2>Chats Managing</h2>
                 </div>
                 <div class="card-body">
-                    <div class="btn-group mb-3">
-                        <a asp-action="Create" class="btn btn-primary">Create New</a>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="input-group" style="max-width: 600px;">
+                            <span class="input-group-text bg-primary">
+                                <i class="fas fa-search text-white"></i>
+                            </span>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search by ID or users..." />
+                        </div>
+                        <div class="btn-group">
+                            <a asp-action="Create" class="btn btn-primary">Create New</a>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -28,10 +39,10 @@
                             <tbody>
                                 @foreach (var chat in Model.Chats)
                                 {
-                                    <tr>
-                                        <td>@chat.Id</td>
-                                        <td>@chat.User1Id</td>
-                                        <td>@chat.User2Id</td>
+                                    <tr class="chat-row">
+                                        <td class="chat-id">@chat.Id</td>
+                                        <td class="chat-user1">@chat.User1Id</td>
+                                        <td class="chat-user2">@chat.User2Id</td>
                                         <td>
                                             <div class="btn-group">
                                                 <a asp-action="Edit" asp-route-id="@chat.Id" class="btn btn-primary btn-sm">Edit</a>
@@ -50,4 +61,24 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".chat-row").filter(function() {
+                    var id = $(this).find(".chat-id").text().toLowerCase();
+                    var user1 = $(this).find(".chat-user1").text().toLowerCase();
+                    var user2 = $(this).find(".chat-user2").text().toLowerCase();
+                    $(this).toggle(
+                        id.indexOf(value) > -1 || 
+                        user1.indexOf(value) > -1 || 
+                        user2.indexOf(value) > -1
+                    );
+                });
+            });
+        });
+    </script>
+} 

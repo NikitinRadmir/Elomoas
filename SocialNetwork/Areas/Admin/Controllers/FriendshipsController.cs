@@ -24,16 +24,13 @@ public class FriendshipsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly ILogger<FriendshipsController> _logger;
-    private readonly UserManager<IdentityUser> _userManager;
 
     public FriendshipsController(
         IMediator mediator,
-        ILogger<FriendshipsController> logger,
-        UserManager<IdentityUser> userManager)
+        ILogger<FriendshipsController> logger)
     {
         _mediator = mediator;
         _logger = logger;
-        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()

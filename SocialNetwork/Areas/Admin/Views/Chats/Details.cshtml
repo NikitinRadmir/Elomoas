@@ -9,7 +9,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Chat Details</h5>
+                    <h2>Chat Details Managing</h2>
                 </div>
                 <div class="card-body">
                     <dl class="row">
@@ -21,11 +21,21 @@
 
                         <dt class="col-sm-2">User 2</dt>
                         <dd class="col-sm-10">@Model.User2Id</dd>
-
                     </dl>
 
                     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-                        <h6>Messages</h6>
+                        <div class="d-flex align-items-center gap-3">
+                            <h6 class="mb-0">Messages</h6>
+                            <div class="input-group" style="width: 300px;">
+                                <span class="input-group-text bg-primary">
+                                    <i class="fas fa-search text-white"></i>
+                                </span>
+                                <input type="text" 
+                                       id="searchInput" 
+                                       class="form-control" 
+                                       placeholder="Search messages..." />
+                            </div>
+                        </div>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMessageModal">
                             Add Message
                         </button>
@@ -44,12 +54,11 @@
                             <tbody>
                                 @foreach (var message in Model.Messages.OrderByDescending(m => m.Id))
                                 {
-                                    <tr>
-                                        <td>@message.Id</td>
-                                        <td>@message.SenderId</td>
-                                        <td>@message.Content</td>
-
-                                        <td>@message.IsRead</td>
+                                    <tr class="message-row">
+                                        <td class="message-id">@message.Id</td>
+                                        <td class="message-sender">@message.SenderId</td>
+                                        <td class="message-content">@message.Content</td>
+                                        <td class="message-read">@message.IsRead</td>
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary btn-sm" 
@@ -157,6 +166,24 @@
             document.getElementById('editMessageId').value = messageId;
             document.getElementById('editMessageContent').value = messageContent;
             document.getElementById('editMessageIsRead').checked = messageIsRead;
+        });
+
+        $(document).ready(function() {
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".message-row").filter(function() {
+                    var id = $(this).find(".message-id").text().toLowerCase();
+                    var sender = $(this).find(".message-sender").text().toLowerCase();
+                    var content = $(this).find(".message-content").text().toLowerCase();
+                    var isRead = $(this).find(".message-read").text().toLowerCase();
+                    $(this).toggle(
+                        id.indexOf(value) > -1 || 
+                        sender.indexOf(value) > -1 || 
+                        content.indexOf(value) > -1 || 
+                        isRead.indexOf(value) > -1
+                    );
+                });
+            });
         });
     </script>
 } 
