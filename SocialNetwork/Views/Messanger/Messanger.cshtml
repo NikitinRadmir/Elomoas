@@ -325,6 +325,46 @@
         padding: 5px 15px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
+
+    .search-form {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .search-form i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+        font-size: 14px;
+    }
+
+    .search-form input {
+        padding-left: 40px;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .search-form input:focus {
+        background-color: #fff;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .search-form input::placeholder {
+        color: #999;
+    }
+
+    .no-chats-found {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-style: italic;
+        display: none;
+    }
 </style>
 
 <div class="middle-sidebar-bottom">
@@ -334,7 +374,10 @@
                 <div class="d-flex justify-content-between align-items-center mt-0 pl-3 pt-3">
                     <div class="search-form flex-grow-1 mr-2">
                         <i class="ti-search font-xs"></i>
-                        <input type="text" class="form-control text-grey-500 mb-0 bg-greylight border-0" placeholder="Search here.">
+                        <input type="text" 
+                               class="form-control text-grey-500 mb-0 bg-greylight border-0" 
+                               placeholder="Search for name or last message"
+                               autocomplete="off">
                     </div>
                     <button class="btn btn-primary rounded-circle" onclick="showFriendsModal()">
                         <i class="ti-plus"></i>
@@ -343,6 +386,9 @@
                 <div class="section full mt-2 mb-2 pl-3">
                     <ul class="list-group list-group-flush">
                     </ul>
+                    <div class="no-chats-found">
+                        Чаты не найдены
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6 col-xl-8 col-md-6 pl-0 d-none d-lg-block d-md-block">
@@ -421,6 +467,7 @@
         let currentFriendId = null;
         let currentUserId = null;
         let connection = null;
+        let allChats = []; // Храним все чаты
 
         $(document).ready(function() {
             // Инициализация SignalR
@@ -467,6 +514,12 @@
                 searchTimeout = setTimeout(() => {
                     filterFriends(searchText);
                 }, 300);
+            });
+
+            // Добавляем обработчик поиска чатов
+            $('.search-form input').on('input', function() {
+                const searchText = $(this).val().toLowerCase();
+                filterChats(searchText);
             });
         });
 
@@ -774,47 +827,72 @@
         function updateChatsList() {
             $.get('/Messanger/GetUserChats')
                 .done(function(chats) {
-                    const chatList = $('.list-group');
-                    chatList.empty();
-
-                    if (chats && Array.isArray(chats)) {
-                        chats.forEach(chat => {
-                            const lastMessageTime = chat.lastMessageTime 
-                                ? new Date(chat.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-                                : '';
-                            
-                            const unreadBadge = chat.unreadCount > 0 && chat.chatId !== currentChatId
-                                ? `<div class="badge badge-primary badge-pill">${chat.unreadCount}</div>` 
-                                : '';
-
-                            const chatHtml = `
-                                <li class="list-group-item chat-item ${chat.chatId === currentChatId ? 'active' : ''}" 
-                                    onclick="startChat('${chat.userId}', '${chat.userName}', '${chat.userImage || '/images/default-icon.jpg'}', '${chat.userEmail}', false)">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar mr-3">
-                                            <img src="${chat.userImage || '/images/default-icon.jpg'}" 
-                                                alt="${chat.userName}" 
-                                                class="rounded-circle"
-                                                style="width: 45px; height: 45px; object-fit: cover;">
-                                        </div>
-                                        <div class="chat-info flex-grow-1">
-                                            <h6 class="mb-1">${chat.userName}</h6>
-                                            <p class="mb-0 text-muted">${chat.lastMessage || ''}</p>
-                                        </div>
-                                        <div class="chat-meta">
-                                            <div class="last-message-time text-muted small">${lastMessageTime}</div>
-                                            ${unreadBadge}
-                                        </div>
-                                    </div>
-                                </li>
-                            `;
-                            chatList.append(chatHtml);
-                        });
-                    }
+                    allChats = chats; // Сохраняем все чаты
+                    displayChats(chats);
                 })
                 .fail(function(error) {
                     console.error('Error updating chats list:', error);
                 });
+        }
+
+        // Добавляем функцию фильтрации чатов
+        function filterChats(searchText) {
+            if (!allChats || !Array.isArray(allChats)) return;
+
+            const chatList = $('.list-group');
+            chatList.empty();
+
+            const filteredChats = allChats.filter(chat => 
+                chat.userName.toLowerCase().includes(searchText) || 
+                (chat.lastMessage && chat.lastMessage.toLowerCase().includes(searchText))
+            );
+
+            displayChats(filteredChats);
+        }
+
+        function displayChats(chats) {
+            const chatList = $('.list-group');
+            const noChatsFound = $('.no-chats-found');
+            chatList.empty();
+
+            if (!chats || !Array.isArray(chats) || chats.length === 0) {
+                noChatsFound.show();
+                return;
+            }
+
+            noChatsFound.hide();
+            chats.forEach(chat => {
+                const lastMessageTime = chat.lastMessageTime 
+                    ? new Date(chat.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                    : '';
+                
+                const unreadBadge = chat.unreadCount > 0 && chat.chatId !== currentChatId
+                    ? `<div class="badge badge-primary badge-pill">${chat.unreadCount}</div>` 
+                    : '';
+
+                const chatHtml = `
+                    <li class="list-group-item chat-item ${chat.chatId === currentChatId ? 'active' : ''}" 
+                        onclick="startChat('${chat.userId}', '${chat.userName}', '${chat.userImage || '/images/default-icon.jpg'}', '${chat.userEmail}', false)">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar mr-3">
+                                <img src="${chat.userImage || '/images/default-icon.jpg'}" 
+                                    alt="${chat.userName}" 
+                                    class="rounded-circle"
+                                    style="width: 45px; height: 45px; object-fit: cover;">
+                            </div>
+                            <div class="chat-info flex-grow-1">
+                                <h6 class="mb-1">${chat.userName}</h6>
+                                <p class="mb-0 text-muted">${chat.lastMessage || ''}</p>
+                            </div>
+                            <div class="chat-meta">
+                                <div class="last-message-time text-muted small">${lastMessageTime}</div>
+                                ${unreadBadge}
+                            </div>
+                        </div>
+                    </li>
+                `;
+                chatList.append(chatHtml);
+            });
         }
     </script>
 }  
