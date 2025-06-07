@@ -15,7 +15,7 @@ using Elomoas.Application.Features.Auth.Query.GetCurrentIdentityId;
 using Elomoas.Application.Features.Messenger.Queries.GetOrCreateChat;
 using Elomoas.Application.Features.Messenger.Queries.GetChatMessages;
 using Elomoas.Application.Features.Messenger.Commands.MarkMessagesAsRead;
-
+using Elomoas.Application.Features.Messenger.Commands.SendMessage;
 
 namespace Elomoas.Controllers
 {
@@ -25,14 +25,12 @@ namespace Elomoas.Controllers
         private readonly ILogger<MessangerController> _logger;
         private readonly IMediator _mediator;
 
-
         public MessangerController(
             ILogger<MessangerController> logger, 
             IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
-
         }
 
         public IActionResult Messanger()
@@ -144,6 +142,46 @@ namespace Elomoas.Controllers
                 _logger.LogError(ex, "Error getting friends list");
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageRequest request)
+        {
+            try
+            {
+                var userId = await _mediator.Send(new GetCurrentIdentityIdQuery());
+                
+                // Create and send the message
+                var message = await _mediator.Send(new SendMessageCommand(userId, request.RecipientId, request.Content));
+                
+                // Get the chat details
+                var chat = await _mediator.Send(new GetOrCreateChatQuery(userId, request.RecipientId));
+
+                return Json(new 
+                { 
+                    success = true,
+                    chatId = chat.Id,
+                    currentUserId = userId,
+                    message = new
+                    {
+                        id = message.Id,
+                        content = message.Content,
+                        senderId = message.SenderId,
+                        createdDate = message.CreatedDate
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending first message to {RecipientId}", request.RecipientId);
+                return StatusCode(500, "Error sending message");
+            }
+        }
+
+        public class SendMessageRequest
+        {
+            public string RecipientId { get; set; }
+            public string Content { get; set; }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

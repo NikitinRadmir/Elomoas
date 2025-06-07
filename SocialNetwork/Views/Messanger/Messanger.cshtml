@@ -1,6 +1,14 @@
-﻿@{
-    ViewData["Title"] = "Messanger";
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Messenger";
 }
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/messenger.css" />
+}
+
+@* Add antiforgery token *@
+@Html.AntiForgeryToken()
 
 <style>
     #friendsModal {
@@ -341,7 +349,11 @@
                 <div class="chat-wrapper pt-0 w-100 position-relative scroll-bar">
                     <div class="chat-header d-flex align-items-center border-bottom p-3">
                         <figure class="avatar mr-3 mb-0">
-                            <img src="~/images/default-icon.jpg" alt="image" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
+                            <img src="/images/default-icon.jpg" 
+                                 alt="image" 
+                                 class="rounded-circle" 
+                                 style="width: 45px; height: 45px; object-fit: cover;"
+                                 onerror="this.src='/images/default-icon.jpg'">
                         </figure>
                         <div class="chat-header-info flex-grow-1">
                             <h6 class="mb-0 text-grey-900 fw-600">Select a chat</h6>
@@ -359,7 +371,7 @@
                                 <input type="text" 
                                        id="messageInput" 
                                        class="form-control" 
-                                       placeholder="Введите сообщение..."
+                                       placeholder="Start type message..."
                                        autocomplete="off">
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-primary">
@@ -379,7 +391,7 @@
 <div id="friendsModal">
     <div class="friends-modal-content">
         <div class="friends-modal-header">
-            <h5>Выберите друга для чата</h5>
+            <h5>Choose your friend for chat</h5>
             <span class="friends-modal-close" onclick="hideFriendsModal()">&times;</span>
         </div>
         <div class="friend-search">
@@ -387,7 +399,7 @@
                 <i class="ti-search friend-search-icon"></i>
                 <input type="text" 
                        class="form-control" 
-                       placeholder="Поиск по имени или email..." 
+                       placeholder="Searching for name or email..." 
                        id="friendSearchInput"
                        autocomplete="off">
             </div>
@@ -396,7 +408,7 @@
             <!-- Список друзей будет загружен динамически -->
         </div>
         <div class="no-results" style="display: none;">
-            <p>Друзья не найдены</p>
+            <p>Friends not founded</p>
         </div>
     </div>
 </div>
@@ -464,14 +476,97 @@
             const messageInput = $('#messageInput');
             const content = messageInput.val().trim();
             
-            if (!content || !currentFriendId) return;
-            
-            connection.invoke("SendMessage", currentFriendId, content)
-                .catch(function (err) {
-                    console.error(err.toString());
+            if (!content || !currentFriendId) {
+                console.log('Missing data:', { content, currentFriendId });
+                return;
+            }
+
+            if (!currentChatId) {
+                // Если чата еще нет, отправляем первое сообщение через обычный AJAX запрос
+                const data = {
+                    recipientId: currentFriendId,
+                    content: content
+                };
+                
+                console.log('Sending first message:', data);
+                
+                $.ajax({
+                    url: '/Messanger/SendMessage',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        console.log('First message response:', response);
+                        if (response && response.success && response.chatId) {
+                            currentChatId = response.chatId;
+                            currentUserId = response.currentUserId;
+
+                            // Отображаем отправленное сообщение
+                            if (response.message) {
+                                displayMessage(response.message, true);
+                            } else {
+                                displayMessage({
+                                    content: content,
+                                    senderId: currentUserId,
+                                    createdDate: new Date()
+                                }, true);
+                            }
+
+                            // Подключаемся к чату через SignalR
+                            connection.invoke("JoinChat", currentChatId.toString())
+                                .catch(function (err) {
+                                    console.error('Error joining chat:', err);
+                                    showError('Error joining chat. Please refresh the page.');
+                                });
+
+                            messageInput.val('');
+                            updateChatsList();
+                            scrollToBottom();
+                        } else {
+                            console.error('Invalid response format:', response);
+                            showError('Failed to send message. Please try again.');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error sending first message:', {
+                            status: jqXHR.status,
+                            textStatus: textStatus,
+                            error: errorThrown,
+                            response: jqXHR.responseText
+                        });
+                        showError('Failed to send message. Please try again.');
+                    }
                 });
-            
-            messageInput.val('');
+            } else {
+                // Если чат уже существует, отправляем через SignalR
+                console.log('Sending message via SignalR:', {
+                    friendId: currentFriendId,
+                    content: content,
+                    chatId: currentChatId
+                });
+                
+                connection.invoke("SendMessage", currentFriendId, content)
+                    .then(function() {
+                        messageInput.val('');
+                    })
+                    .catch(function (err) {
+                        console.error('Error sending message via SignalR:', err);
+                        alert('Failed to send message. Please try again.');
+                    });
+            }
+        }
+
+        function showError(message) {
+            // Показываем ошибку пользователю
+            const errorDiv = $('#messageError');
+            if (errorDiv.length === 0) {
+                const newErrorDiv = $('<div id="messageError" class="alert alert-danger mt-2" style="display: none;"></div>');
+                $('.message-input-wrapper').after(newErrorDiv);
+            }
+            $('#messageError').text(message).fadeIn().delay(3000).fadeOut();
         }
 
         function formatDate(date) {
@@ -579,7 +674,7 @@
                 const friendHtml = `
                     <div class="friend-item d-flex align-items-center justify-content-between p-2 border-bottom">
                         <div class="d-flex align-items-center">
-                            <img src="${friend.img || '/images/user-12.png'}" 
+                            <img src="${friend.img || '/images/default-icon.jpg'}" 
                                  alt="${friend.name}" 
                                  class="rounded-circle mr-2" 
                                  style="width: 40px; height: 40px; object-fit: cover;">
@@ -588,7 +683,7 @@
                                 <small class="text-muted">${friend.email}</small>
                             </div>
                         </div>
-                        <button class="btn btn-primary btn-sm" onclick="startChat('${friend.identityId}', '${friend.name}', '${friend.img}', '${friend.email}')">
+                        <button class="btn btn-primary btn-sm" onclick="startChat('${friend.identityId}', '${friend.name}', '${friend.img || '/images/default-icon.jpg'}', '${friend.email}', true)">
                             Message
                         </button>
                     </div>
@@ -615,7 +710,7 @@
             });
         }
 
-        function startChat(friendId, friendName, friendImg, friendEmail) {
+        function startChat(friendId, friendName, friendImg, friendEmail, isNewChat = false) {
             currentFriendId = friendId;
             
             // Показываем чат
@@ -624,7 +719,7 @@
             // Обновляем шапку чата
             const headerImg = $('.chat-header img');
             headerImg.attr('src', friendImg || '/images/default-icon.jpg');
-            headerImg.attr('style', 'width: 45px; height: 45px; object-fit: cover;');
+            headerImg.attr('alt', friendName);
             $('.chat-header h6').text(friendName);
             $('.chat-header span').text(friendEmail);
             
@@ -633,34 +728,47 @@
             
             // Очищаем сообщения
             $('#messagesContainer').empty();
-            
-            // Загружаем историю сообщений
-            $.get(`/Messanger/GetChatMessages?friendId=${friendId}`)
-                .done(function(data) {
-                    currentChatId = data.chatId;
-                    currentUserId = data.currentUserId;
-                    
-                    if (data.messages && Array.isArray(data.messages)) {
-                        // Сортируем сообщения по дате
-                        const sortedMessages = data.messages.sort((a, b) => 
-                            new Date(a.createdDate) - new Date(b.createdDate)
-                        );
-                        
-                        sortedMessages.forEach(message => {
-                            displayMessage(message, message.senderId === currentUserId);
-                        });
-                        scrollToBottom();
-                    }
-                    
-                    // Присоединяемся к чату через SignalR
-                    connection.invoke("JoinChat", currentChatId.toString())
-                        .catch(function (err) {
-                            console.error(err.toString());
-                        });
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error loading messages:', errorThrown);
-                });
+
+            if (isNewChat) {
+                // Если это новый чат (из модального окна), просто подготавливаем интерфейс
+                currentChatId = null;
+                // Фокусируемся на поле ввода
+                $('#messageInput').focus();
+            } else {
+                // Если это существующий чат из списка, загружаем сообщения
+                $.get(`/Messanger/GetChatMessages?friendId=${friendId}`)
+                    .done(function(data) {
+                        if (data && data.chatId) {
+                            currentChatId = data.chatId;
+                            currentUserId = data.currentUserId;
+                            
+                            if (data.messages && Array.isArray(data.messages)) {
+                                const sortedMessages = data.messages.sort((a, b) => 
+                                    new Date(a.createdDate) - new Date(b.createdDate)
+                                );
+                                
+                                sortedMessages.forEach(message => {
+                                    displayMessage(message, message.senderId === currentUserId);
+                                });
+                                scrollToBottom();
+                            }
+                            
+                            connection.invoke("JoinChat", currentChatId.toString())
+                                .then(() => {
+                                    return connection.invoke("MarkAsRead", currentChatId.toString());
+                                })
+                                .then(() => {
+                                    updateChatsList();
+                                })
+                                .catch(function (err) {
+                                    console.error(err.toString());
+                                });
+                        }
+                    })
+                    .fail(function(error) {
+                        console.error('Error loading messages:', error);
+                    });
+            }
         }
 
         function updateChatsList() {
@@ -675,29 +783,26 @@
                                 ? new Date(chat.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
                                 : '';
                             
-                            // Не показываем счетчик, если чат открыт или нет непрочитанных сообщений
                             const unreadBadge = chat.unreadCount > 0 && chat.chatId !== currentChatId
                                 ? `<div class="badge badge-primary badge-pill">${chat.unreadCount}</div>` 
                                 : '';
 
                             const chatHtml = `
                                 <li class="list-group-item chat-item ${chat.chatId === currentChatId ? 'active' : ''}" 
-                                    onclick="startChat('${chat.userId}', '${chat.userName}', '${chat.userImage || '/images/default-avatar.png'}', '${chat.userEmail}')">
+                                    onclick="startChat('${chat.userId}', '${chat.userName}', '${chat.userImage || '/images/default-icon.jpg'}', '${chat.userEmail}', false)">
                                     <div class="d-flex align-items-center">
                                         <div class="avatar mr-3">
-                                            <img src="${chat.userImage || '/images/default-avatar.png'}" 
+                                            <img src="${chat.userImage || '/images/default-icon.jpg'}" 
                                                 alt="${chat.userName}" 
                                                 class="rounded-circle"
                                                 style="width: 45px; height: 45px; object-fit: cover;">
                                         </div>
                                         <div class="chat-info flex-grow-1">
                                             <h6 class="mb-1">${chat.userName}</h6>
-                                            <p class="mb-0 text-muted small text-truncate" style="max-width: 200px;">
-                                                ${chat.lastMessage || 'Нет сообщений'}
-                                            </p>
+                                            <p class="mb-0 text-muted">${chat.lastMessage || ''}</p>
                                         </div>
-                                        <div class="chat-meta text-right">
-                                            <small class="text-muted d-block mb-1">${lastMessageTime}</small>
+                                        <div class="chat-meta">
+                                            <div class="last-message-time text-muted small">${lastMessageTime}</div>
                                             ${unreadBadge}
                                         </div>
                                     </div>
@@ -707,60 +812,8 @@
                         });
                     }
                 })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error updating chats list:', errorThrown);
-                });
-        }
-
-        function startChat(userId, userName, userImage, userEmail) {
-            // Получаем или создаем чат
-            $.get(`/Messanger/GetChatMessages?friendId=${userId}`)
-                .done(function(response) {
-                    const chatId = response.chatId;
-                    currentChatId = chatId;
-                    currentFriendId = userId;
-
-                    // Показываем правую колонку на мобильных устройствах
-                    $('.col-lg-6.col-xl-8').removeClass('d-none');
-                    
-                    // Обновляем активный класс
-                    $('.chat-item').removeClass('active');
-                    $(`.chat-item[onclick*="${userId}"]`).addClass('active');
-
-                    // Обновляем заголовок чата
-                    $('.chat-header-info h6').text(userName);
-                    $('.chat-header-info span').text(userEmail);
-                    $('.chat-header img').attr('src', userImage);
-
-                    // Очищаем и отображаем сообщения
-                    const messagesContainer = $('#messagesContainer');
-                    messagesContainer.empty();
-
-                    response.messages.forEach(msg => {
-                        displayMessage(msg, msg.senderId === response.currentUserId);
-                    });
-                    
-                    // Прокручиваем к последнему сообщению
-                    messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
-
-                    // Присоединяемся к чату через SignalR и помечаем сообщения как прочитанные
-                    if (connection) {
-                        connection.invoke("JoinChat", chatId.toString())
-                            .then(() => {
-                                // После успешного присоединения к чату помечаем сообщения как прочитанные
-                                return connection.invoke("MarkAsRead", chatId.toString());
-                            })
-                            .then(() => {
-                                // После успешной отметки сообщений как прочитанных обновляем список чатов
-                                updateChatsList();
-                            })
-                            .catch(function (err) {
-                                console.error(err.toString());
-                            });
-                    }
-                })
                 .fail(function(error) {
-                    console.error('Error starting chat:', error);
+                    console.error('Error updating chats list:', error);
                 });
         }
     </script>
