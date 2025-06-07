@@ -9,14 +9,21 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4>Course Subscriptions</h4>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <a asp-action="Create" class="btn btn-primary">
-                                <i data-feather="plus"></i> Add New Subscription
-                            </a>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>Course Subscriptions</h4>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i data-feather="plus"></i> Add New Subscription
+                        </a>
+                    </div>
+                    <div class="search-wrapper">
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary">
+                                <i data-feather="search" class="text-white"></i>
+                            </span>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search by user ID, course ID, or price..." />
                         </div>
                     </div>
                 </div>
@@ -48,16 +55,16 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="subscriptionsTableBody">
                                 @foreach (var subscription in Model.Subscriptions)
                                 {
-                                    <tr>
-                                        <td>@subscription.Id</td>
-                                        <td>@subscription.UserId</td>
-                                        <td>@subscription.CourseId</td>
-                                        <td>$@subscription.SubscriptionPrice.ToString("F2")</td>
-                                        <td>@subscription.DurationInMonths</td>
-                                        <td>@(subscription.ExpirationDate.Year + "-" + subscription.ExpirationDate.Month + "-" + subscription.ExpirationDate.Day)</td>
+                                    <tr class="subscription-row">
+                                        <td class="subscription-id">@subscription.Id</td>
+                                        <td class="subscription-user-id">@subscription.UserId</td>
+                                        <td class="subscription-course-id">@subscription.CourseId</td>
+                                        <td class="subscription-price">$@subscription.SubscriptionPrice.ToString("F2")</td>
+                                        <td class="subscription-duration">@subscription.DurationInMonths</td>
+                                        <td class="subscription-expiration">@subscription.ExpirationDate.ToString("yyyy-MM-dd")</td>
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <a asp-action="Edit" asp-route-id="@subscription.Id" class="btn btn-primary">
@@ -80,12 +87,12 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 Are you sure you want to delete this subscription?
@@ -104,10 +111,69 @@
 
 @section Scripts {
     <script>
+        $(document).ready(function() {
+            feather.replace();
+
+            // Real-time search functionality
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#subscriptionsTableBody tr").filter(function() {
+                    var id = $(this).find(".subscription-id").text().toLowerCase();
+                    var userId = $(this).find(".subscription-user-id").text().toLowerCase();
+                    var courseId = $(this).find(".subscription-course-id").text().toLowerCase();
+                    var price = $(this).find(".subscription-price").text().toLowerCase();
+                    var duration = $(this).find(".subscription-duration").text().toLowerCase();
+                    var expiration = $(this).find(".subscription-expiration").text().toLowerCase();
+                    
+                    var matches = id.includes(value) ||
+                        userId.includes(value) ||
+                        courseId.includes(value) ||
+                        price.includes(value) ||
+                        duration.includes(value) ||
+                        expiration.includes(value);
+                        
+                    $(this).toggle(matches);
+                });
+            });
+        });
+
         function confirmDelete(id) {
             document.getElementById('subscriptionId').value = id;
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
     </script>
+
+    <style>
+        .search-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-wrapper .input-group-text {
+            border: none;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .search-wrapper .form-control {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            border-left: none;
+        }
+
+        .search-wrapper .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        .search-wrapper .input-group-text i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+        }
+    </style>
 } 
