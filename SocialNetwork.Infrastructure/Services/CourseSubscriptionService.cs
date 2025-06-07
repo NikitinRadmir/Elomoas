@@ -21,17 +21,15 @@ public class CourseSubscriptionService : ICourseSubscriptionService
 
     public async Task<IEnumerable<CourseSubscription>> GetAllCourseSubscriptionsAsync()
     {
-        
-            try
-            {
-                return await _context.CourseSubscriptions.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving all courses");
-                throw;
-            }
-        
+        try
+        {
+            return await _context.CourseSubscriptions.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving all courses");
+            throw;
+        }
     }
 
     public async Task<CourseSubscription?> GetSubscriptionByIdAsync(int id)
@@ -102,6 +100,38 @@ public class CourseSubscriptionService : ICourseSubscriptionService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting subscription {Id}", id);
+            throw;
+        }
+    }
+
+    public async Task CheckAndUpdateExpiredSubscriptionsAsync()
+    {
+        try
+        {
+            var now = DateTime.UtcNow;
+            var expiredSubscriptions = await _context.CourseSubscriptions
+                .Where(s => s.ExpirationDate <= now)
+                .ToListAsync();
+
+            if (!expiredSubscriptions.Any())
+            {
+                _logger.LogInformation("No expired course subscriptions found");
+                return;
+            }
+
+            foreach (var subscription in expiredSubscriptions)
+            {
+                _logger.LogInformation("Removing expired course subscription {Id} for user {UserId}", 
+                    subscription.Id, subscription.UserId);
+                _context.CourseSubscriptions.Remove(subscription);
+            }
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Removed {Count} expired course subscriptions", expiredSubscriptions.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking and updating expired course subscriptions");
             throw;
         }
     }

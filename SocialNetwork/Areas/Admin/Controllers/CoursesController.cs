@@ -11,7 +11,7 @@ using Elomoas.Domain.Entities.Enum;
 namespace SocialNetwork.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
+    [Authorize(Policy = "ManagerPolicy")]
     public class CoursesController : Controller
     {
         private readonly IMediator _mediator;

@@ -1,4 +1,8 @@
 ﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,7 +151,10 @@
                         <li class="logo d-none d-xl-block d-lg-block"></li>
                         <li><a asp-controller="Settings" asp-action="Settings" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-settings mr-3 text-grey-500"></i><span>Settings</span></a></li>
                         <li><a asp-controller="Messanger" asp-action="Messanger" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-message-square mr-3 text-grey-500"></i><span>Chat</span></a></li>
-                        <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-grid mr-3 text-grey-500"></i><span>Admin Dashboard</span></a></li
+                        @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Manager") || User.IsInRole("Admin")))
+                        {
+                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-grid mr-3 text-grey-500"></i><span>Admin Dashboard</span></a></li>
+                        }
                     </ul>
                 </div>
             </div>

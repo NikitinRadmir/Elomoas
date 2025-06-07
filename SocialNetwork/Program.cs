@@ -5,20 +5,19 @@ using Elomoas.Infrastructure.Extensions;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Elomoas.Infrastructure.Settings;
-
 using Microsoft.AspNetCore.Identity;
 using Elomoas.Extensions;
 using Microsoft.Extensions.Logging;
 using Elomoas.Logging;
-
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using Elomoas.Infrastructure.Hubs;
+using Elomoas.Infrastructure.Identity;
+using Elomoas.Infrastructure.Services;
 
 namespace Elomoas;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +44,49 @@ public class Program
 
         builder.Services.AddSignalR();
 
+        // Configure authorization policies
+        builder.Services.AddAuthorization(options =>
+        {
+            // Admin policy - full access
+            options.AddPolicy("AdminPolicy", policy =>
+                policy.RequireRole("Admin"));
+
+            // Manager policy - access to Courses and Groups
+            options.AddPolicy("ManagerPolicy", policy =>
+                policy.RequireRole("Manager", "Admin"));
+
+            // User policy - no admin access
+            options.AddPolicy("UserPolicy", policy =>
+                policy.RequireRole("User", "Manager", "Admin"));
+        });
+
+        // Configure hosted services
+        builder.Services.Configure<HostOptions>(options =>
+        {
+            // Don't stop the application when a background service fails
+            options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+        });
+
+        builder.Services.AddHostedService<SubscriptionExpirationService>();
+
         var app = builder.Build();
+
+        // Ensure database is created and seeded
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
+            {
+                var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
+            }
+        }
 
         if (!app.Environment.IsDevelopment())
         {
@@ -65,7 +106,6 @@ public class Program
         app.UseStaticFiles(new StaticFileOptions
         {
             ServeUnknownFileTypes = true,
-            
             DefaultContentType = "application/octet-stream"
         });
 
@@ -76,6 +116,17 @@ public class Program
         
         app.UseRequestLogging();
         app.UseUserActivityLogging();
+
+        // Custom 404 handler for unauthorized access
+        app.Use(async (context, next) =>
+        {
+            await next();
+
+            if (context.Response.StatusCode == 401 || context.Response.StatusCode == 403)
+            {
+                context.Response.Redirect("/Error/NotFound");
+            }
+        });
 
         app.MapControllerRoute(
             name: "areas",
@@ -88,6 +139,6 @@ public class Program
         app.MapHub<FriendshipHub>("/friendshipHub");
         app.MapHub<ChatHub>("/chatHub");
 
-        app.Run();
+        await app.RunAsync();
     }   
 }

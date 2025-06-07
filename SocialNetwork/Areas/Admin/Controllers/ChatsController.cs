@@ -10,10 +10,12 @@ using Elomoas.Application.Features.Messenger.Commands.UpdateMessage;
 using Elomoas.Application.Features.Messenger.Commands.DeleteMessage;
 using Elomoas.Application.Features.AppUsers.Queries.GetAllUsers;
 using SocialNetwork.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Policy = "ManagerPolicy")]
 public class ChatsController : Controller
 {
     private readonly IMediator _mediator;

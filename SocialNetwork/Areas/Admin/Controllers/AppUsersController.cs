@@ -1,6 +1,7 @@
 using Elomoas.Application.Features.Auth.Query;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
 using SocialNetwork.Application.Features.AppUsers.Command.DeleteUser;
 using SocialNetwork.Application.Features.AppUsers.Command.UpdateUser;
@@ -9,6 +10,7 @@ using SocialNetwork.Areas.Admin.Models;
 namespace SocialNetwork.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Policy = "AdminPolicy")]
     public class AppUsersController : Controller
     {
         private readonly IMediator _mediator;

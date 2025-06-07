@@ -1,5 +1,6 @@
 using MediatR;
 using Elomoas.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Elomoas.Application.Features.AppUsers.Query.GetCurrentUser
 {
@@ -7,9 +8,11 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetCurrentUser
     {
         private readonly ICurrentUserService _currentUserService;
 
-        public GetCurrentUserQueryHandler(ICurrentUserService currentUserService)
+        public GetCurrentUserQueryHandler(
+            ICurrentUserService currentUserService)
         {
             _currentUserService = currentUserService;
+
         }
 
         public async Task<AppUserDto> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)

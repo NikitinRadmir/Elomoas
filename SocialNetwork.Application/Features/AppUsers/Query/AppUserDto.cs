@@ -20,6 +20,6 @@ public class AppUserDto
     public string Description { get; set; }
     public string Password { get; set; }
     public FriendshipStatus? FriendshipStatus { get; set; }
-    public bool IsFriend { get; set; }
+    public bool IsFriend {  get; set; }
     public bool IsSentByMe { get; set; }
 }

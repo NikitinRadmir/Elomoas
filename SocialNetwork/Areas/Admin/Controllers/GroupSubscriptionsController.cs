@@ -10,10 +10,12 @@ using Elomoas.Application.Features.Groups.Query;
 using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
 using SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups;
 using Elomoas.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Policy = "ManagerPolicy")]
 public class GroupSubscriptionsController : Controller
 {
     private readonly IMediator _mediator;

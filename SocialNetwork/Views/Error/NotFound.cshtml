@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Page Not Found";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-template">
+                <h1 class="display-1">404</h1>
+                <h2>Page Not Found</h2>
+                <div class="error-details mb-4">
+                    Sorry, the page you requested could not be found.
+                </div>
+                <div class="error-actions">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                        <i class="feather-home"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .error-template {
+            padding: 40px 15px;
+            text-align: center;
+        }
+        .error-actions {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+} 

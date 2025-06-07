@@ -1,109 +1,67 @@
-using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Application.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Elomoas.Infrastructure.Services
 {
-    public class SubscriptionExpirationService : BackgroundService, ISubscriptionExpirationService
+    public class SubscriptionExpirationService : BackgroundService
     {
         private readonly ILogger<SubscriptionExpirationService> _logger;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly TimeSpan _checkInterval = TimeSpan.FromHours(1);
 
         public SubscriptionExpirationService(
             ILogger<SubscriptionExpirationService> logger,
-            IServiceProvider serviceProvider)
+            IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
-            _serviceProvider = serviceProvider;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Subscription Expiration Service is starting.");
-
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                try
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    await ProcessExpiredSubscriptionsAsync(stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error occurred while processing expired subscriptions");
-                }
+                    _logger.LogInformation("Checking for expired course subscriptions at: {time}", DateTimeOffset.Now);
 
-                await Task.Delay(_checkInterval, stoppingToken);
-            }
-        }
-
-        public async Task ProcessExpiredSubscriptionsAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation("Checking for expired subscriptions at: {time}", DateTimeOffset.Now);
-
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var subscriptionRepo = scope.ServiceProvider.GetRequiredService<ICourseSubscriptionRepository>();
-                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-                try
-                {
-                    var expiredSubscriptions = await subscriptionRepo.GetExpiredSubscriptions();
-                    
-                    if (!expiredSubscriptions.Any())
+                    try
                     {
-                        _logger.LogInformation("No expired subscriptions found.");
-                        return;
-                    }
-
-                    _logger.LogInformation("Found {count} expired subscriptions", expiredSubscriptions.Count());
-
-                    foreach (var subscription in expiredSubscriptions)
-                    {
-                        try
+                        using (var scope = _serviceScopeFactory.CreateScope())
                         {
-                            await subscriptionRepo.DeleteAsync(subscription);
-                            _logger.LogInformation(
-                                "Successfully unsubscribed user {userId} from course {courseId}. Subscription expired at {expirationDate}",
-                                subscription.UserId,
-                                subscription.CourseId,
-                                subscription.ExpirationDate);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex,
-                                "Error unsubscribing user {userId} from course {courseId}",
-                                subscription.UserId,
-                                subscription.CourseId);
+                            var courseSubscriptionService = scope.ServiceProvider.GetRequiredService<ICourseSubscriptionService>();
+                            await courseSubscriptionService.CheckAndUpdateExpiredSubscriptionsAsync();
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error occurred while checking course subscriptions");
+                    }
 
-                    await unitOfWork.Save(cancellationToken);
-                    _logger.LogInformation("Finished processing expired subscriptions");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error occurred while processing expired subscriptions batch");
-                    throw;
+                    // Wait for 1 hour before next check
+                    await Task.Delay(_checkInterval, stoppingToken);
                 }
             }
-        }
-
-        public override async Task StartAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation("Subscription Expiration Service is starting.");
-            await base.StartAsync(cancellationToken);
+            catch (OperationCanceledException)
+            {
+                // Log graceful shutdown
+                _logger.LogInformation("Subscription expiration service is shutting down");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fatal error in subscription expiration service");
+                throw; // Re-throw fatal errors
+            }
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Subscription Expiration Service is stopping.");
+            _logger.LogInformation("Subscription expiration service is stopping");
             await base.StopAsync(cancellationToken);
         }
     }

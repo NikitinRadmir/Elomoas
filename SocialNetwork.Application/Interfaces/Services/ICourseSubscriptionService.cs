@@ -11,4 +11,5 @@ public interface ICourseSubscriptionService
     Task<CourseSubscription> CreateSubscriptionAsync(CourseSubscription subscription);
     Task<bool> UpdateSubscriptionAsync(CourseSubscription subscription);
     Task<bool> DeleteSubscriptionAsync(int id);
+    Task CheckAndUpdateExpiredSubscriptionsAsync();
 } 

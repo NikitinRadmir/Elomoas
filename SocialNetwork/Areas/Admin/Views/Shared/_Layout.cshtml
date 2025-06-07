@@ -93,14 +93,15 @@
                             <div class="user-wrap">
                                 <div class="user-img">
                                     @{
-                                       var currentUser = await Mediator.Send(new GetCurrentUserQuery());
+                                        var currentUser = await Mediator.Send(new GetCurrentUserQuery());
                                         var userImage = currentUser?.Img ?? "/assets/images/profile.png";
+                                        var userRole = User.IsInRole("Admin") ? "Admin" : "Manager";
                                     }
                                     <img src="@userImage" alt="user">
                                 </div>
                                 <div class="user-content">
-                                    <h6>@(currentUser?.Email ?? "Guest")</h6>
-                                    <p class="mb-0">Admin</p>
+                                    <h6>@User.Identity?.Name</h6>
+                                    <p class="mb-0">@userRole</p>
                                 </div>
                             </div>
                         </li>
