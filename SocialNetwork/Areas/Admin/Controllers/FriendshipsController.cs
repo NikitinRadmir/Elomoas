@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
+using Elomoas.Application.Features.Auth.Query.GetAllIdentityUsers;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 
@@ -47,7 +48,7 @@ public class FriendshipsController : Controller
 
     public async Task<IActionResult> Create()
     {
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(new CreateFriendshipViewModel());
     }
@@ -70,7 +71,7 @@ public class FriendshipsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(model);
     }
@@ -83,7 +84,7 @@ public class FriendshipsController : Controller
             return NotFound();
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
 
         var viewModel = new UpdateFriendshipViewModel
@@ -119,7 +120,7 @@ public class FriendshipsController : Controller
             }
         }
 
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _mediator.Send(new GetAllIdentityUsersQuery());
         ViewBag.Users = new SelectList(users, "Id", "Email");
         return View(model);
     }

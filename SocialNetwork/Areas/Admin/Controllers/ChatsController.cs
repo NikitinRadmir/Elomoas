@@ -17,10 +17,12 @@ namespace SocialNetwork.Areas.Admin.Controllers;
 public class ChatsController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<ChatsController> _logger;
 
-    public ChatsController(IMediator mediator)
+    public ChatsController(IMediator mediator, ILogger<ChatsController> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
     public async Task<IActionResult> Index()

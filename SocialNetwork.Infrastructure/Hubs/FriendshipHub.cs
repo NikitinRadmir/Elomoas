@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Elomoas.Domain.Entities.Enums;
 
-namespace Elomoas.Hubs
+namespace Elomoas.Infrastructure.Hubs
 {
     public class FriendshipHub : Hub
     {

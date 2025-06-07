@@ -12,10 +12,12 @@ namespace SocialNetwork.Areas.Admin.Controllers
     public class AppUsersController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<AppUsersController> _logger;
 
-        public AppUsersController(IMediator mediator)
+        public AppUsersController(IMediator mediator, ILogger<AppUsersController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()

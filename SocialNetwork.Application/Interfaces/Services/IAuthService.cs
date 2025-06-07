@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,4 +14,5 @@ public interface IAuthService
     Task<bool> LoginAsync(string email, string password);
 
     Task LogoutAsync();
+    Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync();
 }

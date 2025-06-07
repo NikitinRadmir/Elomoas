@@ -17,13 +17,13 @@ using System;
 using Elomoas.Application.Features.Groups.Query.GetSubscribedGroups;
 using Elomoas.Application.Features.Courses.Query.GetSubscribedCourses;
 using Microsoft.AspNetCore.SignalR;
-using Elomoas.Hubs;
 using Elomoas.Application.Features.Friends.Commands.SendFriendRequest;
 using Elomoas.Application.Features.Friends.Commands.AcceptFriendRequest;
 using Elomoas.Application.Features.Friends.Commands.RejectFriendRequest;
 using Elomoas.Application.Features.Friends.Commands.RemoveFriend;
 using Elomoas.Application.Features.Friends.Queries.GetUserFriends;
 using Elomoas.Application.Features.Friends.Queries.GetPendingFriendRequests;
+using Elomoas.Infrastructure.Hubs;
 
 namespace Elomoas.Controllers
 {

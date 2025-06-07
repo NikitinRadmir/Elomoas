@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Elomoas.Application.Interfaces.Services;
 
-namespace Elomoas.Hubs
+namespace Elomoas.Infrastructure.Hubs
 {
     public class ChatHub : Hub
     {

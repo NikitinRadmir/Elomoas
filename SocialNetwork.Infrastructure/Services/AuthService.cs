@@ -2,6 +2,7 @@
 using Elomoas.Domain.Entities;
 using Elomoas.Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,5 +82,10 @@ public class AuthService : IAuthService
     public async Task LogoutAsync()
     {
         await _signInManager.SignOutAsync();
+    }
+
+    public async Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync()
+    {
+        return await _userManager.Users.ToListAsync();
     }
 }
