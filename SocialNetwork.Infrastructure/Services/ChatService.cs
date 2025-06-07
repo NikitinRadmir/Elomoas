@@ -391,8 +391,8 @@ namespace Elomoas.Infrastructure.Services
                         UserEmail = otherUser != null ? otherUser.Email : "Unknown",
                         UserImage = otherUser != null ? otherUser.Img : "/images/default-icon.jpg",
                         LastMessage = lastMessage != null ? 
-                            (lastMessage.Content.Length > 30 ? 
-                                lastMessage.Content.Substring(0, 27) + "..." : 
+                            (lastMessage.Content.Length > 10 ? 
+                                lastMessage.Content.Substring(0, 10) + "..." : 
                                 lastMessage.Content) : 
                             "",
                         LastMessageTime = lastMessage != null ? lastMessage.CreatedDate : null,
@@ -404,7 +404,7 @@ namespace Elomoas.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting chat details for user {UserId}", userId);
+                _logger.LogError(ex, "Error getting user chats with details for user {UserId}", userId);
                 throw;
             }
         }
