@@ -24,6 +24,15 @@ using Elomoas.Application.Features.Friends.Commands.RemoveFriend;
 using Elomoas.Application.Features.Friends.Queries.GetUserFriends;
 using Elomoas.Application.Features.Friends.Queries.GetPendingFriendRequests;
 using Elomoas.Infrastructure.Hubs;
+using Elomoas.Application.Features.Friends.Queries.GetFriendship;
+using Elomoas.Application.Features.Auth.Query.GetIdentityUserById;
+using Elomoas.Application.Features.Auth.Query.GetCurrentIdentityUser;
+using Elomoas.Application.Features.FriendHub.Commands.NotifyFriendRequestReceived;
+using Elomoas.Application.Features.FriendHub.Commands.NotifyFriendRequestAccepted;
+using Elomoas.Application.Features.FriendHub.Commands.NotifyFriendRequestRejected;
+using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
+using SocialNetwork.Application.Features.FriendHub.Commands.NotifyFriendRemoved;
+using Elomoas.Application.Features.Users.Commands.HandleFriendRequest;
 
 namespace Elomoas.Controllers
 {
@@ -32,33 +41,30 @@ namespace Elomoas.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IMediator _mediator;
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly ICurrentUserService _currentUserService;
         private readonly IAppUserRepository _userRepository;
         private readonly IHubContext<FriendshipHub> _hubContext;
-        private readonly IFriendshipRepository _friendshipRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public UsersController(
             ILogger<UsersController> logger, 
-            IMediator mediator, 
-            UserManager<IdentityUser> userManager, 
+            IMediator mediator,
             ICurrentUserService currentUserService,
             IAppUserRepository userRepository,
             IHubContext<FriendshipHub> hubContext,
-            IFriendshipRepository friendshipRepository)
+            UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _mediator = mediator;
-            _userManager = userManager;
             _currentUserService = currentUserService;
             _userRepository = userRepository;
             _hubContext = hubContext;
-            _friendshipRepository = friendshipRepository;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Users(string search)
         {
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
             if (currentUser == null)
             {
                 return RedirectToAction("Login", "Auth");
@@ -115,7 +121,7 @@ namespace Elomoas.Controllers
         {
             try
             {
-                var currentUser = await _userManager.GetUserAsync(User);
+                var currentUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
                 if (currentUser == null)
                 {
                     return RedirectToAction("Login", "Auth");
@@ -130,7 +136,9 @@ namespace Elomoas.Controllers
                     return NotFound();
                 }
 
-                var friendship = await _friendshipRepository.GetFriendshipAsync(currentUser.Id, user.IdentityId);
+                var friendshipQuery = new GetFriendshipQuery(currentUser.Id, user.IdentityId);
+                var friendship = await _mediator.Send(friendshipQuery);
+                
                 if (friendship != null)
                 {
                     user.FriendshipStatus = friendship.Status;
@@ -152,100 +160,62 @@ namespace Elomoas.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> HandleFriendRequest(string targetUserId, string action)
         {
-            if (string.IsNullOrEmpty(targetUserId))
-            {
-                return Json(new { success = false, message = "User ID cannot be empty" });
-            }
-
-            if (string.IsNullOrEmpty(action))
-            {
-                return Json(new { success = false, message = "Action cannot be empty" });
-            }
-
-            var currentIdentityUser = await _userManager.GetUserAsync(User);
-            if (currentIdentityUser == null)
-            {
-                return Json(new { success = false, message = "User not found" });
-            }
-
-            var targetUser = await _userManager.FindByIdAsync(targetUserId);
-            if (targetUser == null)
-            {
-                return Json(new { success = false, message = "Target user not found" });
-            }
-
-            // Prevent self-friending
-            if (currentIdentityUser.Id == targetUserId)
-            {
-                return Json(new { success = false, message = "Cannot send friend request to yourself" });
-            }
-
-            bool result = false;
-            string message = string.Empty;
-
             try
             {
-                switch (action.ToLower().Trim())
+                _logger.LogInformation("HandleFriendRequest: Starting to process request. Action: {Action}, TargetUserId: {TargetUserId}",
+                    action, targetUserId);
+
+                if (string.IsNullOrEmpty(targetUserId))
                 {
-                    case "send":
-                    case "add":
-                        result = await _mediator.Send(new SendFriendRequestCommand(currentIdentityUser.Id, targetUserId));
-                        message = result ? "Friend request sent successfully" : "Failed to send friend request";
-                        if (result)
-                        {
-                            await _hubContext.Clients.Group(targetUserId).SendAsync("ReceiveFriendRequest", 
-                                new { 
-                                    senderId = currentIdentityUser.Id, 
-                                    senderName = currentIdentityUser.UserName,
-                                    senderEmail = currentIdentityUser.Email
-                                });
-                        }
-                        break;
-
-                    case "accept":
-                        result = await _mediator.Send(new AcceptFriendRequestCommand(currentIdentityUser.Id, targetUserId));
-                        message = result ? "Friend request accepted" : "Failed to accept friend request";
-                        if (result)
-                        {
-                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRequestAccepted", 
-                                new { acceptorId = currentIdentityUser.Id, acceptorName = currentIdentityUser.UserName });
-                        }
-                        break;
-
-                    case "reject":
-                        result = await _mediator.Send(new RejectFriendRequestCommand(currentIdentityUser.Id, targetUserId));
-                        message = result ? "Friend request rejected" : "Failed to reject friend request";
-                        if (result)
-                        {
-                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRequestRejected", 
-                                new { rejectorId = currentIdentityUser.Id, rejectorName = currentIdentityUser.UserName });
-                        }
-                        break;
-
-                    case "remove":
-                        result = await _mediator.Send(new RemoveFriendCommand(currentIdentityUser.Id, targetUserId));
-                        message = result ? "Friend removed successfully" : "Failed to remove friend";
-                        if (result)
-                        {
-                            await _hubContext.Clients.Group(targetUserId).SendAsync("FriendRemoved", 
-                                new { removerId = currentIdentityUser.Id, removerName = currentIdentityUser.UserName });
-                        }
-                        break;
-
-                    default:
-                        return Json(new { success = false, message = $"Invalid action: {action}. Valid actions are: add, send, accept, reject, remove" });
+                    _logger.LogWarning("HandleFriendRequest: Target user ID is empty");
+                    return Json(new { success = false, message = "Target user ID is required" });
                 }
 
-                return Json(new { success = result, message = message });
+                if (string.IsNullOrEmpty(action))
+                {
+                    _logger.LogWarning("HandleFriendRequest: Action is empty");
+                    return Json(new { success = false, message = "Action is required" });
+                }
+
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    _logger.LogWarning("HandleFriendRequest: Current user not found");
+                    return Json(new { success = false, message = "Current user not found" });
+                }
+
+                _logger.LogInformation("HandleFriendRequest: Creating command. CurrentUserId: {CurrentUserId}, TargetUserId: {TargetUserId}, Action: {Action}",
+                    currentUser.Id, targetUserId, action);
+
+                var command = new HandleFriendRequestCommand(currentUser.Id, targetUserId, action);
+                var result = await _mediator.Send(command);
+
+                _logger.LogInformation("HandleFriendRequest: Command processed. Result: {Result}", result);
+
+                if (!result)
+                {
+                    _logger.LogWarning("HandleFriendRequest: Command failed");
+                    return Json(new { success = false, message = "Failed to process friend request" });
+                }
+
+                var message = action.ToLower() switch
+                {
+                    "add" or "send" => "Friend request sent successfully",
+                    "accept" => "Friend request accepted",
+                    "reject" => "Friend request rejected",
+                    "remove" => "Friend removed",
+                    _ => "Request processed successfully"
+                };
+
+                return Json(new { success = true, message = message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling friend request. Action: {Action}, TargetUserId: {TargetUserId}", 
+                _logger.LogError(ex, "HandleFriendRequest: Error processing request. Action: {Action}, TargetUserId: {TargetUserId}",
                     action, targetUserId);
                 return Json(new { success = false, message = "An error occurred while processing your request" });
             }
@@ -261,11 +231,11 @@ namespace Elomoas.Controllers
                 return Json(new { success = false, message = "Friend ID cannot be empty" });
             }
 
-            var currentIdentityUser = await _userManager.GetUserAsync(User);
+            var currentIdentityUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
             if (currentIdentityUser == null)
-                {
+            {
                 return Json(new { success = false, message = "User not found" });
-                }
+            }
 
             try
             {
@@ -274,8 +244,12 @@ namespace Elomoas.Controllers
                 
                 if (result)
                 {
-                    await _hubContext.Clients.Group(friendId).SendAsync("FriendRemoved", 
-                        new { removerId = currentIdentityUser.Id, removerName = currentIdentityUser.UserName });
+                    await _mediator.Send(new NotifyFriendRemovedCommand 
+                    { 
+                        FriendId = friendId,
+                        RemoverId = currentIdentityUser.Id,
+                        RemoverName = currentIdentityUser.UserName
+                    });
                 }
 
                 return Json(new { success = result, message = message });
@@ -289,13 +263,13 @@ namespace Elomoas.Controllers
 
         public async Task<IActionResult> MyProfile()
         {
-            var currentIdentityUser = await _userManager.GetUserAsync(User);
+            var currentIdentityUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
             if (currentIdentityUser == null)
             {
                 return RedirectToAction("Login", "Auth");
             }
 
-            var appUser = await _userRepository.GetAllUsersAsync();
+            var appUser = await _mediator.Send(new GetAllAllUsersQuery());
             var currentAppUser = appUser.FirstOrDefault(u => u.IdentityId == currentIdentityUser.Id);
             if (currentAppUser == null)
             {

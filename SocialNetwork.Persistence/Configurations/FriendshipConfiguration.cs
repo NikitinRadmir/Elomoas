@@ -11,21 +11,27 @@ namespace Elomoas.Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.HasOne<IdentityUser>()
+            builder.HasOne(f => f.User)
                 .WithMany()
                 .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne<IdentityUser>()
+            builder.HasOne(f => f.Friend)
                 .WithMany()
                 .HasForeignKey(f => f.FriendId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.Status)
                 .IsRequired();
 
             builder.Property(x => x.AddedAt)
                 .IsRequired();
+
+            builder.Property(x => x.CreatedDate)
+                .IsRequired();
+
+            builder.Property(x => x.UpdatedDate)
+                .IsRequired(false);
         }
     }
 } 

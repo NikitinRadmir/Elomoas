@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Elomoas.Infrastructure.Services;
 
@@ -17,17 +18,20 @@ public class AuthService : IAuthService
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly ApplicationDbContext _context;
     private readonly IEmailService _emailService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthService(
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager,
         IEmailService emailService,
-        ApplicationDbContext context)
+        ApplicationDbContext context,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _context = context;
         _emailService = emailService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<bool> RegisterAsync(string name, string email, string password)
@@ -87,5 +91,18 @@ public class AuthService : IAuthService
     public async Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync()
     {
         return await _userManager.Users.ToListAsync();
+    }
+
+    public async Task<IdentityUser> GetCurrentIdentityUserAsync()
+    {
+        if (_httpContextAccessor.HttpContext?.User == null)
+            return null;
+
+        return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+    }
+
+    public async Task<IdentityUser> GetIdentityUserByIdAsync(string userId)
+    {
+        return await _userManager.FindByIdAsync(userId);
     }
 }

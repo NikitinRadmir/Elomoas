@@ -15,4 +15,6 @@ public interface IAuthService
 
     Task LogoutAsync();
     Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync();
+    Task<IdentityUser> GetCurrentIdentityUserAsync();
+    Task<IdentityUser> GetIdentityUserByIdAsync(string userId);
 }

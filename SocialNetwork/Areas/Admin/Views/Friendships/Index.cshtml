@@ -45,7 +45,6 @@
                             <th>User</th>
                             <th>Friend</th>
                             <th>Status</th>
-                            <th>Added At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -57,7 +56,6 @@
                                 <td>@friendship.UserId</td>
                                 <td>@friendship.FriendId</td>
                                 <td>@friendship.Status</td>
-                                <td>@friendship.AddedAt.ToString("g")</td>
                                 <td>
                                     <div class="btn-group">
                                         <a asp-action="Edit" asp-route-id="@friendship.Id" class="btn btn-primary btn-sm">

@@ -242,7 +242,6 @@ namespace Elomoas.Infrastructure.Services
         {
             try
             {
-                friendship.AddedAt = DateTime.UtcNow;
                 _context.Friendships.Add(friendship);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Created new friendship with id {Id}", friendship.Id);

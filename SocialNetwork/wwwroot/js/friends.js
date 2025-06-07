@@ -12,13 +12,14 @@ $(document).ready(function () {
     $(document).off('friendRemoved');
 
     function updateFriendStatus(userId, status, senderData = null) {
+        console.log('Updating friend status:', { userId, status, senderData });
         const isUserPage = window.location.pathname.includes('/Users/UserPage/');
         const actions = {
             'pending': isUserPage ? `
                 <a href="#" class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-clock font-xss"></i> PENDING
                 </a>` : `
-                <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                <a href="/Users/UserPage/${senderData?.id || userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
                 </a>
                 <a href="#" class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white">
@@ -33,7 +34,7 @@ $(document).ready(function () {
                         <i class="feather-message-square font-sm text-grey-900"></i>
                     </a>
                 </div>` : `
-                <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                <a href="/Users/UserPage/${senderData?.id || userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
                 </a>
                 <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white remove-friend-btn" data-user-id="${userId}">
@@ -43,7 +44,7 @@ $(document).ready(function () {
                 <a href="#" class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="${userId}">
                     <i class="feather-user-plus font-xss"></i> ADD FRIEND
                 </a>` : `
-                <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                <a href="/Users/UserPage/${senderData?.id || userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
                 </a>
                 <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="${userId}">
@@ -58,7 +59,7 @@ $(document).ready(function () {
                         <i class="feather-x mr-1"></i> REJECT
                     </a>
                 </div>` : `
-                <a href="/Users/UserPage/${userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                <a href="/Users/UserPage/${senderData?.id || userId}" class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
                     <i class="feather-user font-xss"></i> PROFILE
                 </a>
                 <div class="d-flex justify-content-center">
@@ -73,9 +74,11 @@ $(document).ready(function () {
 
         // Find user cards and elements
         const elements = $(`.user-card[data-user-id="${userId}"], .user-item[data-user-id="${userId}"], .friend-actions[data-user-id="${userId}"]`);
+        console.log('Found elements:', elements.length);
 
         // If we can't find the user's card and this is a new friend request
         if (elements.length === 0 && status === 'request' && senderData) {
+            console.log('Creating new friend request card');
             // Get the requests container
             const requestsSection = $('.pending-requests-container');
             if (requestsSection.length) {
@@ -83,14 +86,24 @@ $(document).ready(function () {
                 const userCard = $(`
                     <div class="col-xl-4 col-lg-6 col-md-6 user-item" data-user-id="${senderData.senderId}">
                         <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-4 border-0 text-center user-card">
-                            <a href="/Users/UserPage/${senderData.senderId}" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
+                            <a href="/Users/UserPage/${senderData.id}" class="ml-auto mr-auto rounded-lg overflow-hidden d-inline-block user-image">
                                 <img src="/images/user-12.png" alt="${senderData.senderName}" class="p-0 w100 shadow-xss">
                             </a>
                             <h4 class="fw-700 font-xs mt-3 mb-1">${senderData.senderName}</h4>
                             <p class="fw-600 font-xssss text-grey-500 mt-0 mb-2">${senderData.senderEmail}</p>
                             <div class="clearfix"></div>
                             <div class="friend-actions" data-user-id="${senderData.senderId}">
-                                ${actions['request']}
+                                <a href="/Users/UserPage/${senderData.id}" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
+                                    <i class="feather-user font-xss"></i> PROFILE
+                                </a>
+                                <div class="d-flex justify-content-center mt-2">
+                                    <button class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white accept-friend-btn" data-user-id="${senderData.senderId}">
+                                        <i class="feather-user-plus font-xss"></i> ACCEPT
+                                    </button>
+                                    <button class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white reject-friend-btn" data-user-id="${senderData.senderId}">
+                                        <i class="feather-user-minus font-xss"></i> REJECT
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -108,6 +121,7 @@ $(document).ready(function () {
         elements.each(function() {
             const element = $(this);
             const actionHtml = actions[status];
+            console.log('Updating element with status:', status);
 
             if (actionHtml) {
                 if (element.hasClass('friend-actions')) {
@@ -167,7 +181,9 @@ $(document).ready(function () {
     }
 
     function handleFriendAction(userId, action, button) {
+        console.log('Handling friend action:', { userId, action });
         const token = $('input[name="__RequestVerificationToken"]').val();
+        console.log('Token:', token);
         button.prop('disabled', true);
         
         $.ajax({
@@ -179,20 +195,11 @@ $(document).ready(function () {
                 __RequestVerificationToken: token
             },
             success: function(response) {
+                console.log('Friend action response:', response);
                 button.prop('disabled', false);
                 if (response.success) {
                     let newStatus = '';
                     switch (action) {
-                        case 'add':
-                        case 'send':
-                            newStatus = 'pending';
-                            // Обновляем UI для отправителя, показывая PENDING
-                            updateFriendStatus(userId, 'pending');
-                            // Сохраняем состояние в localStorage
-                            const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
-                            sentRequests[userId] = true;
-                            localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
-                            break;
                         case 'accept':
                             newStatus = 'friend';
                             updateFriendStatus(userId, 'friend');
@@ -216,7 +223,8 @@ $(document).ready(function () {
                     toastr.error(response.message);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('Friend action error:', { xhr, status, error });
                 button.prop('disabled', false);
                 toastr.error('There was an error processing your request');
             }
@@ -225,6 +233,7 @@ $(document).ready(function () {
 
     // При загрузке страницы проверяем отправленные запросы
     function checkSentRequests() {
+        console.log('Checking sent requests');
         const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
         Object.keys(sentRequests).forEach(userId => {
             // Проверяем, не являемся ли мы уже друзьями
@@ -245,53 +254,126 @@ $(document).ready(function () {
     // Вызываем проверку при загрузке страницы
     checkSentRequests();
 
-    // Click handlers for friend-related buttons
-    $(document).on('click', '.add-friend-btn', function(e) {
+    // Click handler for add friend button
+    $(document).on('click', '.add-friend-btn', function (e) {
         e.preventDefault();
-        const userId = $(this).data('user-id');
-        handleFriendAction(userId, 'add', $(this));
+        const button = $(this);
+        const userId = button.data('user-id');
+        
+        if (!userId) {
+            console.error('User ID not found');
+            toastr.error('Error: User ID not found');
+            return;
+        }
+
+        // Disable the button to prevent double clicks
+        button.prop('disabled', true);
+
+        // Get the anti-forgery token
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        // Send the friend request
+        $.ajax({
+            url: '/Users/HandleFriendRequest',
+            type: 'POST',
+            data: {
+                targetUserId: userId,
+                action: 'add',
+                __RequestVerificationToken: token
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Update the button to show pending state
+                    updateFriendStatus(userId, 'pending');
+                    toastr.success('Friend request sent successfully');
+                    
+                    // Save to localStorage
+                    const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+                    sentRequests[userId] = true;
+                    localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
+                } else {
+                    toastr.error(response.message || 'Failed to send friend request');
+                    // Re-enable the button on error
+                    button.prop('disabled', false);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error sending friend request:', error);
+                toastr.error('Error sending friend request');
+                // Re-enable the button on error
+                button.prop('disabled', false);
+            }
+        });
     });
 
+    // Click handlers for friend-related buttons
     $(document).on('click', '.accept-friend-btn', function(e) {
         e.preventDefault();
+        console.log('Accept friend button clicked');
         const userId = $(this).data('user-id');
         handleFriendAction(userId, 'accept', $(this));
     });
 
     $(document).on('click', '.reject-friend-btn', function(e) {
         e.preventDefault();
+        console.log('Reject friend button clicked');
         const userId = $(this).data('user-id');
         handleFriendAction(userId, 'reject', $(this));
     });
 
     $(document).on('click', '.remove-friend-btn', function(e) {
         e.preventDefault();
+        console.log('Remove friend button clicked');
         const userId = $(this).data('user-id');
         handleFriendAction(userId, 'remove', $(this));
     });
 
     // SignalR event handlers
     $(document).on("friendRequest", function (e, data) {
-        updateFriendStatus(data.senderId, 'request', data);
+        console.log('Friend request received:', data);
+        updateFriendStatus(data.senderId, 'request', { 
+            id: data.id, 
+            senderId: data.senderId, 
+            senderName: data.senderName, 
+            senderEmail: data.senderEmail 
+        });
         toastr.info(`${data.senderName} sent you a friend request`);
     });
 
     $(document).on("friendRequestAccepted", function (e, data) {
-        updateFriendStatus(data.acceptorId, 'friend');
+        console.log('Friend request accepted:', data);
+        updateFriendStatus(data.accepterId, 'friend', { 
+            id: data.id, 
+            senderId: data.accepterId, 
+            senderName: data.accepterName, 
+            senderEmail: data.accepterEmail 
+        });
         // Удаляем запись из localStorage при получении уведомления о принятии запроса
         const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
-        delete sentRequests[data.acceptorId];
+        delete sentRequests[data.accepterId];
         localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
-        toastr.success(`${data.acceptorName} accepted your friend request`);
+        toastr.success(`${data.accepterName} accepted your friend request`);
     });
 
     $(document).on("friendRequestRejected", function (e, data) {
-        updateFriendStatus(data.rejectorId, 'none');
+        console.log('Friend request rejected:', data);
+        updateFriendStatus(data.rejecterId, 'none', { 
+            id: data.id, 
+            senderId: data.rejecterId 
+        });
+        // Удаляем запись из localStorage при получении уведомления об отклонении запроса
+        const sentRequests = JSON.parse(localStorage.getItem('sentFriendRequests') || '{}');
+        delete sentRequests[data.rejecterId];
+        localStorage.setItem('sentFriendRequests', JSON.stringify(sentRequests));
         toastr.info(`${data.rejectorName} rejected your friend request`);
     });
 
     $(document).on("friendRemoved", function (e, data) {
-        updateFriendStatus(data.removerId, 'none');
+        console.log('Friend removed:', data);
+        updateFriendStatus(data.removerId, 'none', { 
+            id: data.id, 
+            senderId: data.removerId 
+        });
         toastr.info(`${data.removerName} removed you from their friends list`);
     });
 }); 
