@@ -4,7 +4,7 @@ using Elomoas.Domain.Entities;
 
 namespace Elomoas.Application.Features.Courses.Query.GetSubscribedCourses
 {
-    public class GetSubscribedCoursesQuery : IRequest<IEnumerable<Course>>
+    public record GetSubscribedCoursesQuery : IRequest<IEnumerable<Course>>
     {
         public int UserId { get; set; }
 
