@@ -158,6 +158,7 @@
 
 @section Styles {
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <link href="~/css/video-player.css" rel="stylesheet" />
     <style>
         .duration-select {
             border: 1px solid #e5e5e5;
@@ -195,234 +196,552 @@
             font-weight: 600;
             color: #007bff;
         }
+
+        /* Добавляем стили для выбора длительности */
+        .duration-option {
+            cursor: pointer;
+        }
+
+        .duration-option .duration-select {
+            transition: all 0.3s ease;
+        }
+
+        .duration-option .duration-select:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .duration-option .duration-select.selected {
+            background-color: #e8f4ff;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+
+        .duration-option .badge {
+            transition: all 0.3s ease;
+        }
+
+        .duration-option:hover .badge {
+            transform: scale(1.1);
+        }
+
+        .subscription-price {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .subscription-price.highlight {
+            color: #28a745;
+            transform: scale(1.1);
+        }
+
+        .duration-select.selected .subscription-price {
+            color: #28a745;
+            font-weight: 700;
+        }
     </style>
 }
 
 @section Scripts {
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             let selectedDuration = 1;
             let isProcessing = false;
 
-            function updateSubscriptionUI(isSubscribed, subscriptionInfo) {
-                const subscriptionContainer = $('.subscription-container');
-                
-                if (isSubscribed) {
-                    const html = `
-                        <div class="bg-white p-3 rounded-lg mb-3">
-                            <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
-                            <div class="subscription-info">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="font-xssss fw-600 text-grey-600">Duration:</span>
-                                    <span class="font-xssss fw-700 text-primary">${subscriptionInfo.durationInMonths} months</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="font-xssss fw-600 text-grey-600">Price:</span>
-                                    <span class="font-xssss fw-700 text-primary">$${subscriptionInfo.subscriptionPrice}</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
-                                    <span class="font-xssss fw-700 text-primary">${new Date(subscriptionInfo.expirationDate).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
-                    
-                    subscriptionContainer.html(html);
-                    attachUnsubscribeHandler();
+            // Инициализация видеоплеера
+            const player = document.querySelector('.player');
+            const video = document.querySelector('#video');
+            const playBtn = document.querySelector('.play-btn');
+            const playBtnBig = document.querySelector('.play-btn-big');
+            const volumeBtn = document.querySelector('.volume-btn');
+            const volumeSlider = document.querySelector('.volume-slider');
+            const volumeFill = document.querySelector('.volume-filled');
+            const progressSlider = document.querySelector('.progress');
+            const progressFill = document.querySelector('.progress-filled');
+            const textCurrent = document.querySelector('.time-current');
+            const textTotal = document.querySelector('.time-total');
+            const speedBtns = document.querySelectorAll('.speed-item');
+            const fullscreenBtn = document.querySelector('.fullscreen');
+
+            let lastVolume = 1;
+            let isMouseDown = false;
+            let isFullscreen = false;
+
+            // Функция переключения воспроизведения
+            function togglePlay() {
+                if (video.paused) {
+                    video.play();
+                    playBtnBig.style.display = 'none';
                 } else {
-                    const html = `
-                        <div class="subscription-options bg-white p-3 rounded-lg">
-                            <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
-                            <div class="duration-options">
-                                ${generateDurationOptionsHtml()}
-                            </div>
-                            <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="${courseId}" data-duration="1">
-                                SUBSCRIBE
-                            </button>
-                        </div>`;
-                    
-                    subscriptionContainer.html(html);
-                    attachDurationSelectHandlers();
-                    attachSubscribeHandler();
+                    video.pause();
+                    playBtnBig.style.display = 'block';
+                }
+                playBtn.classList.toggle('paused');
+            }
+
+            // Функция переключения полноэкранного режима
+            function toggleFullscreen() {
+                if (!isFullscreen) {
+                    if (player.requestFullscreen) {
+                        player.requestFullscreen();
+                    } else if (player.mozRequestFullScreen) {
+                        player.mozRequestFullScreen();
+                    } else if (player.webkitRequestFullscreen) {
+                        player.webkitRequestFullscreen();
+                    } else if (player.msRequestFullscreen) {
+                        player.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+                isFullscreen = !isFullscreen;
+            }
+
+            // Функция переключения звука
+            function toggleMute() {
+                if (video.volume) {
+                    lastVolume = video.volume;
+                    video.volume = 0;
+                    volumeBtn.classList.add('muted');
+                    volumeFill.style.width = 0;
+                } else {
+                    video.volume = lastVolume;
+                    volumeBtn.classList.remove('muted');
+                    volumeFill.style.width = `${lastVolume * 100}%`;
                 }
             }
 
-            function generateDurationOptionsHtml() {
-                const options = [
-                    { months: 1, discount: 0 },
-                    { months: 3, discount: 10 },
-                    { months: 6, discount: 20 },
-                    { months: 12, discount: 30 }
-                ];
-
-                return options.map(option => `
-                    <div class="duration-option mb-2" data-months="${option.months}" data-base-price="${basePrice}">
-                        <div class="d-flex justify-content-between align-items-center p-2 rounded cursor-pointer duration-select ${option.months === 1 ? 'selected' : ''}">
-                            <div>
-                                <span class="font-xssss fw-600">${option.months} ${option.months === 1 ? 'month' : 'months'}</span>
-                                ${option.discount > 0 ? `<span class="badge bg-success text-white ml-2">-${option.discount}%</span>` : ''}
-                            </div>
-                            <div class="text-primary font-xssss fw-700 subscription-price">
-                                $${calculatePrice(basePrice, option.months, option.discount)}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+            // Функция изменения громкости
+            function changeVolume(e) {
+                volumeBtn.classList.remove('muted');
+                let volume = e.offsetX / volumeSlider.offsetWidth;
+                volume < 0.1 ? volume = 0 : volume = volume;
+                volumeFill.style.width = `${volume * 100}%`;
+                video.volume = volume;
+                if (volume > 0.7) {
+                    volumeBtn.classList.add('loud');
+                } else if (volume < 0.7 && volume > 0) {
+                    volumeBtn.classList.remove('loud');
+                } else if (volume == 0) {
+                    volumeBtn.classList.add('muted');
+                }
+                lastVolume = volume;
             }
 
-            function calculatePrice(basePrice, months, discount) {
-                const discountAmount = basePrice * (discount / 100);
-                return ((basePrice - discountAmount) * months).toFixed(2);
+            // Функция обновления прогресса
+            function updateProgress() {
+                const time = (video.currentTime / video.duration) * 100;
+                progressFill.style.width = `${time}%`;
+                textCurrent.textContent = getTimeCodeFromNum(video.currentTime);
             }
 
-            function attachDurationSelectHandlers() {
-                $('.duration-select').click(function() {
-                    if (isProcessing) return;
-                    
-                    const option = $(this).closest('.duration-option');
-                    const months = option.data('months');
-                    
-                    $('.duration-select').removeClass('selected');
-                    $(this).addClass('selected');
-                    
-                    selectedDuration = months;
-                    $('#subscribeButton').data('duration', months);
-                    
-                    updatePrice();
+            // Функция установки прогресса
+            function setProgress(e) {
+                const newTime = e.offsetX / progressSlider.offsetWidth;
+                progressFill.style.width = `${newTime * 100}%`;
+                video.currentTime = newTime * video.duration;
+            }
+
+            // Функция форматирования времени
+            function getTimeCodeFromNum(num) {
+                let seconds = parseInt(num);
+                let minutes = parseInt(seconds / 60);
+                seconds -= minutes * 60;
+                const hours = parseInt(minutes / 60);
+                minutes -= hours * 60;
+
+                if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
+                return `${String(hours).padStart(2, 0)}:${minutes}:${String(seconds % 60).padStart(2, 0)}`;
+            }
+
+            // Добавляем обработчики событий
+            playBtn.addEventListener('click', togglePlay);
+            playBtnBig.addEventListener('click', togglePlay);
+            video.addEventListener('click', togglePlay);
+            video.addEventListener('timeupdate', updateProgress);
+            video.addEventListener('canplay', () => {
+                textTotal.textContent = getTimeCodeFromNum(video.duration);
+            });
+            video.addEventListener('ended', () => {
+                playBtnBig.style.display = 'block';
+                playBtn.classList.add('paused');
+            });
+            volumeBtn.addEventListener('click', toggleMute);
+            volumeSlider.addEventListener('click', changeVolume);
+            progressSlider.addEventListener('click', setProgress);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+            // Обработчики для перетаскивания ползунка громкости
+            volumeSlider.addEventListener('mousedown', () => {
+                isMouseDown = true;
+            });
+            volumeSlider.addEventListener('mousemove', (e) => {
+                if (isMouseDown) {
+                    changeVolume(e);
+                }
+            });
+            volumeSlider.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+            document.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+
+            // Обработчики для клавиш
+            document.addEventListener('keyup', (e) => {
+                switch (e.key.toLowerCase()) {
+                    case ' ':
+                        togglePlay();
+                        break;
+                    case 'm':
+                        toggleMute();
+                        break;
+                    case 'arrowright':
+                        video.currentTime += 5;
+                        break;
+                    case 'arrowleft':
+                        video.currentTime -= 5;
+                        break;
+                }
+            });
+
+            // Обработчики для скорости воспроизведения
+            speedBtns.forEach(speedBtn => {
+                speedBtn.addEventListener('click', () => {
+                    speedBtns.forEach(btn => btn.classList.remove('active'));
+                    speedBtn.classList.add('active');
+                    video.playbackRate = speedBtn.getAttribute('data-speed');
+                });
+            });
+
+            // Обработчики для полноэкранного режима
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+            function handleFullscreenChange() {
+                isFullscreen = Boolean(
+                    document.fullscreenElement ||
+                    document.webkitFullscreenElement ||
+                    document.mozFullScreenElement ||
+                    document.msFullscreenElement
+                );
+            }
+
+            // Инициализация начального состояния
+            playBtnBig.style.display = 'block';
+
+            // Обработка выбора длительности подписки
+            $('.duration-select').on('click', function() {
+                const option = $(this).closest('.duration-option');
+                const months = option.data('months');
+                selectedDuration = months;
+                
+                // Обновляем визуальное выделение
+                $('.duration-select').removeClass('selected');
+                $(this).addClass('selected');
+                
+                // Обновляем кнопку подписки
+                $('#subscribeButton').data('duration', months);
+
+                // Анимация цены
+                const priceElement = $(this).find('.subscription-price');
+                priceElement.addClass('highlight');
+                setTimeout(() => {
+                    priceElement.removeClass('highlight');
+                }, 300);
+
+                // Добавляем анимацию при выборе
+                $(this).css('transform', 'scale(1.02)');
+                setTimeout(() => {
+                    $(this).css('transform', '');
+                }, 200);
+            });
+
+            // Обработка кнопки подписки
+            $('#subscribeButton').on('click', async function() {
+                if (isProcessing) return;
+                
+                const button = $(this);
+                const courseId = button.data('course-id');
+                const duration = button.data('duration');
+                
+                try {
+                    isProcessing = true;
+                    button.prop('disabled', true);
+                    button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                    const response = await $.ajax({
+                        url: '/Course/Subscribe',
+                        method: 'POST',
+                        data: {
+                            courseId: courseId,
+                            durationInMonths: duration
+                        }
+                    });
+
+                    if (response.success) {
+                        // Показываем уведомление об успехе
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Subscribed!',
+                            text: `You have successfully subscribed to this course for ${duration} month${duration > 1 ? 's' : ''}!`,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+
+                        // Обновляем UI без перезагрузки
+                        const subscriptionHtml = `
+                            <div class="bg-white p-3 rounded-lg mb-3">
+                                <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                                <div class="subscription-info">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="font-xssss fw-600 text-grey-600">Duration:</span>
+                                        <span class="font-xssss fw-700 text-primary">${duration} month${duration > 1 ? 's' : ''}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                        <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                        <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
+
+                        $('.subscription-container').html(subscriptionHtml);
+                        
+                        // Переинициализируем обработчик отписки
+                        initUnsubscribeHandler();
+                    } else {
+                        throw new Error('Failed to subscribe');
+                    }
+                } catch (error) {
+                    console.error('Subscription error:', error);
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to subscribe. Please try again.',
+                    });
+                } finally {
+                    isProcessing = false;
+                    button.prop('disabled', false);
+                    button.html('SUBSCRIBE');
+                }
+            });
+
+            // Функция инициализации обработчика отписки
+            function initUnsubscribeHandler() {
+                $('.unsubscribe-btn').off('click').on('click', async function(e) {
+                    e.preventDefault();
+                    const button = $(this);
+                    const courseId = button.data('course-id');
+
+                    try {
+                        const result = await Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You will be unsubscribed from this course",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, unsubscribe!'
+                        });
+
+                        if (result.isConfirmed) {
+                            button.prop('disabled', true);
+                            button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                            const response = await $.ajax({
+                                url: '/Course/Unsubscribe',
+                                method: 'POST',
+                                data: { courseId: courseId }
+                            });
+
+                            if (response.success) {
+                                await Swal.fire({
+                                    icon: 'success',
+                                    title: 'Unsubscribed!',
+                                    text: 'You have been unsubscribed from this course.',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+
+                                // Update UI to show subscription options
+                                const subscriptionOptionsHtml = `
+                                    <div class="subscription-options bg-white p-3 rounded-lg">
+                                        <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
+                                        <div class="duration-options">
+                                            @foreach (var option in Model.DurationOptions)
+                                            {
+                                                <div class="duration-option mb-2" data-months="@option.Months" data-base-price="@Model.Course.Price">
+                                                    <div class="d-flex justify-content-between align-items-center p-2 rounded cursor-pointer duration-select @(option.Months == 1 ? "selected" : "")">
+                                                        <div>
+                                                            <span class="font-xssss fw-600">@option.GetDisplayText()</span>
+                                                            @if (option.DiscountPercent > 0)
+                                                            {
+                                                                <span class="badge bg-success text-white ml-2">-@option.DiscountPercent%</span>
+                                                            }
+                                                        </div>
+                                                        <div class="text-primary font-xssss fw-700 subscription-price">
+                                                            $@option.CalculatePrice(Model.Course.Price)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="${courseId}" data-duration="1">
+                                            SUBSCRIBE
+                                        </button>
+                                    </div>`;
+
+                                $('.subscription-container').html(subscriptionOptionsHtml);
+                                
+                                // Reinitialize all handlers
+                                initializeDurationHandlers();
+                                initializeSubscribeHandler();
+                            } else {
+                                throw new Error('Failed to unsubscribe');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Unsubscription error:', error);
+                        await Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Failed to unsubscribe. Please try again.',
+                        });
+                    } finally {
+                        button.prop('disabled', false);
+                        button.html('UNSUBSCRIBE');
+                    }
                 });
             }
 
-            function attachSubscribeHandler() {
-                $('#subscribeButton').click(function(e) {
-                    e.preventDefault();
+            // Функция инициализации обработчиков длительности
+            function initializeDurationHandlers() {
+                // Отключаем предыдущие обработчики
+                $('.duration-select').off('click');
+                
+                // Добавляем новые обработчики
+                $('.duration-select').on('click', function() {
+                    const option = $(this).closest('.duration-option');
+                    const months = option.data('months');
+                    
+                    // Обновляем визуальное выделение
+                    $('.duration-select').removeClass('selected');
+                    $(this).addClass('selected');
+                    
+                    // Обновляем кнопку подписки
+                    $('#subscribeButton').data('duration', months);
+
+                    // Анимация цены
+                    const priceElement = $(this).find('.subscription-price');
+                    priceElement.addClass('highlight');
+                    setTimeout(() => {
+                        priceElement.removeClass('highlight');
+                    }, 300);
+
+                    // Добавляем анимацию при выборе
+                    $(this).css('transform', 'scale(1.02)');
+                    setTimeout(() => {
+                        $(this).css('transform', '');
+                    }, 200);
+                });
+            }
+
+            // Функция инициализации обработчика подписки
+            function initializeSubscribeHandler() {
+                $('#subscribeButton').off('click').on('click', async function() {
                     if (isProcessing) return;
                     
                     const button = $(this);
                     const courseId = button.data('course-id');
                     const duration = button.data('duration');
                     
-                    button.prop('disabled', true);
-                    button.html('<span class="spinner-border spinner-border-sm mr-2"></span>Please wait...');
-                    isProcessing = true;
-                    
-                    $.post('/Course/Subscribe', {
-                        courseId: courseId,
-                        durationInMonths: duration
-                    })
-                    .done(function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'You have successfully subscribed to the course',
-                                icon: 'success',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                            
-                            updateSubscriptionUI(true, {
-                                durationInMonths: duration,
-                                subscriptionPrice: calculatePrice(basePrice, duration, getDiscountByDuration(duration)),
-                                expirationDate: new Date(Date.now() + duration * 30 * 24 * 60 * 60 * 1000)
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'An error occurred while subscribing to the course',
-                                icon: 'error'
-                            });
-                        }
-                    })
-                    .fail(function() {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while subscribing to the course',
-                            icon: 'error'
+                    try {
+                        isProcessing = true;
+                        button.prop('disabled', true);
+                        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                        const response = await $.ajax({
+                            url: '/Course/Subscribe',
+                            method: 'POST',
+                            data: {
+                                courseId: courseId,
+                                durationInMonths: duration
+                            }
                         });
-                    })
-                    .always(function() {
+
+                        if (response.success) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Subscribed!',
+                                text: `You have successfully subscribed to this course for ${duration} month${duration > 1 ? 's' : ''}!`,
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+
+                            const subscriptionHtml = `
+                                <div class="bg-white p-3 rounded-lg mb-3">
+                                    <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                                    <div class="subscription-info">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="font-xssss fw-600 text-grey-600">Duration:</span>
+                                            <span class="font-xssss fw-700 text-primary">${duration} month${duration > 1 ? 's' : ''}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                            <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                            <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
+
+                            $('.subscription-container').html(subscriptionHtml);
+                            
+                            // Reinitialize unsubscribe handler
+                            initUnsubscribeHandler();
+                        } else {
+                            throw new Error('Failed to subscribe');
+                        }
+                    } catch (error) {
+                        console.error('Subscription error:', error);
+                        await Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Failed to subscribe. Please try again.',
+                        });
+                    } finally {
+                        isProcessing = false;
                         button.prop('disabled', false);
                         button.html('SUBSCRIBE');
-                        isProcessing = false;
-                    });
+                    }
                 });
             }
 
-            function attachUnsubscribeHandler() {
-                $('.unsubscribe-btn').click(function(e) {
-                    e.preventDefault();
-                    if (isProcessing) return;
-                    
-                    const button = $(this);
-                    const courseId = button.data('course-id');
-                    
-                    Swal.fire({
-                        title: 'Confirmation',
-                        text: 'Are you sure you want to unsubscribe from the course?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, unsubscribe',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            button.prop('disabled', true);
-                            button.html('<span class="spinner-border spinner-border-sm mr-2"></span>Please wait...');
-                            isProcessing = true;
-                            
-                            $.post('/Course/Unsubscribe', { courseId: courseId })
-                                .done(function(response) {
-                                    if (response.success) {
-                                        Swal.fire({
-                                            title: 'Success!',
-                                            text: 'You have successfully unsubscribed from the course',
-                                            icon: 'success',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                        updateSubscriptionUI(false);
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: 'An error occurred while unsubscribing from the course',
-                                            icon: 'error'
-                                        });
-                                    }
-                                })
-                                .fail(function() {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'An error occurred while unsubscribing from the course',
-                                        icon: 'error'
-                                    });
-                                })
-                                .always(function() {
-                                    button.prop('disabled', false);
-                                    button.html('UNSUBSCRIBE');
-                                    isProcessing = false;
-                                });
-                        }
-                    });
-                });
-            }
-
-            function getDiscountByDuration(duration) {
-                switch (duration) {
-                    case 3: return 10;
-                    case 6: return 20;
-                    case 12: return 30;
-                    default: return 0;
-                }
-            }
-
-            // Initialization
-            const courseId = $('#subscribeButton').data('course-id');
-            const basePrice = parseFloat($('#basePrice').val());
-            
-            attachDurationSelectHandlers();
-            attachSubscribeHandler();
-            attachUnsubscribeHandler();
-            updatePrice();
+            // Инициализация всех обработчиков при загрузке страницы
+            initializeDurationHandlers();
+            initializeSubscribeHandler();
+            initUnsubscribeHandler();
         });
     </script>
 }

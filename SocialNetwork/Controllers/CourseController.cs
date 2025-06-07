@@ -58,7 +58,18 @@ namespace Elomoas.Controllers
                 var command = new SubscribeToCourseCommand(courseId, durationInMonths);
                 var result = await _mediator.Send(command);
 
-                return Json(new { success = result });
+                if (result)
+                {
+                    // Получаем информацию о подписке
+                    var course = await _mediator.Send(new GetCourseByIdQuery(courseId));
+                    return Json(new { 
+                        success = true,
+                        subscriptionPrice = course.SubscriptionInfo.SubscriptionPrice,
+                        expirationDate = course.SubscriptionInfo.ExpirationDate.ToString("dd.MM.yyyy")
+                    });
+                }
+
+                return Json(new { success = false });
             }
             catch (Exception ex)
             {

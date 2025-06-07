@@ -312,34 +312,62 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             // Обработчик отписки от курса
-            $('.unsubscribe-course-btn').click(function(e) {
+            $('.unsubscribe-course-btn').click(async function(e) {
                 e.preventDefault();
                 const button = $(this);
                 const courseId = button.data('course-id');
 
-                if (confirm('Are you sure you want to unsubscribe from this course?')) {
-                    button.prop('disabled', true);
-                    
-                    $.post('/Course/Unsubscribe', { courseId: courseId })
-                        .done(function(response) {
-                            if (response.success) {
-                                // Удаляем карточку курса
-                                button.closest('.col-xl-4').fadeOut(300, function() {
-                                    $(this).remove();
-                                    // Если это был последний курс, показываем сообщение
-                                    if ($('#navtabs1 .col-xl-4').length === 0) {
-                                        $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any courses yet.</p></div>');
-                                    }
-                                });
-                            } else {
-                                alert('Failed to unsubscribe from the course. Please try again.');
-                                button.prop('disabled', false);
-                            }
-                        })
-                        .fail(function() {
-                            alert('An error occurred while unsubscribing from the course. Please try again.');
-                            button.prop('disabled', false);
+                try {
+                    const result = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You will be unsubscribed from this course",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, unsubscribe!'
+                    });
+
+                    if (result.isConfirmed) {
+                        button.prop('disabled', true);
+                        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                        const response = await $.ajax({
+                            url: '/Course/Unsubscribe',
+                            method: 'POST',
+                            data: { courseId: courseId }
                         });
+
+                        if (response.success) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Unsubscribed!',
+                                text: 'You have been unsubscribed from this course.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+
+                            // Удаляем карточку курса с анимацией
+                            button.closest('.col-xl-4').fadeOut(300, function() {
+                                $(this).remove();
+                                // Если это был последний курс, показываем сообщение
+                                if ($('#navtabs1 .col-xl-4').length === 0) {
+                                    $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any courses yet.</p></div>');
+                                }
+                            });
+                        } else {
+                            throw new Error('Failed to unsubscribe');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Unsubscription error:', error);
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to unsubscribe. Please try again.',
+                    });
+                    button.prop('disabled', false);
+                    button.html('UNSUBSCRIBE');
                 }
             });
 
