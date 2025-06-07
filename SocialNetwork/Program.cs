@@ -63,7 +63,6 @@ public class Program
         // Configure hosted services
         builder.Services.Configure<HostOptions>(options =>
         {
-            // Don't stop the application when a background service fails
             options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
         });
 

@@ -7,7 +7,6 @@
 }
 
 <style>
-    /* User Profile Image Styles */
     .avatar {
         display: inline-block;
         width: 120px;
@@ -30,7 +29,6 @@
         transform: scale(1.05);
     }
 
-    /* Override any existing image styles */
     .avatar img.w-100,
     .avatar img.float-right {
         width: 120px !important;
@@ -73,7 +71,6 @@
             </ul>
         </div>
 
-        @*ТАБ КОНТЕКНТЫ*@
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="navtabs0">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
@@ -83,7 +80,6 @@
                             <div class="col-xl-12">
                                 <p class="font-xssss fw-600 lh-28 text-grey-500 pl-0">@(string.IsNullOrEmpty(user?.Description) ? "The user has no description" : user.Description)</p>
                                 <ul class="d-flex align-items-center mt-2 mb-3 float-left">
-                                    @*SOCIAL NETWORKS*@
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-facebook"><i class="font-xs ti-facebook text-white"></i></a></li>
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-twiiter"><i class="font-xs ti-twitter-alt text-white"></i></a></li>
                                     <li class="mr-2"><a href="#" class="btn-round-md bg-linkedin"><i class="font-xs ti-linkedin text-white"></i></a></li>
@@ -95,7 +91,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="tab-pane fade" id="navtabs1">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
@@ -139,8 +134,6 @@
                     </div>
                 </div>
             </div>
-
-
 
             <div class="tab-pane fade" id="navtabs2">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
@@ -280,7 +273,6 @@
         transform: scale(1.05);
     }
 
-    /* Override any existing image styles */
     .user-card img.w100,
     .user-card img.shadow-xss {
         width: 120px !important;
@@ -311,7 +303,6 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
 
-            // Обработчик отписки от курса
             $('.unsubscribe-course-btn').click(async function(e) {
                 e.preventDefault();
                 const button = $(this);
@@ -347,10 +338,8 @@
                                 timer: 2000
                             });
 
-                            // Удаляем карточку курса с анимацией
                             button.closest('.col-xl-4').fadeOut(300, function() {
                                 $(this).remove();
-                                // Если это был последний курс, показываем сообщение
                                 if ($('#navtabs1 .col-xl-4').length === 0) {
                                     $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any courses yet.</p></div>');
                                 }
@@ -371,7 +360,6 @@
                 }
             });
 
-            // Обработчик отписки от группы
             $('.unsubscribe-btn').click(function(e) {
                 e.preventDefault();
                 const button = $(this);
@@ -383,10 +371,8 @@
                     $.post('/Groups/Unsubscribe', { groupId: groupId })
                         .done(function(response) {
                             if (response.success) {
-                                // Удаляем карточку группы
                                 button.closest('.col-xl-4').fadeOut(300, function() {
                                     $(this).remove();
-                                    // Если это была последняя группа, показываем сообщение
                                     if ($('#navtabs2 .col-xl-4').length === 0) {
                                         $('#navtabs2 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any groups yet.</p></div>');
                                     }

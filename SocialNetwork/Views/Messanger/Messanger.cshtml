@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="~/css/messenger.css" />
 }
 
-@* Add antiforgery token *@
 @Html.AntiForgeryToken()
 
 <style>
@@ -408,7 +407,6 @@
                     </div>
                     <div class="chat-body p-3">
                         <div class="messages-content pb-5" id="messagesContainer">
-                            <!-- Сообщения будут добавляться динамически -->
                         </div>
                     </div>
                     <div class="message-input-wrapper p-3 border-top">
@@ -433,7 +431,6 @@
     </div>
 </div>
 
-<!-- Модальное окно со списком друзей -->
 <div id="friendsModal">
     <div class="friends-modal-content">
         <div class="friends-modal-header">
@@ -451,7 +448,6 @@
             </div>
         </div>
         <div class="friends-list">
-            <!-- Список друзей будет загружен динамически -->
         </div>
         <div class="no-results" style="display: none;">
             <p>Friends not founded</p>
@@ -462,15 +458,14 @@
 @section Scripts {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script>
-        let allFriends = []; // Храним полный список друзей
+        let allFriends = [];
         let currentChatId = null;
         let currentFriendId = null;
         let currentUserId = null;
         let connection = null;
-        let allChats = []; // Храним все чаты
+        let allChats = [];
 
         $(document).ready(function() {
-            // Инициализация SignalR
             connection = new signalR.HubConnectionBuilder()
                 .withUrl("/chatHub")
                 .build();
@@ -492,20 +487,18 @@
             connection.start()
                 .then(function () {
                     console.log("SignalR Connected.");
-                    updateChatsList(); // Загружаем список чатов при подключении
+                    updateChatsList();
                 })
                 .catch(function (err) {
                     console.error(err.toString());
                 });
 
-            // Закрытие модального окна при клике вне его содержимого
             $('#friendsModal').click(function(e) {
                 if (e.target.id === 'friendsModal') {
                     hideFriendsModal();
                 }
             });
 
-            // Улучшенный поиск по друзьям
             let searchTimeout;
             $('#friendSearchInput').on('input', function() {
                 clearTimeout(searchTimeout);
@@ -516,7 +509,6 @@
                 }, 300);
             });
 
-            // Добавляем обработчик поиска чатов
             $('.search-form input').on('input', function() {
                 const searchText = $(this).val().toLowerCase();
                 filterChats(searchText);
@@ -535,7 +527,6 @@
             }
 
             if (!currentChatId) {
-                // Если чата еще нет, отправляем первое сообщение через обычный AJAX запрос
                 const data = {
                     recipientId: currentFriendId,
                     content: content
@@ -557,7 +548,6 @@
                             currentChatId = response.chatId;
                             currentUserId = response.currentUserId;
 
-                            // Отображаем отправленное сообщение
                             if (response.message) {
                                 displayMessage(response.message, true);
                             } else {
@@ -568,7 +558,6 @@
                                 }, true);
                             }
 
-                            // Подключаемся к чату через SignalR
                             connection.invoke("JoinChat", currentChatId.toString())
                                 .catch(function (err) {
                                     console.error('Error joining chat:', err);
@@ -594,7 +583,6 @@
                     }
                 });
             } else {
-                // Если чат уже существует, отправляем через SignalR
                 console.log('Sending message via SignalR:', {
                     friendId: currentFriendId,
                     content: content,
@@ -613,7 +601,6 @@
         }
 
         function showError(message) {
-            // Показываем ошибку пользователю
             const errorDiv = $('#messageError');
             if (errorDiv.length === 0) {
                 const newErrorDiv = $('<div id="messageError" class="alert alert-danger mt-2" style="display: none;"></div>');
@@ -626,13 +613,11 @@
             const now = new Date();
             const messageDate = new Date(date);
             
-            // Get days difference
             const diffTime = now - messageDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             
-            // Check if date is in current week
             const startOfWeek = new Date(now);
-            startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+            startOfWeek.setDate(now.getDate() - now.getDay());
             
             if (messageDate.toDateString() === now.toDateString()) {
                 return 'Today';
@@ -644,17 +629,15 @@
                 return 'Yesterday';
             }
             
-            // If message is within current week
             if (messageDate >= startOfWeek) {
                 return `${messageDate.toLocaleDateString('en-US', {
-                    weekday: 'long' // Day name
+                    weekday: 'long'
                 })}, ${messageDate.toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric'
                 })}`;
             }
             
-            // If message is in current year
             if (messageDate.getFullYear() === now.getFullYear()) {
                 return messageDate.toLocaleDateString('en-US', {
                     month: 'long',
@@ -662,7 +645,6 @@
                 });
             }
             
-            // For older messages
             return messageDate.toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
@@ -675,7 +657,6 @@
             const messageTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dateDivId = `date-${messageDate.toDateString()}`;
 
-            // Проверяем, нужно ли добавить разделитель даты
             if (!document.getElementById(dateDivId)) {
                 const dateHtml = `
                     <div id="${dateDivId}" class="message-date-divider">
@@ -747,7 +728,7 @@
 
         function showFriendsModal() {
             $('#friendsModal').fadeIn(300);
-            $('#friendSearchInput').val(''); // Очищаем поле поиска
+            $('#friendSearchInput').val('');
             loadFriends();
         }
 
@@ -758,7 +739,7 @@
 
         function loadFriends() {
             $.get('/Messanger/GetFriends', function(friends) {
-                allFriends = friends; // Сохраняем полный список
+                allFriends = friends;
                 displayFriends(friends);
             });
         }
@@ -766,29 +747,22 @@
         function startChat(friendId, friendName, friendImg, friendEmail, isNewChat = false) {
             currentFriendId = friendId;
             
-            // Показываем чат
             $('.col-lg-6.col-xl-8').removeClass('d-none');
             
-            // Обновляем шапку чата
             const headerImg = $('.chat-header img');
             headerImg.attr('src', friendImg || '/images/default-icon.jpg');
             headerImg.attr('alt', friendName);
             $('.chat-header h6').text(friendName);
             $('.chat-header span').text(friendEmail);
             
-            // Скрываем модальное окно
             hideFriendsModal();
             
-            // Очищаем сообщения
             $('#messagesContainer').empty();
 
             if (isNewChat) {
-                // Если это новый чат (из модального окна), просто подготавливаем интерфейс
                 currentChatId = null;
-                // Фокусируемся на поле ввода
                 $('#messageInput').focus();
             } else {
-                // Если это существующий чат из списка, загружаем сообщения
                 $.get(`/Messanger/GetChatMessages?friendId=${friendId}`)
                     .done(function(data) {
                         if (data && data.chatId) {
@@ -827,7 +801,7 @@
         function updateChatsList() {
             $.get('/Messanger/GetUserChats')
                 .done(function(chats) {
-                    allChats = chats; // Сохраняем все чаты
+                    allChats = chats;
                     displayChats(chats);
                 })
                 .fail(function(error) {
@@ -835,7 +809,6 @@
                 });
         }
 
-        // Добавляем функцию фильтрации чатов
         function filterChats(searchText) {
             if (!allChats || !Array.isArray(allChats)) return;
 

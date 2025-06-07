@@ -139,12 +139,10 @@
                 .done(function (response) {
                     $('#groupsContainer').html($(response).find('#groupsContainer').html());
                     
-                    // Update URL without page reload
                     const url = new URL(window.location);
                     url.searchParams.set('search', searchTerm || '');
                     history.pushState({}, '', url);
 
-                    // Reattach event handlers after DOM update
                     initializeSubscriptionHandlers();
                 });
         }
@@ -155,20 +153,17 @@
             clearTimeout(searchTimeout);
             const searchTerm = $(this).val();
             
-            // Add 300ms delay before sending request
             searchTimeout = setTimeout(function() {
                 updateGroups(searchTerm);
             }, 300);
         });
 
-        // Prevent default form submission
         $('#searchForm').on('submit', function(e) {
             e.preventDefault();
             const searchTerm = $('#groupSearch').val();
             updateGroups(searchTerm);
         });
 
-        // Handle browser history navigation
         $(window).on('popstate', function() {
             const url = new URL(window.location);
             const searchTerm = url.searchParams.get('search') || '';
@@ -177,7 +172,6 @@
             updateGroups(searchTerm);
         });
 
-        // Subscription/unsubscription functionality
         function handleSubscriptionError() {
             alert('An error occurred. Please try again later.');
         }
@@ -241,7 +235,6 @@
                 });
         }
 
-        // Initialize handlers on page load
         $(document).ready(function() {
             initializeSubscriptionHandlers();
         });

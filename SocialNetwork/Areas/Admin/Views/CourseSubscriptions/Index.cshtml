@@ -86,7 +86,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -114,7 +113,6 @@
         $(document).ready(function() {
             feather.replace();
 
-            // Real-time search functionality
             $("#searchInput").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 $("#subscriptionsTableBody tr").filter(function() {

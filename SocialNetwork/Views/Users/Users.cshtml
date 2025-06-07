@@ -105,7 +105,6 @@
         animation: spin 1s linear infinite;
     }
     
-    /* User image styles */
     .user-card .user-image {
         display: inline-block;
         width: 120px;
@@ -128,7 +127,6 @@
         transform: scale(1.05);
     }
 
-    /* Override any existing image styles */
     .user-card img.w100,
     .user-card img.shadow-xss {
         width: 120px !important;
@@ -305,16 +303,13 @@
     <script src="~/js/friends.js"></script>
     <script>
         function updateUsers(searchTerm) {
-            // Показываем индикатор загрузки
             $('#usersContainer').addClass('loading');
             
             $.get('/Users/Users', { search: searchTerm })
                 .done(function (response) {
-                    // Обновляем контент
                     const $newContent = $(response).find('#usersContainer');
                     $('#usersContainer').html($newContent.html());
                     
-                    // Обновляем URL без перезагрузки страницы
                     const url = new URL(window.location);
                     if (searchTerm && searchTerm.trim()) {
                         url.searchParams.set('search', searchTerm);
@@ -323,55 +318,44 @@
                     }
                     history.pushState({ searchTerm: searchTerm }, '', url);
 
-                    // Переинициализируем тултипы
                     $('[data-toggle="tooltip"]').tooltip();
                 })
                 .fail(function() {
                     console.error('Failed to filter users');
                 })
                 .always(function() {
-                    // Скрываем индикатор загрузки
                     $('#usersContainer').removeClass('loading');
                 });
         }
 
         let searchTimeout;
         
-        // Обработчик ввода в поле поиска
         $('#userSearch').on('input', function() {
             clearTimeout(searchTimeout);
             const searchTerm = $(this).val().trim();
             
-            // Добавляем задержку 300мс перед отправкой запроса
             searchTimeout = setTimeout(function() {
                 updateUsers(searchTerm);
             }, 300);
         });
 
-        // Предотвращаем стандартную отправку формы
         $('#searchForm').on('submit', function(e) {
             e.preventDefault();
             const searchTerm = $('#userSearch').val().trim();
             updateUsers(searchTerm);
         });
 
-        // Обработка навигации по истории браузера
         $(window).on('popstate', function(e) {
             const state = e.originalEvent.state;
             const searchTerm = state ? state.searchTerm : '';
             
-            // Обновляем поле поиска
             $('#userSearch').val(searchTerm);
-            // Обновляем результаты без добавления в историю
             updateUsers(searchTerm);
         });
 
-        // Инициализация при загрузке страницы
         $(document).ready(function() {
-            // Инициализируем тултипы
             $('[data-toggle="tooltip"]').tooltip();
 
-            // Применяем начальную фильтрацию если есть параметр в URL
             const urlParams = new URLSearchParams(window.location.search);
             const searchTerm = urlParams.get('search') || '';
             if (searchTerm) {

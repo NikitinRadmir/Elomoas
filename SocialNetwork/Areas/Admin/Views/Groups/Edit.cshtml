@@ -79,7 +79,6 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        // Добавим клиентскую валидацию
         $(document).ready(function () {
             $('form').submit(function () {
                 if (!$('#Name').val()) {

@@ -14,7 +14,6 @@
                             <form id="searchForm" method="get" asp-controller="Search" asp-action="Search">
                                 <div class="row">
                                     <div class="col-lg-5">
-                                        @*SEARCH*@
                                         <div class="form-group icon-input mb-0">
                                             <i class="ti-search font-xs text-grey-400"></i>
                                             <input type="text" 
@@ -110,7 +109,6 @@
                 .done(function (response) {
                     $('#searchResults').html($(response).find('#searchResults').html());
                     
-                    // Update URL without page reload
                     const url = new URL(window.location);
                     url.searchParams.set('searchTerm', searchTerm || '');
                     url.searchParams.set('category', category || '');
@@ -125,7 +123,6 @@
             const searchTerm = $(this).val();
             const category = $('#categorySelect').val();
             
-            // Add 300ms delay before sending request
             searchTimeout = setTimeout(function() {
                 updateSearchResults(searchTerm, category);
             }, 300);
@@ -137,7 +134,6 @@
             updateSearchResults(searchTerm, category);
         });
 
-        // Prevent default form submission
         $('#searchForm').on('submit', function(e) {
             e.preventDefault();
             const searchTerm = $('#searchInput').val();
@@ -145,7 +141,6 @@
             updateSearchResults(searchTerm, category);
         });
 
-        // Handle browser history navigation
         $(window).on('popstate', function() {
             const url = new URL(window.location);
             const searchTerm = url.searchParams.get('searchTerm') || '';

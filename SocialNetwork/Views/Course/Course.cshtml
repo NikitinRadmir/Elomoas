@@ -45,8 +45,6 @@
                                         </svg>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -59,7 +57,6 @@
                     </div>
                 </div>
 
-                
                 <div class="card d-block border-0 rounded-lg overflow-hidden p-4 shadow-xss mt-4 alert-success">
                     <h2 class="fw-700 font-sm mb-3 mt-1 pl-1 text-success mb-4">What you'll learn from this lesson</h2>
                     @foreach (var item in Model.Course.Learn.Split('^'))
@@ -146,14 +143,9 @@
                         }
                     </div>
                 </div>
-                
-
-                
             </div>
-
         </div>
     </div>
-    
 </div>
 
 @section Styles {
@@ -197,7 +189,6 @@
             color: #007bff;
         }
 
-        /* Добавляем стили для выбора длительности */
         .duration-option {
             cursor: pointer;
         }
@@ -251,7 +242,6 @@
             let selectedDuration = 1;
             let isProcessing = false;
 
-            // Инициализация видеоплеера
             const player = document.querySelector('.player');
             const video = document.querySelector('#video');
             const playBtn = document.querySelector('.play-btn');
@@ -270,7 +260,6 @@
             let isMouseDown = false;
             let isFullscreen = false;
 
-            // Функция переключения воспроизведения
             function togglePlay() {
                 if (video.paused) {
                     video.play();
@@ -282,7 +271,6 @@
                 playBtn.classList.toggle('paused');
             }
 
-            // Функция переключения полноэкранного режима
             function toggleFullscreen() {
                 if (!isFullscreen) {
                     if (player.requestFullscreen) {
@@ -308,7 +296,6 @@
                 isFullscreen = !isFullscreen;
             }
 
-            // Функция переключения звука
             function toggleMute() {
                 if (video.volume) {
                     lastVolume = video.volume;
@@ -322,7 +309,6 @@
                 }
             }
 
-            // Функция изменения громкости
             function changeVolume(e) {
                 volumeBtn.classList.remove('muted');
                 let volume = e.offsetX / volumeSlider.offsetWidth;
@@ -339,21 +325,18 @@
                 lastVolume = volume;
             }
 
-            // Функция обновления прогресса
             function updateProgress() {
                 const time = (video.currentTime / video.duration) * 100;
                 progressFill.style.width = `${time}%`;
                 textCurrent.textContent = getTimeCodeFromNum(video.currentTime);
             }
 
-            // Функция установки прогресса
             function setProgress(e) {
                 const newTime = e.offsetX / progressSlider.offsetWidth;
                 progressFill.style.width = `${newTime * 100}%`;
                 video.currentTime = newTime * video.duration;
             }
 
-            // Функция форматирования времени
             function getTimeCodeFromNum(num) {
                 let seconds = parseInt(num);
                 let minutes = parseInt(seconds / 60);
@@ -365,7 +348,6 @@
                 return `${String(hours).padStart(2, 0)}:${minutes}:${String(seconds % 60).padStart(2, 0)}`;
             }
 
-            // Добавляем обработчики событий
             playBtn.addEventListener('click', togglePlay);
             playBtnBig.addEventListener('click', togglePlay);
             video.addEventListener('click', togglePlay);
@@ -382,7 +364,6 @@
             progressSlider.addEventListener('click', setProgress);
             fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-            // Обработчики для перетаскивания ползунка громкости
             volumeSlider.addEventListener('mousedown', () => {
                 isMouseDown = true;
             });
@@ -398,7 +379,6 @@
                 isMouseDown = false;
             });
 
-            // Обработчики для клавиш
             document.addEventListener('keyup', (e) => {
                 switch (e.key.toLowerCase()) {
                     case ' ':
@@ -416,7 +396,6 @@
                 }
             });
 
-            // Обработчики для скорости воспроизведения
             speedBtns.forEach(speedBtn => {
                 speedBtn.addEventListener('click', () => {
                     speedBtns.forEach(btn => btn.classList.remove('active'));
@@ -425,7 +404,6 @@
                 });
             });
 
-            // Обработчики для полноэкранного режима
             document.addEventListener('fullscreenchange', handleFullscreenChange);
             document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -440,37 +418,30 @@
                 );
             }
 
-            // Инициализация начального состояния
             playBtnBig.style.display = 'block';
 
-            // Обработка выбора длительности подписки
             $('.duration-select').on('click', function() {
                 const option = $(this).closest('.duration-option');
                 const months = option.data('months');
                 selectedDuration = months;
                 
-                // Обновляем визуальное выделение
                 $('.duration-select').removeClass('selected');
                 $(this).addClass('selected');
                 
-                // Обновляем кнопку подписки
                 $('#subscribeButton').data('duration', months);
 
-                // Анимация цены
                 const priceElement = $(this).find('.subscription-price');
                 priceElement.addClass('highlight');
                 setTimeout(() => {
                     priceElement.removeClass('highlight');
                 }, 300);
 
-                // Добавляем анимацию при выборе
                 $(this).css('transform', 'scale(1.02)');
                 setTimeout(() => {
                     $(this).css('transform', '');
                 }, 200);
             });
 
-            // Обработка кнопки подписки
             $('#subscribeButton').on('click', async function() {
                 if (isProcessing) return;
                 
@@ -493,7 +464,6 @@
                     });
 
                     if (response.success) {
-                        // Показываем уведомление об успехе
                         await Swal.fire({
                             icon: 'success',
                             title: 'Subscribed!',
@@ -502,7 +472,6 @@
                             timer: 2000
                         });
 
-                        // Обновляем UI без перезагрузки
                         const subscriptionHtml = `
                         <div class="bg-white p-3 rounded-lg mb-3">
                             <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
@@ -525,9 +494,8 @@
                     
                         $('.subscription-container').html(subscriptionHtml);
                         
-                        // Переинициализируем обработчик отписки
                         initUnsubscribeHandler();
-                } else {
+                    } else {
                         throw new Error('Failed to subscribe');
                     }
                 } catch (error) {
@@ -544,7 +512,6 @@
                 }
             });
 
-            // Функция инициализации обработчика отписки
             function initUnsubscribeHandler() {
                 $('.unsubscribe-btn').off('click').on('click', async function(e) {
                     e.preventDefault();
@@ -581,7 +548,6 @@
                                     timer: 2000
                                 });
 
-                                // Update UI to show subscription options
                                 const subscriptionOptionsHtml = `
                         <div class="subscription-options bg-white p-3 rounded-lg">
                             <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
@@ -611,7 +577,6 @@
                     
                                 $('.subscription-container').html(subscriptionOptionsHtml);
                                 
-                                // Reinitialize all handlers
                                 initializeDurationHandlers();
                                 initializeSubscribeHandler();
                             } else {
@@ -632,31 +597,24 @@
                 });
             }
 
-            // Функция инициализации обработчиков длительности
             function initializeDurationHandlers() {
-                // Отключаем предыдущие обработчики
                 $('.duration-select').off('click');
                 
-                // Добавляем новые обработчики
                 $('.duration-select').on('click', function() {
                     const option = $(this).closest('.duration-option');
                     const months = option.data('months');
                     
-                    // Обновляем визуальное выделение
                     $('.duration-select').removeClass('selected');
                     $(this).addClass('selected');
                     
-                    // Обновляем кнопку подписки
                     $('#subscribeButton').data('duration', months);
                     
-                    // Анимация цены
                     const priceElement = $(this).find('.subscription-price');
                     priceElement.addClass('highlight');
                     setTimeout(() => {
                         priceElement.removeClass('highlight');
                     }, 300);
 
-                    // Добавляем анимацию при выборе
                     $(this).css('transform', 'scale(1.02)');
                     setTimeout(() => {
                         $(this).css('transform', '');
@@ -664,7 +622,6 @@
                 });
             }
 
-            // Функция инициализации обработчика подписки
             function initializeSubscribeHandler() {
                 $('#subscribeButton').off('click').on('click', async function() {
                     if (isProcessing) return;
@@ -675,15 +632,15 @@
                     
                     try {
                         isProcessing = true;
-                    button.prop('disabled', true);
+                        button.prop('disabled', true);
                         button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
                     
                         const response = await $.ajax({
                             url: '/Course/Subscribe',
                             method: 'POST',
                             data: {
-                        courseId: courseId,
-                        durationInMonths: duration
+                                courseId: courseId,
+                                durationInMonths: duration
                             }
                         });
 
@@ -718,7 +675,6 @@
 
                             $('.subscription-container').html(subscriptionHtml);
                             
-                            // Reinitialize unsubscribe handler
                             initUnsubscribeHandler();
                         } else {
                             throw new Error('Failed to subscribe');
@@ -738,7 +694,6 @@
                 });
             }
 
-            // Инициализация всех обработчиков при загрузке страницы
             initializeDurationHandlers();
             initializeSubscribeHandler();
             initUnsubscribeHandler();
