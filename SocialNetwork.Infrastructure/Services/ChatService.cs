@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Elomoas.Application.Features.Messenger.Queries.GetUserChats;
 
 namespace Elomoas.Infrastructure.Services
 {
@@ -359,6 +359,46 @@ namespace Elomoas.Infrastructure.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting message with id {MessageId}", messageId);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<UserChatDto>> GetUserChatsWithDetailsAsync(string userId)
+        {
+            try
+            {
+                return await (
+                    from chat in _context.Chats
+                    where chat.User1Id == userId || chat.User2Id == userId
+                    let otherUserId = chat.User1Id == userId ? chat.User2Id : chat.User1Id
+                    let lastMessage = _context.Messages
+                        .Where(m => m.ChatId == chat.Id)
+                        .OrderByDescending(m => m.CreatedDate)
+                        .FirstOrDefault()
+                    join otherUser in _context.AppUsers on otherUserId equals otherUser.IdentityId into userJoin
+                    from otherUser in userJoin.DefaultIfEmpty()
+                    select new UserChatDto
+                    {
+                        ChatId = chat.Id,
+                        UserId = otherUserId,
+                        UserName = otherUser != null ? otherUser.Name : "Unknown",
+                        UserEmail = otherUser != null ? otherUser.Email : "Unknown",
+                        UserImage = otherUser != null ? otherUser.Img : "/images/default-icon.jpg",
+                        LastMessage = lastMessage != null ? 
+                            (lastMessage.Content.Length > 30 ? 
+                                lastMessage.Content.Substring(0, 27) + "..." : 
+                                lastMessage.Content) : 
+                            "",
+                        LastMessageTime = lastMessage != null ? lastMessage.CreatedDate : null,
+                        UnreadCount = _context.Messages
+                            .Count(m => m.ChatId == chat.Id && !m.IsRead && m.SenderId == otherUserId)
+                    })
+                    .OrderByDescending(c => c.LastMessageTime)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting chat details for user {UserId}", userId);
                 throw;
             }
         }

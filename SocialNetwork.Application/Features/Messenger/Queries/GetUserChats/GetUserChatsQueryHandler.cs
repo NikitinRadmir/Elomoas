@@ -1,24 +1,22 @@
-using MediatR;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Elomoas.Domain.Entities;
 using Elomoas.Application.Interfaces.Services;
+using MediatR;
 
-namespace Elomoas.Application.Features.Messenger.Queries.GetUserChats
+namespace Elomoas.Application.Features.Messenger.Queries.GetUserChats;
+
+public class GetUserChatsQueryHandler : IRequestHandler<GetUserChatsQuery, IEnumerable<UserChatDto>>
 {
-    public class GetUserChatsQueryHandler : IRequestHandler<GetUserChatsQuery, IEnumerable<Chat>>
+    private readonly IChatService _chatService;
+
+    public GetUserChatsQueryHandler(IChatService chatService)
     {
-        private readonly IChatService _chatService;
+        _chatService = chatService;
+    }
 
-        public GetUserChatsQueryHandler(IChatService chatService)
-        {
-            _chatService = chatService;
-        }
-
-        public async Task<IEnumerable<Chat>> Handle(GetUserChatsQuery request, CancellationToken cancellationToken)
-        {
-            return await _chatService.GetUserChatsAsync(request.UserId);
-        }
+    public async Task<IEnumerable<UserChatDto>> Handle(GetUserChatsQuery request, CancellationToken cancellationToken)
+    {
+        return await _chatService.GetUserChatsWithDetailsAsync(request.UserId);
     }
 } 

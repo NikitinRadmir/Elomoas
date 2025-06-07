@@ -1,6 +1,7 @@
 using Elomoas.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Elomoas.Application.Features.Messenger.Queries.GetUserChats;
 
 namespace Elomoas.Application.Interfaces.Services
 {
@@ -8,6 +9,7 @@ namespace Elomoas.Application.Interfaces.Services
     {
         Task<Chat> GetOrCreateChatAsync(string user1Id, string user2Id);
         Task<IEnumerable<Chat>> GetUserChatsAsync(string userId);
+        Task<IEnumerable<UserChatDto>> GetUserChatsWithDetailsAsync(string userId);
         Task<Message> SendMessageAsync(string senderId, string recipientId, string content);
         Task<IEnumerable<Message>> GetChatMessagesAsync(int chatId);
         Task MarkMessagesAsReadAsync(int chatId, string userId);
