@@ -242,12 +242,16 @@ namespace Elomoas.Infrastructure.Services
                     .Where(m => m.ChatId == chatId && m.SenderId != userId && !m.IsRead)
                     .ToListAsync();
 
-                foreach (var message in unreadMessages)
+                if (unreadMessages.Any())
                 {
-                    message.IsRead = true;
-                }
+                    foreach (var message in unreadMessages)
+                    {
+                        message.IsRead = true;
+                        message.UpdatedDate = DateTime.UtcNow;
+                    }
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
