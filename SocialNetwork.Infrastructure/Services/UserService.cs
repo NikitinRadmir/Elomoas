@@ -12,7 +12,7 @@ public class UserService : IUserService
     private readonly ApplicationDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ILogger<UserService> _logger;
-    private const string DEFAULT_IMAGE = "/images/default-icon.jpg";
+    private const string DEFAULT_IMAGE = "/uploads/profiles/default-icon.jpg";
 
     public UserService(
         ApplicationDbContext context, 

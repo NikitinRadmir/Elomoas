@@ -12,7 +12,8 @@ namespace Elomoas.Infrastructure.Services
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<FileService> _logger;
-        private const string PROFILE_IMAGES_FOLDER = "profile-images";
+        private const string PROFILE_IMAGES_FOLDER = "uploads/profiles";
+        private const string DEFAULT_PROFILE_IMAGE = "/images/default-icon.jpg";
 
         public FileService(
             IWebHostEnvironment webHostEnvironment,
@@ -38,13 +39,10 @@ namespace Elomoas.Infrastructure.Services
 
                 // Create the profile images directory if it doesn't exist
                 var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, PROFILE_IMAGES_FOLDER);
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                Directory.CreateDirectory(uploadsFolder); // CreateDirectory создаст все нужные поддиректории автоматически
 
-                // Delete old image if it exists
-                if (!string.IsNullOrEmpty(oldImagePath))
+                // Delete old image if it exists and is not the default image
+                if (!string.IsNullOrEmpty(oldImagePath) && oldImagePath != DEFAULT_PROFILE_IMAGE)
                 {
                     await DeleteFileAsync(oldImagePath);
                 }
@@ -75,7 +73,7 @@ namespace Elomoas.Infrastructure.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(filePath))
+                if (string.IsNullOrEmpty(filePath) || filePath == DEFAULT_PROFILE_IMAGE)
                     return;
 
                 // Convert relative path to absolute path
