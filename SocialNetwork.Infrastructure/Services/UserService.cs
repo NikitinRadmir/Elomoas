@@ -41,7 +41,19 @@ public class UserService : IUserService
 
             _logger.LogInformation("Found AppUser with id {Id} and IdentityId {IdentityId}", id, appUser.IdentityId);
 
-            // Delete AppUser first
+            // Delete all friendships where user is either friend1 or friend2
+            var friendships = await _context.Friendships
+                .Where(f => f.UserId == appUser.IdentityId || f.FriendId == appUser.IdentityId)
+                .ToListAsync();
+
+            if (friendships.Any())
+            {
+                _context.Friendships.RemoveRange(friendships);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Deleted {Count} friendships for user {Id}", friendships.Count, id);
+            }
+
+            // Delete AppUser
             _context.AppUsers.Remove(appUser);
             await _context.SaveChangesAsync();
 

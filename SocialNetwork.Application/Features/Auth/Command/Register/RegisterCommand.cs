@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Elomoas.Application.Features.Auth.Query
 {
-    public class RegisterCommand : IRequest<bool>
+    public record RegisterCommand : IRequest<bool>
     {
         public required string Name { get; set; }
         public required string Email { get; set; }

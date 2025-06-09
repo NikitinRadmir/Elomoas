@@ -58,7 +58,6 @@ public class CourseSubscriptionsController : Controller
     {
         try
         {
-            // Check if subscription already exists
             var existingSubscriptions = await _mediator.Send(new GetAllSubscriptionsQuery());
             if (existingSubscriptions.Any(s => s.UserId == model.UserId && s.CourseId == model.CourseId))
             {
@@ -67,7 +66,6 @@ public class CourseSubscriptionsController : Controller
                 return View(model);
             }
 
-            // Validate expiration date
             var expirationDate = DateTime.UtcNow.AddMonths(model.DurationInMonths);
             if (model.ExpirationDate.Date != expirationDate.Date)
             {
@@ -144,7 +142,6 @@ public class CourseSubscriptionsController : Controller
     {
         try
         {
-            // Validate expiration date
             var expirationDate = DateTime.UtcNow.AddMonths(model.DurationInMonths);
 
             var command = new UpdateSubscriptionCommand

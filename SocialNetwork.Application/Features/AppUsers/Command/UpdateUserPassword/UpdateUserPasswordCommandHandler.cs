@@ -25,15 +25,12 @@ public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswo
     {
         try
         {
-            // Получаем AppUser с включенным IdentityUser
             var appUser = await _appUserRepository.GetUserByIdWithIdentityAsync(request.AppUserId);
             if (appUser == null)
             {
                 _logger.LogError("AppUser not found for ID: {UserId}", request.AppUserId);
                 return false;
             }
-
-            // Получаем IdentityUser
             var identityUser = await _userManager.FindByIdAsync(appUser.IdentityId);
             if (identityUser == null)
             {
@@ -41,7 +38,6 @@ public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswo
                 return false;
             }
 
-            // Проверяем валидность пароля
             var passwordValidator = new PasswordValidator<IdentityUser>();
             var validationResult = await passwordValidator.ValidateAsync(_userManager, null, request.NewPassword);
             if (!validationResult.Succeeded)
@@ -53,7 +49,6 @@ public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswo
                 return false;
             }
 
-            // Обновляем пароль в IdentityUser
             var newPasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, request.NewPassword);
             identityUser.PasswordHash = newPasswordHash;
 
@@ -67,8 +62,7 @@ public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswo
                 return false;
             }
 
-            // Обновляем пароль в AppUser (хотя это поле не должно использоваться для аутентификации)
-            appUser.Password = request.NewPassword; // Это поле оставлено для обратной совместимости
+            appUser.Password = request.NewPassword; 
             await _appUserRepository.UpdateAsync(appUser);
 
             _logger.LogInformation("Successfully updated password for user {UserId}", request.AppUserId);

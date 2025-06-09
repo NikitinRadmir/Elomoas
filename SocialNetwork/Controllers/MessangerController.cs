@@ -64,7 +64,6 @@ namespace Elomoas.Controllers
                 var chat = await _mediator.Send(new GetOrCreateChatQuery(userId, friendId));
                 var messages = await _mediator.Send(new GetChatMessagesQuery(chat.Id));
                 
-                // Помечаем сообщения как прочитанные
                 await _mediator.Send(new MarkMessagesAsReadCommand(chat.Id, userId));
 
                 var messageList = messages.Select(m => new
@@ -104,9 +103,9 @@ namespace Elomoas.Controllers
                     id = u.Id,
                     name = u.Name,
                     img = u.Img,
-                    lastMessage = "", // Это нужно будет получать из сервиса сообщений
-                    unreadCount = 0,  // Это нужно будет получать из сервиса сообщений
-                    isTyping = false  // Это будет обновляться через SignalR
+                    lastMessage = "", 
+                    unreadCount = 0,  
+                    isTyping = false  
                 });
 
                 return Json(chatUsers);
@@ -150,11 +149,9 @@ namespace Elomoas.Controllers
             try
             {
                 var userId = await _mediator.Send(new GetCurrentIdentityIdQuery());
-                
-                // Create and send the message
+
                 var message = await _mediator.Send(new SendMessageCommand(userId, request.RecipientId, request.Content));
                 
-                // Get the chat details
                 var chat = await _mediator.Send(new GetOrCreateChatQuery(userId, request.RecipientId));
 
                 return Json(new 

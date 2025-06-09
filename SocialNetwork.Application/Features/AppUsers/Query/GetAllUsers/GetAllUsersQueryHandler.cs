@@ -10,24 +10,25 @@ using Elomoas.Application.Features.AppUsers.Query;
 using Elomoas.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Elomoas.Domain.Entities;
+using Elomoas.Application.Features.Auth.Query.GetCurrentIdentityUser;
 
 namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
 {
     public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<AppUserDto>>
     {
         private readonly IAppUserRepository _userRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IMediator _mediator;
         private readonly ICurrentUserService _currentUserService;
         private readonly IFriendshipRepository _friendshipRepository;
 
         public GetAllUsersQueryHandler(
             IAppUserRepository userRepository,
-            UserManager<IdentityUser> userManager,
+            IMediator mediator,
             ICurrentUserService currentUserService,
             IFriendshipRepository friendshipRepository)
         {
             _userRepository = userRepository;
-            _userManager = userManager;
+            _mediator = mediator;
             _currentUserService = currentUserService;
             _friendshipRepository = friendshipRepository;
         }
@@ -35,7 +36,7 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
         public async Task<IEnumerable<AppUserDto>> Handle(GetAllUsersQuery query, CancellationToken ct)
         {
             var users = await _userRepository.GetAllUsersAsync();
-            var currentUser = await _userManager.GetUserAsync(_currentUserService.User);
+            var currentUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
 
             if (currentUser == null)
                 return new List<AppUserDto>();
@@ -71,7 +72,7 @@ namespace Elomoas.Application.Features.AppUsers.Query.GetAllUsers
                 IdentityId = user.IdentityId,
                 Name = user.Name,
                 Email = user.Email,
-                Img = user.Img ?? "/images/default-icon.jpg",
+                Img = user.Img ?? "/images/user-12.png",
                 Description = user.Description
             };
         }

@@ -60,7 +60,6 @@ namespace Elomoas.Controllers
 
                 if (result)
                 {
-                    // Получаем информацию о подписке
                     var course = await _mediator.Send(new GetCourseByIdQuery(courseId));
                     return Json(new { 
                         success = true,

@@ -119,8 +119,27 @@ namespace SocialNetwork.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var command = new DeleteUserCommand { Id = id };
-            var result = await _mediator.Send(command);
+            try
+            {
+                var command = new DeleteUserCommand { Id = id };
+                var result = await _mediator.Send(command);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "User deleted successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to delete user. The user may not exist or there might be related records.";
+                    _logger.LogWarning("Failed to delete user with ID: {UserId}", id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user {UserId}", id);
+                TempData["ErrorMessage"] = "An error occurred while deleting the user.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

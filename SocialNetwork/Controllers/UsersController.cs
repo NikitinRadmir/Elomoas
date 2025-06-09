@@ -33,6 +33,10 @@ using Elomoas.Application.Features.FriendHub.Commands.NotifyFriendRequestRejecte
 using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
 using SocialNetwork.Application.Features.FriendHub.Commands.NotifyFriendRemoved;
 using Elomoas.Application.Features.Users.Commands.HandleFriendRequest;
+using Elomoas.Application.Features.Auth.Query;
+using SocialNetwork.Application.Features.AppUsers.Command.DeleteUser;
+using SocialNetwork.Application.Features.AppUsers.Command.UpdateUser;
+using SocialNetwork.Areas.Admin.Models;
 
 namespace Elomoas.Controllers
 {
@@ -41,25 +45,14 @@ namespace Elomoas.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IMediator _mediator;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IAppUserRepository _userRepository;
-        private readonly IHubContext<FriendshipHub> _hubContext;
-        private readonly UserManager<IdentityUser> _userManager;
+
 
         public UsersController(
             ILogger<UsersController> logger, 
-            IMediator mediator,
-            ICurrentUserService currentUserService,
-            IAppUserRepository userRepository,
-            IHubContext<FriendshipHub> hubContext,
-            UserManager<IdentityUser> userManager)
+            IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
-            _currentUserService = currentUserService;
-            _userRepository = userRepository;
-            _hubContext = hubContext;
-            _userManager = userManager;
         }
 
         public async Task<IActionResult> Users(string search)
@@ -181,7 +174,7 @@ namespace Elomoas.Controllers
                     return Json(new { success = false, message = "Action is required" });
                 }
 
-                var currentUser = await _userManager.GetUserAsync(User);
+                var currentUser = await _mediator.Send(new GetCurrentIdentityUserQuery());
                 if (currentUser == null)
                 {
                     _logger.LogWarning("HandleFriendRequest: Current user not found");

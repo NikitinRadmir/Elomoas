@@ -44,23 +44,19 @@ public class Program
 
         builder.Services.AddSignalR();
 
-        // Configure authorization policies
+
         builder.Services.AddAuthorization(options =>
         {
-            // Admin policy - full access
             options.AddPolicy("AdminPolicy", policy =>
                 policy.RequireRole("Admin"));
 
-            // Manager policy - access to Courses and Groups
             options.AddPolicy("ManagerPolicy", policy =>
                 policy.RequireRole("Manager", "Admin"));
 
-            // User policy - no admin access
             options.AddPolicy("UserPolicy", policy =>
                 policy.RequireRole("User", "Manager", "Admin"));
         });
 
-        // Configure hosted services
         builder.Services.Configure<HostOptions>(options =>
         {
             options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
@@ -70,7 +66,6 @@ public class Program
 
         var app = builder.Build();
 
-        // Ensure database is created and seeded
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -116,7 +111,6 @@ public class Program
         app.UseRequestLogging();
         app.UseUserActivityLogging();
 
-        // Custom 404 handler for unauthorized access
         app.Use(async (context, next) =>
         {
             await next();

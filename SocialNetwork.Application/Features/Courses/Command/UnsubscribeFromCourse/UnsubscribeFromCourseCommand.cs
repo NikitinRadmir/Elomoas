@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Elomoas.Application.Features.Courses.Command.UnsubscribeFromCourse
 {
-    public class UnsubscribeFromCourseCommand : IRequest<bool>
+    public record UnsubscribeFromCourseCommand : IRequest<bool>
     {
         public int CourseId { get; set; }
 
