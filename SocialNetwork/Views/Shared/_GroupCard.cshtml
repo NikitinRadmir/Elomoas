@@ -1,3 +1,7 @@
+@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
 @model Elomoas.Application.Features.Groups.Query.GetAll.GetAllDto
 
 <div class="card mb-4 d-block w-100 shadow-xss rounded-lg p-xxl-5 p-4 border-0 text-center">
@@ -7,18 +11,18 @@
     <h4 class="fw-700 font-xs mt-4">@Model.Name</h4>
     <p class="fw-500 font-xssss text-grey-500 mt-3">@Model.Description</p>
     <div class="clearfix"></div>
-    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
+    <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@Localizer["FullTime"]</span>
     <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@Model.PL</span>
     <div class="clearfix"></div>
     @if (User.Identity.IsAuthenticated)
     {
         @if (Model.IsCurrentUserSubscribed)
         {
-            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@Model.Id">UNSUBSCRIBE</a>
+            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@Model.Id">@Localizer["UNSUBSCRIBE"]</a>
         }
         else
         {
-            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current subscribe-btn" data-group-id="@Model.Id">SUBSCRIBE</a>
+            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-current subscribe-btn" data-group-id="@Model.Id">@Localizer["SUBSCRIBE"]</a>
         }
     }
 </div> 

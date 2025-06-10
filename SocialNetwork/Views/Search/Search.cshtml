@@ -1,7 +1,11 @@
-﻿@model Elomoas.mvc.Models.Courses.CourseVM
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@model Elomoas.mvc.Models.Courses.CourseVM
 
 @{
-    ViewData["Title"] = "Search";
+    ViewData["Title"] = @Localizer["Search"];
 }
 
 <div class="middle-sidebar-bottom">
@@ -21,7 +25,7 @@
                                                    name="searchTerm"
                                                    value="@Model.SearchTerm"
                                                    class="style1-input border-0 pl-5 font-xsss mb-0 text-grey-500 fw-500 bg-transparent" 
-                                                   placeholder="Search courses...">
+                                                   placeholder="@Localizer["Searchcourses"]">
                                         </div>
                                     </div>
 
@@ -29,7 +33,7 @@
                                         <div class="form-group icon-input mb-0">
                                             <i class="ti-package font-xs text-grey-400"></i>
                                             <select id="categorySelect" name="category" class="style1-select bg-transparent border-0 pl-5">
-                                                <option value="">All categories</option>
+                                                <option value="">@Localizer["Allcategories"]</option>
                                                 @{
                                                     var categories = new[]
                                                     {
@@ -58,7 +62,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
-                                        <button type="submit" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase">Search</button>
+                                        <button type="submit" class="w-100 d-block btn bg-current text-white font-xssss fw-600 ls-3 style1-input p-0 border-0 text-uppercase">@Localizer["Search"]</button>
                                     </div>
                                 </div>
                             </form>
@@ -70,8 +74,8 @@
             <div id="searchResults" class="col-lg-12">
                 <div class="row">
                     <div class="col-lg-12 pt-2 mb-4">
-                        <h2 class="fw-400 font-lg">Search <b>Results</b> 
-                            <span class="fw-500 ml-2 text-grey-500 font-xssss">(@Model.PopularCourses.Count() courses found)</span>
+                        <h2 class="fw-400 font-lg">@Localizer["SearchResult"]
+                            <span class="fw-500 ml-2 text-grey-500 font-xssss">(@Model.PopularCourses.Count() @Localizer["coursesfound"])</span>
                         </h2>
                     </div>
 

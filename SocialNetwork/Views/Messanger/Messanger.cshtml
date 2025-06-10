@@ -1,6 +1,10 @@
-﻿@model dynamic
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@model dynamic
 @{
-    ViewData["Title"] = "Messenger";
+    ViewData["Title"] = @Localizer["Messenger"];
 }
 
 @section Styles {
@@ -375,7 +379,7 @@
                         <i class="ti-search font-xs"></i>
                         <input type="text" 
                                class="form-control text-grey-500 mb-0 bg-greylight border-0" 
-                               placeholder="Search for name or last message"
+                               placeholder="@Localizer["Searchfornameorlastmessage"]"
                                autocomplete="off">
                     </div>
                     <button class="btn btn-primary rounded-circle" onclick="showFriendsModal()">
@@ -386,7 +390,7 @@
                     <ul class="list-group list-group-flush">
                     </ul>
                     <div class="no-chats-found">
-                        Чаты не найдены
+                        @Localizer["Chatswasnotfound"]
                     </div>
                 </div>
             </div>
@@ -401,8 +405,8 @@
                                  onerror="this.src='/images/default-icon.jpg'">
                         </figure>
                         <div class="chat-header-info flex-grow-1">
-                            <h6 class="mb-0 text-grey-900 fw-600">Select a chat</h6>
-                            <span class="text-grey-500">Click the + button to start a chat</span>
+                            <h6 class="mb-0 text-grey-900 fw-600">@Localizer["Selectachat"]</h6>
+                            <span class="text-grey-500">@Localizer["Clickthebutton"]</span>
                         </div>
                     </div>
                     <div class="chat-body p-3">
@@ -415,7 +419,7 @@
                                 <input type="text" 
                                        id="messageInput" 
                                        class="form-control" 
-                                       placeholder="Start type message..."
+                                       placeholder="@Localizer["Starttypemessage"]"
                                        autocomplete="off">
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-primary">
@@ -434,7 +438,7 @@
 <div id="friendsModal">
     <div class="friends-modal-content">
         <div class="friends-modal-header">
-            <h5>Choose your friend for chat</h5>
+            <h5>@Localizer["Chooseyourfriendforchat"]</h5>
             <span class="friends-modal-close" onclick="hideFriendsModal()">&times;</span>
         </div>
         <div class="friend-search">
@@ -442,7 +446,7 @@
                 <i class="ti-search friend-search-icon"></i>
                 <input type="text" 
                        class="form-control" 
-                       placeholder="Searching for name or email..." 
+                       placeholder="@Localizer["Searchingfornameoremail"]" 
                        id="friendSearchInput"
                        autocomplete="off">
             </div>
@@ -450,7 +454,7 @@
         <div class="friends-list">
         </div>
         <div class="no-results" style="display: none;">
-            <p>Friends not founded</p>
+            <p>@Localizer["Friendsnotfounded"]</p>
         </div>
     </div>
 </div>
@@ -620,13 +624,13 @@
             startOfWeek.setDate(now.getDate() - now.getDay());
             
             if (messageDate.toDateString() === now.toDateString()) {
-                return 'Today';
+                return '@Localizer["Today"]';
             }
             
             const yesterday = new Date(now);
             yesterday.setDate(yesterday.getDate() - 1);
             if (messageDate.toDateString() === yesterday.toDateString()) {
-                return 'Yesterday';
+                return '@Localizer["Yesterday"]';
             }
             
             if (messageDate >= startOfWeek) {
