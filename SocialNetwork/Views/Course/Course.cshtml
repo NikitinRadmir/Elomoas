@@ -1,4 +1,8 @@
-﻿@model Elomoas.mvc.Models.Courses.CourseDetailsVM
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@model Elomoas.mvc.Models.Courses.CourseDetailsVM
 
 @{
     ViewData["Title"] = Model.Course.Name;
@@ -58,7 +62,7 @@
                 </div>
 
                 <div class="card d-block border-0 rounded-lg overflow-hidden p-4 shadow-xss mt-4 alert-success">
-                    <h2 class="fw-700 font-sm mb-3 mt-1 pl-1 text-success mb-4">What you'll learn from this lesson</h2>
+                    <h2 class="fw-700 font-sm mb-3 mt-1 pl-1 text-success mb-4">@Localizer["Whatlearn"]</h2>
                     @foreach (var item in Model.Course.Learn.Split('^'))
                     {
                         <h4 class="font-xssss fw-600 text-grey-600 mb-3 pl-30 position-relative lh-24">
@@ -69,7 +73,7 @@
                 </div>
 
                 <div class="card d-block border-0 rounded-lg overflow-hidden p-4 shadow-xss mt-4">
-                    <h2 class="fw-700 font-sm mb-3 mt-1 pl-1 mb-3">Description</h2>
+                    <h2 class="fw-700 font-sm mb-3 mt-1 pl-1 mb-3">@Localizer["Description"]</h2>
                     <p class="font-xssss fw-500 lh-28 text-grey-600 mb-0 pl-2">@Model.Course.Description</p>
                 </div>
             </div>
@@ -77,40 +81,40 @@
                 <div class="card p-4 mb-4 bg-primary border-0 shadow-xss rounded-lg">
                     <div class="card-body">
                         <h2 class="text-white font-xsssss fw-700 text-uppercase ls-3 ">@Model.Course.PL</h2>
-                        <h1 class="display2-size text-white fw-700">$ @Model.Course.Price / month</h1>
+                        <h1 class="display2-size text-white fw-700">$ @Model.Course.Price / @Localizer["month"]</h1>
                         <input type="hidden" id="basePrice" value="@Model.Course.Price" />
-                        <h4 class="text-white fw-500 mb-4 lh-24 font-xssss">For anyone validating Framer as a professional prototyping tool.</h4>
-                        <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Unlimited views</h4>
-                        <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> Everything in Free</h4>
-                        <h4 class="text-white font-xssss mb-4"><i class="ti-check mr-2 text-white"></i> Private share links</h4>
+                        <h4 class="text-white fw-500 mb-4 lh-24 font-xssss">@Localizer["ForanyonevalidatingFramer"]</h4>
+                        <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> @Localizer["Unlimitedviews"]</h4>
+                        <h4 class="text-white font-xssss mb-2"><i class="ti-check mr-2 text-white"></i> @Localizer["EverythinginFree"]</h4>
+                        <h4 class="text-white font-xssss mb-4"><i class="ti-check mr-2 text-white"></i> @Localizer["Privatesharelinks"]</h4>
                         @if (User.Identity.IsAuthenticated)
                         {
                             <div class="subscription-container">
                                 @if (Model.IsSubscribed)
                                 {
                                     <div class="bg-white p-3 rounded-lg mb-3">
-                                        <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                                        <h4 class="text-success fw-600 font-xssss mb-2">@Localizer["ActiveSubscription"]</h4>
                                         <div class="subscription-info">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="font-xssss fw-600 text-grey-600">Duration:</span>
-                                                <span class="font-xssss fw-700 text-primary">@Model.SubscriptionInfo.DurationInMonths months</span>
+                                                <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]:</span>
+                                                <span class="font-xssss fw-700 text-primary">@Model.SubscriptionInfo.DurationInMonths @Localizer["months"]</span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                                <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]:</span>
                                                 <span class="font-xssss fw-700 text-primary">$@Model.SubscriptionInfo.SubscriptionPrice</span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                                <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]:</span>
                                                 <span class="font-xssss fw-700 text-primary">@Model.SubscriptionInfo.ExpirationDate.ToString("dd.MM.yyyy")</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="@Model.Course.Id">UNSUBSCRIBE</a>
+                                    <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="@Model.Course.Id">@Localizer["UNSUBSCRIBE"]</a>
                                 }
                                 else
                                 {
                                     <div class="subscription-options bg-white p-3 rounded-lg">
-                                        <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
+                                        <h4 class="text-primary fw-600 font-xssss mb-3">@Localizer["Chooseduration"]:</h4>
                                         <div class="duration-options">
                                             @foreach (var option in Model.DurationOptions)
                                             {
@@ -131,15 +135,11 @@
                                             }
                                         </div>
                                         <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="@Model.Course.Id" data-duration="1">
-                                            SUBSCRIBE
+                                            @Localizer["SUBSCRIBE"]
                                         </button>
                                     </div>
                                 }
                             </div>
-                        }
-                        else
-                        {
-                            <a asp-controller="Auth" asp-action="Login" class="btn btn-block border-0 w-100 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss">LOGIN</a>
                         }
                     </div>
                 </div>
@@ -466,49 +466,49 @@
                     if (response.success) {
                         await Swal.fire({
                             icon: 'success',
-                            title: 'Subscribed!',
-                            text: `You have successfully subscribed to this course for ${duration} month${duration > 1 ? 's' : ''}!`,
+                            title: '@Localizer["Subscribed"]',
+                            text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"]" ${duration} @Localizer["month"]" ${duration > 1 ? 's' : ''}!`,
                             showConfirmButton: false,
                             timer: 2000
                         });
 
                         const subscriptionHtml = `
                         <div class="bg-white p-3 rounded-lg mb-3">
-                            <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                            <h4 class="text-success fw-600 font-xssss mb-2">@Localizer["ActiveSubscription"]</h4>
                             <div class="subscription-info">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="font-xssss fw-600 text-grey-600">Duration:</span>
-                                        <span class="font-xssss fw-700 text-primary">${duration} month${duration > 1 ? 's' : ''}</span>
+                                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]:</span>
+                                                <span class="font-xssss fw-700 text-primary">${duration} @Localizer["month"] ${duration > 1 ? 's' : ''}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]":</span>
                                         <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]":</span>
                                         <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
                                     </div>
                             </div>
                         </div>
-                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
+                                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">@Localizer["UNSUBSCRIBE"]</a>`;
                     
                         $('.subscription-container').html(subscriptionHtml);
                         
                         initUnsubscribeHandler();
                     } else {
-                        throw new Error('Failed to subscribe');
+                        throw new Error('@Localizer["Failedtosubscribe"]');
                     }
                 } catch (error) {
                     console.error('Subscription error:', error);
                     await Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
-                        text: 'Failed to subscribe. Please try again.',
+                        title: '@Localizer["Oops"]',
+                        text: '@Localizer["Failedtosubscribetry"]',
                     });
                 } finally {
                     isProcessing = false;
                     button.prop('disabled', false);
-                    button.html('SUBSCRIBE');
+                    button.html('@Localizer["SUBSCRIBE"]');
                 }
             });
 
@@ -520,13 +520,13 @@
 
                     try {
                         const result = await Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You will be unsubscribed from this course",
+                            title: '@Localizer["Areyousure"]',
+                            text: "@Localizer["Youwillbeunsubscribedfromthiscourse"]",
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
                             cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Yes, unsubscribe!'
+                            confirmButtonText: '@Localizer["Yesunsub"]'
                         });
 
                         if (result.isConfirmed) {
@@ -542,15 +542,15 @@
                             if (response.success) {
                                 await Swal.fire({
                                     icon: 'success',
-                                    title: 'Unsubscribed!',
-                                    text: 'You have been unsubscribed from this course.',
+                                    title: '@Localizer["Unsubscribed"]',
+                                    text: '@Localizer["Youhavebeenunsubscribedfromthiscourse"]',
                                     showConfirmButton: false,
                                     timer: 2000
                                 });
 
                                 const subscriptionOptionsHtml = `
                         <div class="subscription-options bg-white p-3 rounded-lg">
-                            <h4 class="text-primary fw-600 font-xssss mb-3">Choose duration:</h4>
+                            <h4 class="text-primary fw-600 font-xssss mb-3">@Localizer["Chooseduration"]":</h4>
                             <div class="duration-options">
                                             @foreach (var option in Model.DurationOptions)
                                             {
@@ -571,7 +571,7 @@
                                             }
                             </div>
                             <button class="btn btn-block border-0 w-100 bg-primary p-3 text-white fw-600 rounded-lg d-inline-block font-xssss mt-3" id="subscribeButton" data-course-id="${courseId}" data-duration="1">
-                                SUBSCRIBE
+                                @Localizer["SUBSCRIBE"]
                             </button>
                         </div>`;
                     
@@ -587,12 +587,12 @@
                         console.error('Unsubscription error:', error);
                         await Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
-                            text: 'Failed to unsubscribe. Please try again.',
+                            title: '@Localizer["Oops"]',
+                            text: '@Localizer["Failedtounsub"]',
                         });
                     } finally {
                         button.prop('disabled', false);
-                        button.html('UNSUBSCRIBE');
+                        button.html('@Localizer["UNSUBSCRIBE"]');
                     }
                 });
             }
@@ -647,8 +647,8 @@
                         if (response.success) {
                             await Swal.fire({
                                 icon: 'success',
-                                title: 'Subscribed!',
-                                text: `You have successfully subscribed to this course for ${duration} month${duration > 1 ? 's' : ''}!`,
+                                title: '@Localizer["Subscribed"]',
+                                text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"] ${duration} @Localizer["month"]" ${duration > 1 ? 's' : ''}!`,
                                 showConfirmButton: false,
                                 timer: 2000
                             });
@@ -658,20 +658,20 @@
                                     <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
                                     <div class="subscription-info">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="font-xssss fw-600 text-grey-600">Duration:</span>
-                                            <span class="font-xssss fw-700 text-primary">${duration} month${duration > 1 ? 's' : ''}</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]":</span>
+                                            <span class="font-xssss fw-700 text-primary">${duration} @Localizer["month"]${duration > 1 ? 's' : ''}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="font-xssss fw-600 text-grey-600">Price:</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]":</span>
                                             <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="font-xssss fw-600 text-grey-600">Valid until:</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]":</span>
                                             <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">UNSUBSCRIBE</a>`;
+                                <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">@Localizer["UNSUBSCRIBE"]</a>`;
 
                             $('.subscription-container').html(subscriptionHtml);
                             
@@ -683,13 +683,13 @@
                         console.error('Subscription error:', error);
                         await Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
-                            text: 'Failed to subscribe. Please try again.',
+                            title: '@Localizer["Oops"]',
+                            text: '@Localizer["Failedtosubscribetry"]',
                         });
                     } finally {
                         isProcessing = false;
                         button.prop('disabled', false);
-                        button.html('SUBSCRIBE');
+                        button.html('@Localizer["SUBSCRIBE"]');
                     }
                 });
             }
