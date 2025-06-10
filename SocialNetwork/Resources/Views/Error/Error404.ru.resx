@@ -97,49 +97,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Findaperfect" xml:space="preserve">
-    <value>Найдите идеальный</value>
+  <data name="lost" xml:space="preserve">
+    <value>Упс! Похоже вы потерялись</value>
   </data>
-  <data name="OnlineCourse" xml:space="preserve">
-    <value>Онлайн Курс</value>
+  <data name="dontexist" xml:space="preserve">
+    <value>Страница, которую вы ищете, не существует. Попробуйте искать что -то еще или вернуться на домашнюю страницу.</value>
   </data>
-  <data name="Foronlycourseyouneedtolearnwebdevelopment" xml:space="preserve">
-    <value>Только для этого курса вам нужно научиться веб-разработке</value>
-  </data>
-  <data name="Searchonlinecourses" xml:space="preserve">
-    <value>Поиск онлайн курсов</value>
-  </data>
-  <data name="SelectPL" xml:space="preserve">
-    <value>Выберите язык</value>
-  </data>
-  <data name="Search" xml:space="preserve">
-    <value>Найти</value>
-  </data>
-  <data name="PopularSearch" xml:space="preserve">
-    <value>Популярное :</value>
-  </data>
-  <data name="DesignerDeveloperPHPHTMLCSSSCSS" xml:space="preserve">
-    <value>Дизайн, Разработка, PHP, HTML, CSS, SCSS</value>
-  </data>
-  <data name="Explore" xml:space="preserve">
-    <value>Исследуйте</value>
-  </data>
-  <data name="Categories" xml:space="preserve">
-    <value>Категории</value>
-  </data>
-  <data name="Course" xml:space="preserve">
-    <value> Курсов</value>
-  </data>
-  <data name="Popular" xml:space="preserve">
-    <value>Популярные</value>
-  </data>
-  <data name="Classes" xml:space="preserve">
-    <value>Курсы</value>
-  </data>
-  <data name="Latest" xml:space="preserve">
-    <value>Последние</value>
-  </data>
-  <data name="Main" xml:space="preserve">
-    <value>Главная</value>
+  <data name="Homepage" xml:space="preserve">
+    <value>На главную</value>
   </data>
 </root>

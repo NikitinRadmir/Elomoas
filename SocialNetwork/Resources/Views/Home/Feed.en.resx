@@ -139,4 +139,7 @@
   <data name="Latest" xml:space="preserve">
     <value>Latest</value>
   </data>
+  <data name="Main" xml:space="preserve">
+    <value>Main</value>
+  </data>
 </root>

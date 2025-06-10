@@ -1,3 +1,7 @@
+@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
 @{
     Layout = null;
 }    
@@ -41,9 +45,9 @@
                     <div class="col-lg-6 col-md-8 text-center default-page">
                         <div class="card border-0 text-center d-block">
                             <img src="~/images/bg-43.png" alt="icon" class="w200 mb-4 ml-auto mr-auto">
-                            <h1 class="fw-700 text-grey-900 display4-size display4-md-size">Access Denied</h1>
-                            <p class="text-grey-500 font-xss">You don't have permission to access this page. Please log in or return to the home page.</p>
-                            <a asp-controller="Home" asp-action="Feed" class="p-3 w175 bg-current text-white d-inline-block text-center fw-600 font-xssss rounded-lg text-uppercase ls-3">Home page</a>
+                            <h1 class="fw-700 text-grey-900 display4-size display4-md-size">@Localizer["AccessDenied"]</h1>
+                            <p class="text-grey-500 font-xss">@Localizer["Youdonthavepermission "]</p>
+                            <a asp-controller="Home" asp-action="Feed" class="p-3 w175 bg-current text-white d-inline-block text-center fw-600 font-xssss rounded-lg text-uppercase ls-3">@Localizer["Homepage"]</a>
                         </div>
                     </div>
                 </div>

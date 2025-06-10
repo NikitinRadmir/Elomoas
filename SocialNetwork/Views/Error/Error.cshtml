@@ -1,3 +1,7 @@
+@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
 @model ErrorViewModel
 @{
     Layout = null;
@@ -8,7 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Error - Elomoas</title>
+    <title>@Localizer["Error"] - Elomoas</title>
 
     <link rel="stylesheet" href="~/css/themify-icons.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/feather.css" asp-append-version="true">
@@ -36,15 +40,15 @@
                     <div class="col-lg-6 col-md-8 text-center default-page">
                         <div class="card border-0 text-center d-block">
                             <img src="~/images/bg-43.png" alt="icon" class="w200 mb-4 ml-auto mr-auto">
-                            <h1 class="fw-700 text-grey-900 display4-size display4-md-size">Something went wrong</h1>
-                            <p class="text-grey-500 font-xss">An unexpected error occurred. Please try again later or return to the home page.</p>
+                            <h1 class="fw-700 text-grey-900 display4-size display4-md-size">@Localizer["Somethingwentwrong"]</h1>
+                            <p class="text-grey-500 font-xss">@Localizer["Anunexpectederroroccurred"]</p>
                             @if (!string.IsNullOrEmpty(Model?.RequestId))
                             {
                                 <p class="text-grey-500 font-xss">
                                     <strong>Request ID:</strong> <code>@Model.RequestId</code>
                                 </p>
                             }
-                            <a asp-controller="Home" asp-action="Feed" class="p-3 w175 bg-current text-white d-inline-block text-center fw-600 font-xssss rounded-lg text-uppercase ls-3">Home page</a>
+                            <a asp-controller="Home" asp-action="Feed" class="p-3 w175 bg-current text-white d-inline-block text-center fw-600 font-xssss rounded-lg text-uppercase ls-3">@Localizer["Homepage"]</a>
                         </div>
                     </div>
                 </div>
