@@ -12,6 +12,12 @@ using Elomoas.Logging;
 using Elomoas.Infrastructure.Hubs;
 using Elomoas.Infrastructure.Identity;
 using Elomoas.Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
+
+using Microsoft.Extensions.Options;
 
 namespace Elomoas;
 
@@ -38,6 +44,29 @@ public class Program
             options.AccessDeniedPath = "/Auth/Login";
         });
 
+        builder.Services.AddLocalization(opt => { opt.ResourcesPath = "Resources"; });
+        builder.Services.AddMvc()
+            .AddViewLocalization()
+            .AddDataAnnotationsLocalization();
+
+        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var cultures = new List<CultureInfo> {
+                new CultureInfo("en"),
+                new CultureInfo("ru")
+            };
+            options.DefaultRequestCulture = new RequestCulture("en");
+            options.SupportedCultures = cultures;
+            options.SupportedUICultures = cultures;
+            
+            // Configure culture providers order
+            options.RequestCultureProviders = new List<IRequestCultureProvider>
+            {
+                new CookieRequestCultureProvider(),
+                new AcceptLanguageHeaderRequestCultureProvider()
+            };
+        });
+        
         builder.Services.AddControllersWithViews();
         builder.Services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -93,6 +122,10 @@ public class Program
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseExceptionHandler("/Error");
         }
+
+        var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+        app.UseRequestLocalization(localizationOptions.Value);
+
 
         app.UseGlobalExceptionHandling();
         

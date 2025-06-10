@@ -1,10 +1,13 @@
 ﻿@using Elomoas.Helpers
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject IViewLocalizer Localizer
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -138,22 +141,22 @@
                         </a>
                         <a href="#" class="close-nav d-inline-block d-lg-none"><i class="ti-close bg-grey mb-4 btn-round-sm font-xssss fw-700 text-dark ml-auto mr-2"></i></a>
                     </div>
-                    <div class="nav-caption fw-600 font-xssss text-grey-500"><span>New </span>Feeds</div>
+                    <div class="nav-caption fw-600 font-xssss text-grey-500">@Localizer["NewFeeds"].Value</div>
                     <ul class="mb-3">
                         <li class="logo d-none d-xl-block d-lg-block"></li>
-                        @Html.SidebarLink("Home", "Feed", "Course Feed", "tv", "chats")
-                        @Html.SidebarLink("Users", "Users", "Users", "users", "friends")
-                        @Html.SidebarLink("Groups", "Groups", "Groups", "globe", "favorites")
-                        @Html.SidebarLink("Users", "MyProfile", "My Profile", "user", "archived")
+                        @Html.SidebarLink("Home", "Feed", Localizer["CourseFeed"].Value, "tv", "")
+                        @Html.SidebarLink("Users", "Users", Localizer["Users"].Value, "users", "")
+                        @Html.SidebarLink("Groups", "Groups", Localizer["Groups"].Value, "globe", "")
+                        @Html.SidebarLink("Users", "MyProfile", Localizer["MyProfile"].Value, "user", "")
                     </ul>
-                    <div class="nav-caption fw-600 font-xssss text-grey-500"><span></span> Account</div>
+                    <div class="nav-caption fw-600 font-xssss text-grey-500"><span></span> @Localizer["Account"].Value</div>
                     <ul class="mb-3">
                         <li class="logo d-none d-xl-block d-lg-block"></li>
-                        <li><a asp-controller="Settings" asp-action="Settings" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-settings mr-3 text-grey-500"></i><span>Settings</span></a></li>
-                        <li><a asp-controller="Messanger" asp-action="Messanger" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-message-square mr-3 text-grey-500"></i><span>Chat</span></a></li>
+                        <li><a asp-controller="Settings" asp-action="Settings" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-settings mr-3 text-grey-500"></i><span>@Localizer["Settings"]</span></a></li>
+                        <li><a asp-controller="Messanger" asp-action="Messanger" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-message-square mr-3 text-grey-500"></i><span>@Localizer["Chat"]</span></a></li>
                         @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Manager") || User.IsInRole("Admin")))
                         {
-                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-grid mr-3 text-grey-500"></i><span>Admin Dashboard</span></a></li>
+                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-content-bttn open-font h-auto pt-2 pb-2"><i class="font-sm feather-grid mr-3 text-grey-500"></i><span>@Localizer["AdminDashboard"]</span></a></li>
                         }
                     </ul>
                 </div>
@@ -170,7 +173,7 @@
                         <i class="feather-search font-lg text-grey-400"></i>
                         <input type="text" 
                                name="searchTerm"
-                               placeholder="Search courses..." 
+                               placeholder="@Localizer["SearchPlaceholder"]" 
                                class="bg-transparent border-0 lh-32 pt-2 pb-2 pl-5 pr-3 font-xsss fw-500 rounded-xl w350">
                     </div>
                 </form>
@@ -182,7 +185,7 @@
                             <i class="feather-search font-lg text-grey-400"></i>
                             <input type="text" 
                                    name="searchTerm"
-                                   placeholder="Search courses..." 
+                                   placeholder="@Localizer["SearchPlaceholder"]" 
                                    class="bg-transparent border-0 lh-32 pt-2 pb-2 pl-5 pr-3 font-xsss fw-500 w-100">
                             <a href="javascript:void(0)" class="btn-close-search">
                                 <i class="feather-x font-lg text-grey-900"></i>
@@ -192,92 +195,7 @@
                 </div>
 
                 <!-- Language Switcher -->
-                <div class="language-switcher ml-auto mr-3">
-                    <div class="lang-buttons">
-                        <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">EN</button>
-                        <button class="lang-btn" data-lang="ru" onclick="switchLanguage('ru')">RU</button>
-                    </div>
-                </div>
-
-                <style>
-                    .language-switcher {
-                        display: flex;
-                        align-items: center;
-                        margin: 0 15px;
-                    }
-
-                    .lang-buttons {
-                        display: flex;
-                        background: #e4e6eb;
-                        padding: 3px;
-                        border-radius: 10px;
-                        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                    }
-
-                    .lang-btn {
-                        border: none;
-                        padding: 8px 16px;
-                        font-size: 15px;
-                        font-weight: 600;
-                        color: #65676b;
-                        background: transparent;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        transition: all 0.25s ease;
-                        min-width: 45px;
-                        text-align: center;
-                    }
-
-                    .lang-btn.active {
-                        background: #2563eb;
-                        color: #ffffff;
-                        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
-                        transform: translateY(-1px);
-                    }
-
-                    .lang-btn:not(.active):hover {
-                        background: rgba(37, 99, 235, 0.1);
-                        color: #2563eb;
-                    }
-
-                    @@media (max-width: 768px) {
-                        .lang-buttons {
-                            padding: 2px;
-                        }
-                        .lang-btn {
-                            padding: 6px 12px;
-                            font-size: 14px;
-                            min-width: 40px;
-                        }
-                    }
-                </style>
-
-                <script>
-                    function switchLanguage(lang) {
-                        // Remove active class from all buttons
-                        document.querySelectorAll('.lang-btn').forEach(btn => {
-                            btn.classList.remove('active');
-                        });
-                        
-                        // Add active class to clicked button
-                        document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
-                        
-                        // Store selected language in localStorage
-                        localStorage.setItem('selectedLanguage', lang);
-                        
-                        // You can add additional logic here for language switching
-                        // For example, reload page with new language parameter
-                        // window.location.href = updateQueryStringParameter(window.location.href, 'lang', lang);
-                    }
-
-                    // Initialize language switcher based on stored preference
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const storedLang = localStorage.getItem('selectedLanguage');
-                        if (storedLang) {
-                            switchLanguage(storedLang);
-                        }
-                    });
-                </script>
+                <partial name="_LanguageSwitcher" />
 
                 <ul class="d-flex ml-auto right-menu-icon">
                     <li><a asp-controller="Messanger" asp-action="Messanger"><i class="feather-message-square font-xl text-current"></i></a></li>

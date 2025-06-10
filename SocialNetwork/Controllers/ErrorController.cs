@@ -5,7 +5,7 @@ namespace SocialNetwork.Controllers;
 public class ErrorController : Controller
 {
     [Route("Error/NotFound")]
-    public IActionResult NotFound()
+    public new IActionResult NotFound()
     {
         return View();
     }
