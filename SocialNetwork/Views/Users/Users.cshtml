@@ -1,8 +1,12 @@
-﻿@using Elomoas.mvc.Models.Users;
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@using Elomoas.mvc.Models.Users;
 @model UserVM;
 
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = @Localizer["Users"];
 }
 
 <style>
@@ -149,7 +153,7 @@
                                name="search"
                                value="@Model.SearchTerm"
                                class="form-control search-input" 
-                               placeholder="🔍 Search users by name or email..."
+                               placeholder="🔍 @Localizer["Searchusersbynameoremail"]"
                                autocomplete="off">
                     </div>
                 </form>
@@ -163,7 +167,7 @@
                     <div class="card mb-4 section-header">
                         <div class="card-body p-4">
                             <h3 class="fw-700 text-grey-900">
-                                <i class="feather-users text-current mr-2"></i> Incoming Friend Requests
+                                <i class="feather-users text-current mr-2"></i> @Localizer["IncomingFriendRequests"]
                             </h3>
                         </div>
                     </div>
@@ -180,14 +184,14 @@
                                     <div class="clearfix"></div>
                                     <div class="friend-actions d-flex flex-column" data-user-id="@user.IdentityId">
                                         <a href="/Users/UserPage/@user.Id" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
-                                            <i class="feather-user font-xss"></i> PROFILE
+                                            <i class="feather-user font-xss"></i> @Localizer["PROFILE"]
                                         </a>
                                         <div class="d-flex justify-content-center mt-2">
                                             <button class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white accept-friend-btn" data-user-id="@user.IdentityId">
-                                                <i class="feather-user-plus font-xss"></i> ACCEPT
+                                                <i class="feather-user-plus font-xss"></i> @Localizer["ACCEPT"]
                                             </button>
                                             <button class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white reject-friend-btn" data-user-id="@user.IdentityId">
-                                                <i class="feather-user-minus font-xss"></i> REJECT
+                                                <i class="feather-user-minus font-xss"></i> @Localizer["REJECT"]
                                             </button>
                                         </div>
                                     </div>
@@ -204,7 +208,7 @@
                     <div class="card mb-4 section-header">
                         <div class="card-body p-4">
                             <h3 class="fw-700 text-grey-900">
-                                <i class="feather-user-check text-current mr-2"></i> Friends
+                                <i class="feather-user-check text-current mr-2"></i> @Localizer["Friends"]
                             </h3>
                         </div>
                     </div>
@@ -224,10 +228,10 @@
                                     <div class="clearfix"></div>
                                     <div class="friend-actions d-flex flex-column" data-user-id="@user.IdentityId">
                                         <a href="/Users/UserPage/@user.Id" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
-                                            <i class="feather-user font-xss"></i> PROFILE
+                                            <i class="feather-user font-xss"></i> @Localizer["PROFILE"]"
                                         </a>
                                         <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white remove-friend-btn" data-user-id="@user.IdentityId">
-                                            <i class="feather-user-minus font-xss"></i> REMOVE FRIEND
+                                            <i class="feather-user-minus font-xss"></i> @Localizer["REMOVEFRIEND"]
                                         </button>
                                     </div>
                                 </div>
@@ -241,7 +245,7 @@
                 <div class="card mb-4 section-header">
                     <div class="card-body p-4">
                         <h3 class="fw-700 text-grey-900">
-                            <i class="feather-users text-current mr-2"></i> Suggested Friends
+                            <i class="feather-users text-current mr-2"></i> @Localizer["SuggestedFriends"]
                         </h3>
                     </div>
                 </div>
@@ -261,8 +265,8 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <i class="feather-search text-current display-4 mb-3"></i>
-                                            <h2 class="fw-700 text-grey-900 font-xss mt-3">Users with this name or email were not found</h2>
-                                            <p class="text-grey-500 font-xssss mt-2">Try searching with different keywords</p>
+                                            <h2 class="fw-700 text-grey-900 font-xss mt-3">@Localizer["Userswiththisnameoremailwerenotfound"]</h2>
+                                            <p class="text-grey-500 font-xssss mt-2">@Localizer["Trysearchingwithdifferentkeywords"]</p>
                                         </div>
                                     </div>
                                 </div>
@@ -283,10 +287,10 @@
                                     <div class="clearfix"></div>
                                     <div class="friend-actions d-flex flex-column" data-user-id="@user.IdentityId">
                                         <a href="/Users/UserPage/@user.Id" class="btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white">
-                                            <i class="feather-user font-xss"></i> PROFILE
+                                            <i class="feather-user font-xss"></i> @Localizer["PROFILE"]
                                         </a>
                                         <button class="mt-2 btn pt-2 pb-2 ps-3 pe-3 lh-24 ls-3 rounded-xl bg-primary font-xsssss fw-700 ls-lg text-white add-friend-btn" data-user-id="@user.IdentityId">
-                                            <i class="feather-user-plus font-xss"></i> ADD FRIEND
+                                            <i class="feather-user-plus font-xss"></i> @Localizer["ADDFRIEND"]
                                         </button>
                                     </div>
                                 </div>

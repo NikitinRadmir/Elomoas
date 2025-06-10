@@ -1,8 +1,12 @@
-﻿@using Elomoas.mvc.Models.Users;
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@using Elomoas.mvc.Models.Users;
 @model UserVM;
 
 @{
-    ViewData["Title"] = "UserPage";
+    ViewData["Title"] = @Localizer["UserPage"];
 }
 
 <form id="antiForgeryForm">
@@ -88,7 +92,7 @@
                             {
                                 <div class="d-flex align-items-center">
                                 <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" data-user-id="@Model.User.IdentityId">
-                                    <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                                    <i class="feather-user-minus mr-1"></i> @Localizer["REMOVEFRIEND"]
                                 </a>
                                     <a asp-controller="Messanger" asp-action="Messanger" class="btn-round-md ml-2 mt-2 d-inline-block float-right bg-greylight" data-toggle="tooltip" title="Send message">
                                         <i class="feather-message-square font-sm text-grey-900"></i>
@@ -100,17 +104,17 @@
                                 if (Model.User.IsSentByMe)
                                 {
                                     <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-warning font-xsssss fw-700 ls-lg text-white btn-profile">
-                                        <i class="feather-clock mr-1"></i> PENDING
+                                        <i class="feather-clock mr-1"></i> @Localizer["PENDING"]
                                     </a>
                                 }
                                 else
                                 {
                                     <div class="d-flex">
                                         <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-success font-xsssss fw-700 ls-lg text-white btn-profile accept-friend-btn" data-user-id="@Model.User.IdentityId">
-                                            <i class="feather-check mr-1"></i> ACCEPT
+                                            <i class="feather-check mr-1"></i> @Localizer["ACCEPT"]
                                         </a>
                                         <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile reject-friend-btn" data-user-id="@Model.User.IdentityId">
-                                            <i class="feather-x mr-1"></i> REJECT
+                                            <i class="feather-x mr-1"></i> @Localizer["REJECT"]
                                         </a>
                                     </div>
                                 }
@@ -118,14 +122,14 @@
                             else
                             {
                                 <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile add-friend-btn" data-user-id="@Model.User.IdentityId">
-                                    <i class="feather-user-plus mr-1"></i> ADD FRIEND
+                                    <i class="feather-user-plus mr-1"></i> @Localizer["ADDFRIEND"]
                                 </a>
                             }
                         </div>
                     </div>
                     
                     <div class="col-11">
-                        <h4 class="text-grey-800 font-xsss mt-4 fw-700">About me</h4>
+                        <h4 class="text-grey-800 font-xsss mt-4 fw-700">@Localizer["Aboutme"]</h4>
                         <p class="font-xssss fw-600 lh-28 text-grey-500 mb-0 pl-0">@(string.IsNullOrEmpty(Model.User?.Description) ? "The user has no description" : Model.User.Description)</p>
                     </div>
                 </div>

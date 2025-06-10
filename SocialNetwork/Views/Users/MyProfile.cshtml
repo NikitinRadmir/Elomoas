@@ -1,8 +1,12 @@
-﻿@using Elomoas.mvc.Models.Users;
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@using Elomoas.mvc.Models.Users;
 @model UserVM;
 
 @{
-    ViewData["Title"] = "My Profile";
+    ViewData["Title"] = @Localizer["MyProfile"];
     var user = Model.User;
 }
 
@@ -57,16 +61,16 @@
         <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden mb-4">
             <ul class="nav nav-tabs" id="pills-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#navtabs0">About</a>
+                    <a class="nav-link active" data-bs-toggle="tab" href="#navtabs0">@Localizer["About"]</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs1">My Courses</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs1">@Localizer["MyCourses"]</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs2">Groups</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs2">@Localizer["Groups"]</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs3">Friends</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#navtabs3">@Localizer["Friends"]</a>
                 </li>
             </ul>
         </div>
@@ -74,7 +78,7 @@
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="navtabs0">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-lg-4 p-2">
-                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">  <b>About Me</b> </h2></div>
+                    <div class="card-body mb-lg-3 pb-0"><h2 class="fw-400 font-lg d-block">  <b>@Localizer["AboutMe"]</b> </h2></div>
                     <div class="card-body pb-0">
                         <div class="row">
                             <div class="col-xl-12">
@@ -95,7 +99,7 @@
             <div class="tab-pane fade" id="navtabs1">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
                     <div class="card-body mb-3 pb-0">
-                        <h2 class="fw-400 font-lg d-block"><b>My Courses</b></h2>
+                        <h2 class="fw-400 font-lg d-block"><b>@Localizer["MyCourses"]</b></h2>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row">
@@ -118,7 +122,7 @@
                                                 <h4 class="fw-700 font-xss mt-3 lh-28 mt-0">
                                                     <a asp-controller="Course" asp-action="Course" asp-route-id="@course.Id" class="text-dark text-grey-900">@course.Name</a>
                                                 </h4>
-                                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-course-btn" data-course-id="@course.Id">UNSUBSCRIBE</a>
+                                                <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-course-btn" data-course-id="@course.Id">@Localizer["UNSUBSCRIBE"]</a>
                                             </div>
                                         </div>
                                     </div>
@@ -127,7 +131,7 @@
                             else
                             {
                                 <div class="col-12">
-                                    <p class="text-center text-grey-500">You haven't subscribed to any courses yet.</p>
+                                    <p class="text-center text-grey-500">@Localizer["Youhaventsubscribed"]</p>
                                 </div>
                             }
                         </div>
@@ -138,7 +142,7 @@
             <div class="tab-pane fade" id="navtabs2">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
                     <div class="card-body mb-3 pb-0">
-                        <h2 class="fw-400 font-lg d-block"><b>My Groups</b></h2>
+                        <h2 class="fw-400 font-lg d-block"><b>@Localizer["MyGroups"]</b></h2>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row">
@@ -154,10 +158,10 @@
                                             <h4 class="fw-700 font-xs mt-4">@group.Name</h4>
                                             <p class="fw-500 font-xssss text-grey-500 mt-3">@group.Description</p>
                                             <div class="clearfix"></div>
-                                            <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">Full Time</span>
+                                            <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@Localizer["FullTime"]</span>
                                             <span class="font-xsssss fw-700 pl-3 pr-3 lh-32 text-uppercase rounded-lg ls-2 alert-success d-inline-block text-success mb-1 mr-1">@group.PL</span>
                                             <div class="clearfix"></div>
-                                            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">UNSUBSCRIBE</a>
+                                            <a href="#" class="p-2 mt-4 d-inline-block text-white fw-700 lh-30 rounded-lg w200 text-center font-xsssss ls-3 bg-danger unsubscribe-btn" data-group-id="@group.Id">@Localizer["UNSUBSCRIBE"]</a>
                                         </div>
                                     </div>
                                 }
@@ -165,7 +169,7 @@
                             else
                             {
                                 <div class="col-12">
-                                    <p class="text-center text-grey-500">You haven't subscribed to any groups yet.</p>
+                                    <p class="text-center text-grey-500">@Localizer["Youhaventsubscribedtoanygroupsyet"]</p>
                                 </div>
                             }
                         </div>
@@ -176,7 +180,7 @@
             <div class="tab-pane fade" id="navtabs3">
                 <div class="card d-block w-100 border-0 shadow-xss rounded-lg overflow-hidden p-4">
                     <div class="card-body mb-3 pb-0">
-                        <h2 class="fw-400 font-lg d-block"><b>My Friends</b></h2>
+                        <h2 class="fw-400 font-lg d-block"><b>@Localizer["MyFriends"]</b></h2>
                     </div>
                     <div class="card-body pb-0">
                         <div class="row">
@@ -198,10 +202,10 @@
                                             <div class="clearfix"></div>
                                             <div class="d-flex justify-content-center friend-actions">
                                                 <a asp-controller="Users" asp-action="UserPage" asp-route-id="@friend.Id" 
-                                                   class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">PROFILE</a>
+                                                   class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-current font-xsssss fw-700 ls-lg text-white btn-profile">@Localizer["PROFILE"]</a>
                                                 <a href="#" class="mt-3 p-0 btn p-2 lh-24 w100 ml-1 ls-3 d-inline-block rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white btn-profile remove-friend-btn" 
                                                    data-user-id="@friend.IdentityId">
-                                                    <i class="feather-user-minus mr-1"></i> REMOVE FRIEND
+                                                    <i class="feather-user-minus mr-1"></i> @Localizer["REMOVEFRIEND"]
                                                 </a>
                                             </div>
                                         </div>
@@ -211,7 +215,7 @@
                             else
                             {
                                 <div class="col-12">
-                                    <p class="text-center text-grey-500">You don't have any friends yet.</p>
+                                    <p class="text-center text-grey-500">@Localizer["Youdonthaveanyfriendsyet"]</p>
                                 </div>
                             }
                         </div>
@@ -310,13 +314,13 @@
 
                 try {
                     const result = await Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You will be unsubscribed from this course",
+                        title: '@Localizer["Areyousure"]',
+                        text: "@Localizer["Youwillbeunsubscribedfromthiscourse"]",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, unsubscribe!'
+                        confirmButtonText: '@Localizer["Yesunsubscribe"]'
                     });
 
                     if (result.isConfirmed) {
@@ -332,8 +336,8 @@
                         if (response.success) {
                             await Swal.fire({
                                 icon: 'success',
-                                title: 'Unsubscribed!',
-                                text: 'You have been unsubscribed from this course.',
+                                title: '@Localizer["Unsubscribed"]',
+                                text: '@Localizer["Youhavebeenunsubscribedfromthiscourse"]',
                                 showConfirmButton: false,
                                 timer: 2000
                             });
@@ -341,7 +345,7 @@
                             button.closest('.col-xl-4').fadeOut(300, function() {
                                 $(this).remove();
                                 if ($('#navtabs1 .col-xl-4').length === 0) {
-                                    $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any courses yet.</p></div>');
+                                    $('#navtabs1 .row').html('<div class="col-12"><p class="text-center text-grey-500">@Localizer["Youhaventsubscribedtoanycoursesyet"]</p></div>');
                                 }
                             });
                         } else {
@@ -352,11 +356,11 @@
                     console.error('Unsubscription error:', error);
                     await Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
-                        text: 'Failed to unsubscribe. Please try again.',
+                        title: '@Localizer["Oops"]',
+                        text: '@Localizer["Failedtounsubscribe"]',
                     });
                     button.prop('disabled', false);
-                    button.html('UNSUBSCRIBE');
+                    button.html('@Localizer["UNSUBSCRIBE"]');
                 }
             });
 
@@ -365,7 +369,7 @@
                 const button = $(this);
                 const groupId = button.data('group-id');
 
-                if (confirm('Are you sure you want to unsubscribe from this group?')) {
+                if (confirm('@Localizer["Areyousureyouwanttounsubscribefromthisgroup"]')) {
                     button.prop('disabled', true);
                     
                     $.post('/Groups/Unsubscribe', { groupId: groupId })
@@ -374,7 +378,7 @@
                                 button.closest('.col-xl-4').fadeOut(300, function() {
                                     $(this).remove();
                                     if ($('#navtabs2 .col-xl-4').length === 0) {
-                                        $('#navtabs2 .row').html('<div class="col-12"><p class="text-center text-grey-500">You haven\'t subscribed to any groups yet.</p></div>');
+                                        $('#navtabs2 .row').html('<div class="col-12"><p class="text-center text-grey-500">@Localizer["Youhaventsubscribedtoanygroupsyet"]</p></div>');
                                     }
                                 });
                             } else {
