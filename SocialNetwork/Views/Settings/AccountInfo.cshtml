@@ -1,7 +1,11 @@
-﻿@model Elomoas.mvc.Models.Settings.AccountInfoVM
+﻿@using Elomoas.Helpers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@inject IViewLocalizer Localizer
+@model Elomoas.mvc.Models.Settings.AccountInfoVM
 
 @{
-    ViewData["Title"] = "Account Info";
+    ViewData["Title"] = @Localizer["AccountInfo"];
 }
 
 <style>
@@ -46,7 +50,7 @@
             <div class="card w-100 border-0 bg-white shadow-xs p-0 mb-4">
                 <div class="card-body p-4 w-100 bg-current border-0 d-flex rounded-lg">
                     <a asp-controller="Settings" asp-action="Settings" class="d-inline-block mt-2"><i class="ti-arrow-left font-sm text-white"></i></a>
-                    <h4 class="font-xs text-white fw-600 ml-4 mb-0 mt-2">Profile Information</h4>
+                    <h4 class="font-xs text-white fw-600 ml-4 mb-0 mt-2">@Localizer["ProfileInformation"]</h4>
                 </div>
                 <div class="card-body p-lg-5 p-4 w-100 border-0">
                     @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
@@ -75,7 +79,7 @@
                                 <div class="clearfix"></div>
                                 <div class="form-group mt-3">
                                     <label for="ImageFile" class="p-3 d-block text-primary font-xsss fw-600 rounded-lg text-center cursor-pointer change-photo-btn">
-                                        <i class="feather-camera mr-2"></i>Change Photo
+                                        <i class="feather-camera mr-2"></i>@Localizer["ChangePhoto"]
                                     </label>
                                     <input type="file" asp-for="ImageFile" class="d-none" accept="image/*" onchange="previewImage(this)">
                                     <span asp-validation-for="ImageFile" class="text-danger"></span>
@@ -87,7 +91,7 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xssss">First Name</label>
+                                    <label class="mont-font fw-600 font-xssss">@Localizer["FirstName"]</label>
                                     <input type="text" asp-for="FirstName" class="form-control">
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
@@ -95,7 +99,7 @@
 
                             <div class="col-lg-6 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xssss">Last Name</label>
+                                    <label class="mont-font fw-600 font-xssss">@Localizer["LastName"]</label>
                                     <input type="text" asp-for="LastName" class="form-control">
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
@@ -105,7 +109,7 @@
                         <div class="row">
                             <div class="col-lg-12 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xssss">Email</label>
+                                    <label class="mont-font fw-600 font-xssss">@Localizer["Email"]</label>
                                     <input type="email" asp-for="Email" class="form-control">
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
@@ -115,8 +119,8 @@
                         <div class="row">
                             <div class="col-lg-12 mb-3">
                                 <div class="form-group">
-                                    <label class="mont-font fw-600 font-xssss">Description</label>
-                                    <textarea asp-for="Description" class="form-control mb-0 p-3 h100 bg-greylight lh-16" rows="5" placeholder="Tell us about yourself..."></textarea>
+                                    <label class="mont-font fw-600 font-xssss">@Localizer["Description"]</label>
+                                    <textarea asp-for="Description" class="form-control mb-0 p-3 h100 bg-greylight lh-16" rows="5" placeholder="@Localizer["Tellusaboutyourself"]"></textarea>
                                     <span asp-validation-for="Description" class="text-danger"></span>
                                 </div>
                             </div>
@@ -124,7 +128,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 mb-0">
-                                <button type="submit" class="bg-current text-center text-white font-xsss fw-600 p-3 w175 rounded-lg d-inline-block">Save</button>
+                                <button type="submit" class="bg-current text-center text-white font-xsss fw-600 p-3 w175 rounded-lg d-inline-block">@Localizer["Save"]</button>
                             </div>
                         </div>
                     </form>

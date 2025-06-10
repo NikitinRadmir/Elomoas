@@ -33,7 +33,6 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="logs\" />
-    <Folder Include="Resources\Views\Settings\" />
     <Folder Include="Resources\Views\Users\" />
   </ItemGroup>
 
