@@ -10,22 +10,31 @@ Elomoas – это онлайн-магазин курсов, где каждый
 
 ## Установка
 1. Клонируйте репозиторий:
+   
    git clone https://github.com/NikitinRadmir/Elomoas
+
    ВНИМАНИЕ!!! Чтобы протестировать весь функционал, нужно перейти в ветку dev:
+
    git checkout dev
 
-2. Установите Docker и добавьте свой контейнер на PosgresSQL через терминал:
+3. Установите Docker и добавьте свой контейнер на PosgresSQL через терминал:
+
    docker run --name SocialNetwork  -e POSTGRES_USER=postgres  -e POSTGRES_PASSWORD=postgresmaster -p 5433:5432  -d postgres:latest
 
-3. Откройте проект и примените миграции в Elomoas.Persistence:
+5. Откройте проект и примените миграции в Elomoas.Persistence:
+
    dotnet ef database update -p SocialNetwork.Persistence -s SocialNetwork
 
-4. Установите Minio для хранения ваших логов и других файлов (Minio - объектное хранилище, реализующее Amazon S3):
+7. Установите Minio для хранения ваших логов и других файлов (Minio - объектное хранилище, реализующее Amazon S3):
+
    https://dl.min.io/server/minio/release/windows-amd64/minio.exe
+
    Необходимо перенести exe файл в папку "C:/minio/minio.exe"
 
-5. Откройте PowerShell от имени администратора впишите команду:
+9. Откройте PowerShell от имени администратора впишите команду:
+
    C:\minio\minio.exe server C:\minio\data --console-address ":9001"
+
    Теперь у вас запущен сервер Minio и логи с данными будут сохраняться туда
 
 6.Теперь можно запускать проект.
