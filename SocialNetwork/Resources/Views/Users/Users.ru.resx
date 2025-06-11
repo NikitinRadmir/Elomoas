@@ -127,7 +127,7 @@
   <data name="Userswiththisnameoremailwerenotfound" xml:space="preserve">
     <value>Пользователи с этим именем или почтой не были найдены</value>
   </data>
-  <data name=" Trysearchingwithdifferentkeywords" xml:space="preserve">
+  <data name="Trysearchingwithdifferentkeywords" xml:space="preserve">
     <value>Попробуйте искать с разными ключевыми словами</value>
   </data>
   <data name="ADDFRIEND" xml:space="preserve">

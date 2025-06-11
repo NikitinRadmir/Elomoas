@@ -17,7 +17,6 @@ public class MinioLoggerProvider : ILoggerProvider
     public MinioLoggerProvider(IMinioService minioService)
     {
         _minioService = minioService;
-        // Создаем таймер, который будет срабатывать каждую минуту
         _flushTimer = new Timer(FlushLogs, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
     }
 
@@ -31,7 +30,6 @@ public class MinioLoggerProvider : ILoggerProvider
             var fileName = $"{currentDate}.log";
             var logs = new StringBuilder();
 
-            // Собираем все логи из буфера
             while (_logBuffer.TryDequeue(out var logEntry))
             {
                 logs.AppendLine(logEntry);
@@ -39,7 +37,6 @@ public class MinioLoggerProvider : ILoggerProvider
 
             if (logs.Length > 0)
             {
-                // Получаем существующий файл, если есть
                 try
                 {
                     using var existingLogs = await _minioService.GetFileAsync(_minioService.LogsBucketName, fileName);
@@ -48,16 +45,13 @@ public class MinioLoggerProvider : ILoggerProvider
                 }
                 catch
                 {
-                    // Файл не существует - это нормально для первой записи за день
                 }
 
-                // Сохраняем обновленный файл
                 await _minioService.SaveLogAsync(logs.ToString(), fileName);
             }
         }
         catch
         {
-            // Игнорируем ошибки сохранения, чтобы избежать рекурсивного логирования
         }
     }
 
@@ -73,7 +67,6 @@ public class MinioLoggerProvider : ILoggerProvider
         _isDisposed = true;
         _flushTimer.Dispose();
         
-        // Финальное сохранение логов при завершении работы
         FlushLogs(null);
         
         _loggers.Clear();
