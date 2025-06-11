@@ -43,7 +43,6 @@ public class MinioService : IMinioService
         {
             await _minioClient.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
             
-            // Устанавливаем политику публичного доступа для бакета с изображениями
             if (bucketName == ImagesBucketName)
             {
                 var policy = $@"{{
@@ -100,7 +99,6 @@ public class MinioService : IMinioService
 
         await _minioClient.PutObjectAsync(putObjectArgs);
 
-        // Используем публичный URL для доступа к изображениям
         return $"{_settings.PublicUrl}/{_settings.ImagesBucketName}/{fileName}";
     }
 

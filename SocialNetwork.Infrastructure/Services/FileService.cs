@@ -29,23 +29,19 @@ namespace Elomoas.Infrastructure.Services
                 if (file == null || file.Length == 0)
                     return null;
 
-                // Validate file type
                 var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
                 if (!allowedTypes.Contains(file.ContentType))
                 {
                     throw new InvalidOperationException("Invalid file type. Only JPEG and PNG files are allowed.");
                 }
 
-                // Delete old image if it exists and is not the default image
                 if (!string.IsNullOrEmpty(oldImagePath) && oldImagePath != DEFAULT_PROFILE_IMAGE)
                 {
                     await DeleteFileAsync(oldImagePath);
                 }
 
-                // Generate unique filename
                 var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
 
-                // Save the new file to MinIO
                 using (var stream = file.OpenReadStream())
                 {
                     var url = await _minioService.SaveImageAsync(stream, uniqueFileName, file.ContentType);
@@ -67,10 +63,8 @@ namespace Elomoas.Infrastructure.Services
                 if (string.IsNullOrEmpty(filePath) || filePath == DEFAULT_PROFILE_IMAGE)
                     return;
 
-                // Extract filename from path
                 string fileName;
                 
-                // Если путь начинается с http:// или https://, это полный URL
                 if (filePath.StartsWith("http://") || filePath.StartsWith("https://"))
                 {
                     try
@@ -84,7 +78,7 @@ namespace Elomoas.Infrastructure.Services
                         return;
                     }
                 }
-                else // Иначе это относительный или абсолютный путь
+                else
                 {
                     fileName = Path.GetFileName(filePath.TrimStart('/'));
                 }
@@ -108,7 +102,6 @@ namespace Elomoas.Infrastructure.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
-                // Не пробрасываем исключение, так как удаление старого файла не должно прерывать основной процесс
             }
         }
     }

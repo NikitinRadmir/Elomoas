@@ -26,7 +26,6 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Configure MinIO
         builder.Services.Configure<MinioSettings>(builder.Configuration.GetSection("MinioSettings"));
         builder.Services.AddSingleton<IMinioService, MinioService>();
 
@@ -35,7 +34,6 @@ public class Program
         builder.Logging.AddDebug();
         builder.Logging.AddFile("logs/app-{Date}.txt");
 
-        // Add MinIO logging after MinIO service is configured
         var sp = builder.Services.BuildServiceProvider();
         var minioService = sp.GetRequiredService<IMinioService>();
         builder.Logging.AddMinio(minioService);
@@ -67,7 +65,6 @@ public class Program
             options.SupportedCultures = cultures;
             options.SupportedUICultures = cultures;
             
-            // Configure culture providers order
             options.RequestCultureProviders = new List<IRequestCultureProvider>
             {
                 new CookieRequestCultureProvider(),
