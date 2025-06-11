@@ -10,17 +10,16 @@ namespace Elomoas.Infrastructure.Services
 {
     public class FileService : IFileService
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<FileService> _logger;
-        private const string PROFILE_IMAGES_FOLDER = "uploads/profiles";
+        private readonly IMinioService _minioService;
         private const string DEFAULT_PROFILE_IMAGE = "/images/default-icon.jpg";
 
         public FileService(
-            IWebHostEnvironment webHostEnvironment,
-            ILogger<FileService> logger)
+            ILogger<FileService> logger,
+            IMinioService minioService)
         {
-            _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            _minioService = minioService;
         }
 
         public async Task<string> SaveProfileImageAsync(IFormFile file, string oldImagePath = null)
@@ -37,10 +36,6 @@ namespace Elomoas.Infrastructure.Services
                     throw new InvalidOperationException("Invalid file type. Only JPEG and PNG files are allowed.");
                 }
 
-                // Create the profile images directory if it doesn't exist
-                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, PROFILE_IMAGES_FOLDER);
-                Directory.CreateDirectory(uploadsFolder); // CreateDirectory создаст все нужные поддиректории автоматически
-
                 // Delete old image if it exists and is not the default image
                 if (!string.IsNullOrEmpty(oldImagePath) && oldImagePath != DEFAULT_PROFILE_IMAGE)
                 {
@@ -49,18 +44,14 @@ namespace Elomoas.Infrastructure.Services
 
                 // Generate unique filename
                 var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Save the new file
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Save the new file to MinIO
+                using (var stream = file.OpenReadStream())
                 {
-                    await file.CopyToAsync(fileStream);
+                    var url = await _minioService.SaveImageAsync(stream, uniqueFileName, file.ContentType);
+                    _logger.LogInformation("Successfully saved profile image to MinIO: {Url}", url);
+                    return url;
                 }
-
-                _logger.LogInformation("Successfully saved profile image: {FilePath}", filePath);
-
-                // Return the relative path
-                return Path.Combine("/", PROFILE_IMAGES_FOLDER, uniqueFileName);
             }
             catch (Exception ex)
             {
@@ -76,19 +67,48 @@ namespace Elomoas.Infrastructure.Services
                 if (string.IsNullOrEmpty(filePath) || filePath == DEFAULT_PROFILE_IMAGE)
                     return;
 
-                // Convert relative path to absolute path
-                var absolutePath = Path.Combine(_webHostEnvironment.WebRootPath, filePath.TrimStart('/'));
-
-                if (File.Exists(absolutePath))
+                // Extract filename from path
+                string fileName;
+                
+                // Если путь начинается с http:// или https://, это полный URL
+                if (filePath.StartsWith("http://") || filePath.StartsWith("https://"))
                 {
-                    await Task.Run(() => File.Delete(absolutePath));
-                    _logger.LogInformation("Successfully deleted file: {FilePath}", absolutePath);
+                    try
+                    {
+                        var uri = new Uri(filePath);
+                        fileName = Path.GetFileName(uri.LocalPath);
+                    }
+                    catch
+                    {
+                        _logger.LogWarning("Invalid URL format for file path: {FilePath}", filePath);
+                        return;
+                    }
+                }
+                else // Иначе это относительный или абсолютный путь
+                {
+                    fileName = Path.GetFileName(filePath.TrimStart('/'));
+                }
+
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    _logger.LogWarning("Could not extract filename from path: {FilePath}", filePath);
+                    return;
+                }
+
+                try
+                {
+                    await _minioService.DeleteFileAsync(_minioService.ImagesBucketName, fileName);
+                    _logger.LogInformation("Successfully deleted file from MinIO: {FilePath}", filePath);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to delete file from MinIO: {FilePath}", filePath);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting file: {FilePath}", filePath);
-                throw;
+                // Не пробрасываем исключение, так как удаление старого файла не должно прерывать основной процесс
             }
         }
     }

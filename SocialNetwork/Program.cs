@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
-
 using Microsoft.Extensions.Options;
 
 namespace Elomoas;
@@ -27,10 +26,19 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // Configure MinIO
+        builder.Services.Configure<MinioSettings>(builder.Configuration.GetSection("MinioSettings"));
+        builder.Services.AddSingleton<IMinioService, MinioService>();
+
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.AddDebug();
-        builder.Logging.AddFile("logs/app-{Date}.txt"); 
+        builder.Logging.AddFile("logs/app-{Date}.txt");
+
+        // Add MinIO logging after MinIO service is configured
+        var sp = builder.Services.BuildServiceProvider();
+        var minioService = sp.GetRequiredService<IMinioService>();
+        builder.Logging.AddMinio(minioService);
         builder.Logging.SetMinimumLevel(LogLevel.Information);
 
         builder.Services.AddApplicationLayer();
