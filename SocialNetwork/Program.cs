@@ -48,7 +48,7 @@ public class Program
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Auth/Login";
-            options.AccessDeniedPath = "/Auth/Login";
+            options.AccessDeniedPath = "/Error/403";
         });
 
         builder.Services.AddLocalization(opt => { opt.ResourcesPath = "Resources"; });
@@ -154,9 +154,13 @@ public class Program
         {
             await next();
 
-            if (context.Response.StatusCode == 401 || context.Response.StatusCode == 403)
+            if (context.Response.StatusCode == 401)
             {
-                context.Response.Redirect("/Error/NotFound");
+                context.Response.Redirect("/Error/404");
+            }
+            else if (context.Response.StatusCode == 403)
+            {
+                context.Response.Redirect("/Error/403");
             }
         });
 
