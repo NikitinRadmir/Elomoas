@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Elomoas.Infrastructure.Services;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Logging;
 

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Microsoft.Extensions.Options;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas;
 

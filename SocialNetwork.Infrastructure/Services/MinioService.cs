@@ -4,19 +4,10 @@ using Minio.DataModel;
 using Microsoft.Extensions.Options;
 using Elomoas.Infrastructure.Settings;
 using Minio.DataModel.Args;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Infrastructure.Services;
 
-public interface IMinioService
-{
-    string LogsBucketName { get; }
-    string ImagesBucketName { get; }
-    Task EnsureBucketExists(string bucketName);
-    Task SaveLogAsync(string logMessage, string fileName);
-    Task<string> SaveImageAsync(Stream imageStream, string fileName, string contentType);
-    Task<Stream> GetFileAsync(string bucketName, string fileName);
-    Task DeleteFileAsync(string bucketName, string fileName);
-}
 
 public class MinioService : IMinioService
 {

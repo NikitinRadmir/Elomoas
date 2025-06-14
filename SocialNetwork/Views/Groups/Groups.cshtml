@@ -227,7 +227,29 @@
                            .off('click')
                            .on('click', function(e) {
                                e.preventDefault();
-                               $('.subscribe-btn').click();
+                               var groupId = $(this).data('group-id');
+                               var btn = $(this);
+                               btn.prop('disabled', true);
+
+                               $.post('/Groups/Subscribe', { groupId: groupId })
+                                   .done(function(response) {
+                                       if (response.success) {
+                                           btn.removeClass('bg-current subscribe-btn')
+                                              .addClass('bg-danger unsubscribe-btn')
+                                              .text('@Localizer["UNSUBSCRIBE"]')
+                                              .off('click')
+                                              .on('click', function(e) {
+                                                  e.preventDefault();
+                                                  handleUnsubscribe($(this));
+                                              });
+                                       } else {
+                                           handleSubscriptionError();
+                                       }
+                                   })
+                                   .fail(handleSubscriptionError)
+                                   .always(function() {
+                                       btn.prop('disabled', false);
+                                   });
                            });
                     } else {
                         handleSubscriptionError();

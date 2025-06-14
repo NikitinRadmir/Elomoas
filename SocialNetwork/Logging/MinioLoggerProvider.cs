@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Elomoas.Infrastructure.Services;
 using System.Text;
+using Elomoas.Application.Interfaces.Services;
 
 namespace Elomoas.Logging;
 
