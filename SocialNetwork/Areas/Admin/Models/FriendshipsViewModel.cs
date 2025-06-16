@@ -1,3 +1,4 @@
+using Elomoas.Application.Features.Friends.Dtos;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enums;
 using System;
@@ -7,7 +8,7 @@ namespace SocialNetwork.Areas.Admin.Models;
 
 public class FriendshipsViewModel
 {
-    public IEnumerable<Friendship> Friendships { get; set; }
+    public IEnumerable<FriendshipDto> Friendships { get; set; }
 }
 
 public class CreateFriendshipViewModel

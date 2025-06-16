@@ -238,36 +238,62 @@ namespace Elomoas.Infrastructure.Services
             }
         }
 
-        public async Task<Friendship> CreateFriendshipAsync(Friendship friendship)
+        public async Task<bool> CreateFriendshipAsync(string userId, string friendId, FriendshipStatus status)
         {
             try
             {
+                var friendship = new Friendship
+                {
+                    UserId = userId,
+                    FriendId = friendId,
+                    Status = status,
+                    AddedAt = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow
+                };
+
                 _context.Friendships.Add(friendship);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Created new friendship with id {Id}", friendship.Id);
-                return friendship;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating friendship");
-                throw;
-            }
-        }
-
-        public async Task<bool> UpdateFriendshipAsync(Friendship friendship)
-        {
-            try
-            {
-                _logger.LogInformation("Attempting to update friendship {Id}", friendship.Id);
-                _context.Friendships.Update(friendship);
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("Successfully updated friendship {Id}", friendship.Id);
+                _logger.LogInformation("Created new friendship between {UserId} and {FriendId} with status {Status}", 
+                    userId, friendId, status);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating friendship {Id}", friendship.Id);
-                throw;
+                _logger.LogError(ex, "Error creating friendship between {UserId} and {FriendId}", userId, friendId);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateFriendshipAsync(int id, string userId, string friendId, FriendshipStatus status)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to update friendship {Id}", id);
+
+                var existingFriendship = await _context.Friendships.FindAsync(id);
+                if (existingFriendship == null)
+                {
+                    _logger.LogWarning("Friendship {Id} not found for update", id);
+                    return false;
+                }
+
+                existingFriendship.UserId = userId;
+                existingFriendship.FriendId = friendId;
+                existingFriendship.Status = status;
+                existingFriendship.UpdatedDate = DateTime.UtcNow;
+
+                _context.Friendships.Update(existingFriendship);
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation("Successfully updated friendship {Id} between {UserId} and {FriendId} with status {Status}", 
+                    id, userId, friendId, status);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating friendship {Id} between {UserId} and {FriendId}", 
+                    id, userId, friendId);
+                return false;
             }
         }
 

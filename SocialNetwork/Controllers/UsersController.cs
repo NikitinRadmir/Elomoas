@@ -66,7 +66,7 @@ namespace Elomoas.Controllers
             var query = new GetAllUsersQuery();
             var allUsers = await _mediator.Send(query);
 
-            var pendingRequestsQuery = new GetPendingFriendRequestsQuery { UserId = currentUser.Id };
+            var pendingRequestsQuery = new GetPendingFriendRequestsQuery(currentUser.Id);
             var pendingFriendships = await _mediator.Send(pendingRequestsQuery);
             var pendingFriendIds = pendingFriendships
                 .Where(f => f.FriendId == currentUser.Id) 

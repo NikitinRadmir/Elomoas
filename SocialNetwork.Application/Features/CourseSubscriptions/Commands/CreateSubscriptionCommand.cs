@@ -4,7 +4,7 @@ using System;
 
 namespace Elomoas.Application.Features.CourseSubscriptions.Commands;
 
-public record CreateSubscriptionCommand : IRequest<CourseSubscription>
+public record CreateSubscriptionCommand : IRequest<bool>
 {
     public int UserId { get; init; }
     public int CourseId { get; init; }

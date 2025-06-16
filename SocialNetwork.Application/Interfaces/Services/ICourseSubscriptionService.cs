@@ -8,8 +8,8 @@ public interface ICourseSubscriptionService
 {
     Task<IEnumerable<CourseSubscription>> GetAllCourseSubscriptionsAsync();
     Task<CourseSubscription?> GetSubscriptionByIdAsync(int id);
-    Task<CourseSubscription> CreateSubscriptionAsync(CourseSubscription subscription);
-    Task<bool> UpdateSubscriptionAsync(CourseSubscription subscription);
+    Task<bool> CreateSubscriptionAsync(int userId, int courseId, decimal subscriptionPrice, int durationInMonths, DateTime expirationDate);
+    Task<bool> UpdateSubscriptionAsync(int id, int userId, int courseId, decimal subscriptionPrice, int durationInMonths, DateTime expirationDate);
     Task<bool> DeleteSubscriptionAsync(int id);
     Task CheckAndUpdateExpiredSubscriptionsAsync();
 } 

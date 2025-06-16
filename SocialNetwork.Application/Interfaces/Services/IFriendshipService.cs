@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Elomoas.Application.Features.AppUsers.Query;
 using Elomoas.Domain.Entities;
+using Elomoas.Domain.Entities.Enums;
 
 namespace Elomoas.Application.Interfaces.Services
 {
@@ -17,8 +18,8 @@ namespace Elomoas.Application.Interfaces.Services
         // Admin area CRUD operations
         Task<IEnumerable<Friendship>> GetAllFriendshipsAsync();
         Task<Friendship> GetFriendshipByIdAsync(int id);
-        Task<Friendship> CreateFriendshipAsync(Friendship friendship);
-        Task<bool> UpdateFriendshipAsync(Friendship friendship);
+        Task<bool> CreateFriendshipAsync(string userId, string friendId, FriendshipStatus status);
+        Task<bool> UpdateFriendshipAsync(int id, string userId, string friendId, FriendshipStatus status);
         Task<bool> DeleteFriendshipAsync(int id);
     }
 } 

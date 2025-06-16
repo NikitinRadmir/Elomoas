@@ -45,36 +45,69 @@ public class CourseSubscriptionService : ICourseSubscriptionService
         }
     }
 
-    public async Task<CourseSubscription> CreateSubscriptionAsync(CourseSubscription subscription)
+    public async Task<bool> CreateSubscriptionAsync(int userId, int courseId, decimal subscriptionPrice, int durationInMonths, DateTime expirationDate)
     {
         try
         {
-            subscription.CreatedDate = DateTime.UtcNow;
+            var subscription = new CourseSubscription
+            {
+                UserId = userId,
+                CourseId = courseId,
+                SubscriptionPrice = subscriptionPrice,
+                DurationInMonths = durationInMonths,
+                ExpirationDate = expirationDate,
+                CreatedDate = DateTime.UtcNow
+            };
+
             _context.CourseSubscriptions.Add(subscription);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Created new course with id {Id}", subscription.Id);
-            return subscription;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating course");
-            throw;
-        }
-    }
-
-    public async Task<bool> UpdateSubscriptionAsync(CourseSubscription subscription)
-    {
-        try
-        {
-            _logger.LogInformation("Attempting to update subscription {Id}", subscription.Id);
-            _context.CourseSubscriptions.Update(subscription);
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Successfully updated subscription {Id}", subscription.Id);
+            
+            _logger.LogInformation("Created new subscription with id {Id} for user {UserId} to course {CourseId}", 
+                subscription.Id, userId, courseId);
+            
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating subscription {Id}", subscription.Id);
+            _logger.LogError(ex, "Error creating subscription for user {UserId} to course {CourseId}", 
+                userId, courseId);
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateSubscriptionAsync(int id, int userId, int courseId, decimal subscriptionPrice, int durationInMonths, DateTime expirationDate)
+    {
+        try
+        {
+            _logger.LogInformation("Attempting to update subscription {Id}", id);
+
+            var subscription = await _context.CourseSubscriptions.FindAsync(id);
+            if (subscription == null)
+            {
+                _logger.LogWarning("Subscription {Id} not found for update", id);
+                return false;
+            }
+
+            subscription.UserId = userId;
+            subscription.CourseId = courseId;
+            subscription.SubscriptionPrice = subscriptionPrice;
+            subscription.DurationInMonths = durationInMonths;
+            subscription.ExpirationDate = expirationDate;
+
+            _context.CourseSubscriptions.Update(subscription);
+            await _context.SaveChangesAsync();
+            
+            _logger.LogInformation(
+                "Successfully updated subscription {Id} for user {UserId} to course {CourseId}",
+                id, userId, courseId);
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, 
+                "Error updating subscription {Id} for user {UserId} to course {CourseId}",
+                id, userId, courseId);
             throw;
         }
     }
@@ -86,7 +119,7 @@ public class CourseSubscriptionService : ICourseSubscriptionService
             var subscription = await _context.CourseSubscriptions.FindAsync(id);
             if (subscription == null)
             {
-                _logger.LogWarning($"Subscription {id} not found for deletion", id);
+                _logger.LogWarning("Subscription {Id} not found for deletion", id);
                 return false;
             }
 

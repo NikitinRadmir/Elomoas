@@ -1,4 +1,5 @@
 using Elomoas.Application.Features.Courses.Query;
+using Elomoas.Application.Features.CourseSubscriptions.Dtos;
 using Elomoas.Domain.Entities;
 using System;
 
@@ -6,7 +7,7 @@ namespace SocialNetwork.Areas.Admin.Models;
 
 public class SubscriptionsViewModel
 {
-    public IEnumerable<CourseSubscription> Subscriptions { get; set; }
+    public IEnumerable<CourseSubscriptionDto> Subscriptions { get; set; }
 }
 
 public class CreateSubscriptionViewModel
