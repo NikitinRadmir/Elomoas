@@ -1,33 +1,30 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Elomoas.Application.Interfaces.Services;
-using Elomoas.Domain.Entities;
+using Elomoas.Application.Interfaces.Repositories;
 using MediatR;
 
-namespace Elomoas.Application.Features.Courses.Commands;
-
-public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, Course>
+namespace Elomoas.Application.Features.Courses.Commands
 {
-    private readonly ICourseService _courseService;
-
-    public CreateCourseCommandHandler(ICourseService courseService)
+    public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, bool>
     {
-        _courseService = courseService;
-    }
+        private readonly ICourseRepository _courseRepository;
 
-    public async Task<Course> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
-    {
-        var course = new Course
+        public CreateCourseCommandHandler(ICourseRepository courseRepository)
         {
-            Name = request.Name,
-            Description = request.Description,
-            Img = string.IsNullOrEmpty(request.Img) ? "/images/v-1.png" : request.Img,
-            Price = request.Price,
-            PL = request.PL,
-            Video = string.IsNullOrEmpty(request.Video) ? "/images/video4.mp4" : request.Video,
-            Learn = request.Learn
-        };
+            _courseRepository = courseRepository;
+        }
 
-        return await _courseService.CreateCourseAsync(course);
+        public async Task<bool> Handle(CreateCourseCommand command, CancellationToken ct)
+        {
+            return await _courseRepository.AddCourseAsync(
+                command.Name,
+                command.Description,
+                command.Img,
+                command.Price,
+                command.PL,
+                command.Video,
+                command.Learn
+            );
+        }
     }
 } 

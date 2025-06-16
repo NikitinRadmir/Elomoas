@@ -1,15 +1,13 @@
-﻿using Elomoas.Application.Interfaces.Repositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Elomoas.Application.Interfaces.Repositories;
 using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enum;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Elomoas.Application.Features.Courses.Query;
 
-namespace Elomoas.Persistence.Repositories
+namespace Elomoas.Infrastructure.Repositories
 {
     public class CourseRepository : ICourseRepository
     {
@@ -28,16 +26,6 @@ namespace Elomoas.Persistence.Repositories
         public async Task<Course> GetCourseByIdAsync(int id)
         {
             return await _repository.Entities.FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<Dictionary<string, int>> GetCoursesCountByPL()
-        {
-            return await _repository.Entities
-                .GroupBy(x => x.PL)
-                .ToDictionaryAsync(
-                    g => g.Key.ToString(),
-                    g => g.Count()
-                );
         }
 
         public async Task<bool> AddCourseAsync(string name, string description, string img, decimal price, ProgramLanguage pl, string video, string learn)
@@ -81,6 +69,17 @@ namespace Elomoas.Persistence.Repositories
             return true;
         }
 
+        public async Task<Dictionary<string, int>> GetCoursesCountByPL()
+        {
+            var courses = await _repository.Entities.ToListAsync();
+            return courses
+                .GroupBy(x => x.PL)
+                .ToDictionary(
+                    g => g.Key.ToString(),
+                    g => g.Count()
+                );
+        }
+
         public async Task<IEnumerable<CourseDto>> GetAllCoursesAsDto()
         {
             var courses = await _repository.Entities.ToListAsync();
@@ -97,8 +96,5 @@ namespace Elomoas.Persistence.Repositories
                 IsCurrentUserSubscribed = false
             });
         }
-
-        //Task<IEnumerable<Course>> GetAllCoursesAsync ();
-        //Task<Course> GetCourseById(int id);
     }
-}
+} 

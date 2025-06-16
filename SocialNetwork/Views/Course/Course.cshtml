@@ -467,30 +467,48 @@
                         await Swal.fire({
                             icon: 'success',
                             title: '@Localizer["Subscribed"]',
-                            text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"]" ${duration} @Localizer["month"]" ${duration > 1 ? 's' : ''}!`,
+                            text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"] ${duration} @Localizer["month"]${duration > 1 ? 's' : ''}!`,
                             showConfirmButton: false,
                             timer: 2000
                         });
+
+                        const formatPrice = (price) => {
+                            if (!price) return '0.00';
+                            const numPrice = parseFloat(price);
+                            return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+                        };
+
+                        const formatDate = (dateStr) => {
+                            if (!dateStr) return '-';
+                            try {
+                                const [day, month, year] = dateStr.split('.');
+                                return `${day}.${month}.${year}`;
+                            } catch {
+                                return dateStr || '-';
+                            }
+                        };
+
+                        console.log('Server response:', response);
 
                         const subscriptionHtml = `
                         <div class="bg-white p-3 rounded-lg mb-3">
                             <h4 class="text-success fw-600 font-xssss mb-2">@Localizer["ActiveSubscription"]</h4>
                             <div class="subscription-info">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]:</span>
-                                                <span class="font-xssss fw-700 text-primary">${duration} @Localizer["month"] ${duration > 1 ? 's' : ''}</span>
+                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]:</span>
+                                    <span class="font-xssss fw-700 text-primary">${response.durationInMonths || duration} @Localizer["month"]${(response.durationInMonths || duration) > 1 ? 's' : ''}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]":</span>
-                                        <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
+                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]:</span>
+                                    <span class="font-xssss fw-700 text-primary">$${formatPrice(response.subscriptionPrice)}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]":</span>
-                                        <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
-                                    </div>
+                                    <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]:</span>
+                                    <span class="font-xssss fw-700 text-primary">${formatDate(response.expirationDate)}</span>
+                                </div>
                             </div>
                         </div>
-                                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">@Localizer["UNSUBSCRIBE"]</a>`;
+                        <a href="#" class="btn btn-block border-0 w-100 bg-white p-3 text-danger fw-600 rounded-lg d-inline-block font-xssss unsubscribe-btn" data-course-id="${courseId}">@Localizer["UNSUBSCRIBE"]</a>`;
                     
                         $('.subscription-container').html(subscriptionHtml);
                         
@@ -648,26 +666,44 @@
                             await Swal.fire({
                                 icon: 'success',
                                 title: '@Localizer["Subscribed"]',
-                                text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"] ${duration} @Localizer["month"]" ${duration > 1 ? 's' : ''}!`,
+                                text: `@Localizer["Youhavesuccessfullysubscribedtothiscoursefor"] ${duration} @Localizer["month"]${duration > 1 ? 's' : ''}!`,
                                 showConfirmButton: false,
                                 timer: 2000
                             });
 
+                            const formatPrice = (price) => {
+                                if (!price) return '0.00';
+                                const numPrice = parseFloat(price);
+                                return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+                            };
+
+                            const formatDate = (dateStr) => {
+                                if (!dateStr) return '-';
+                                try {
+                                    const [day, month, year] = dateStr.split('.');
+                                    return `${day}.${month}.${year}`;
+                                } catch {
+                                    return dateStr || '-';
+                                }
+                            };
+
+                            console.log('Server response:', response);
+
                             const subscriptionHtml = `
                                 <div class="bg-white p-3 rounded-lg mb-3">
-                                    <h4 class="text-success fw-600 font-xssss mb-2">Active Subscription</h4>
+                                    <h4 class="text-success fw-600 font-xssss mb-2">@Localizer["ActiveSubscription"]</h4>
                                     <div class="subscription-info">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]":</span>
-                                            <span class="font-xssss fw-700 text-primary">${duration} @Localizer["month"]${duration > 1 ? 's' : ''}</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Duration"]:</span>
+                                            <span class="font-xssss fw-700 text-primary">${response.durationInMonths || duration} @Localizer["month"]${(response.durationInMonths || duration) > 1 ? 's' : ''}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]":</span>
-                                            <span class="font-xssss fw-700 text-primary">$${response.subscriptionPrice}</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Price"]:</span>
+                                            <span class="font-xssss fw-700 text-primary">$${formatPrice(response.subscriptionPrice)}</span>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]":</span>
-                                            <span class="font-xssss fw-700 text-primary">${response.expirationDate}</span>
+                                            <span class="font-xssss fw-600 text-grey-600">@Localizer["Validuntil"]:</span>
+                                            <span class="font-xssss fw-700 text-primary">${formatDate(response.expirationDate)}</span>
                                         </div>
                                     </div>
                                 </div>

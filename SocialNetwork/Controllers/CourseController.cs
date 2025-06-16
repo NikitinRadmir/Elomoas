@@ -10,6 +10,8 @@ using Elomoas.Application.Features.Courses.Command.UnsubscribeFromCourse;
 using Elomoas.Application.Features.Courses.Query.CalculatePrice;
 using System.Threading.Tasks;
 using Elomoas.Extensions;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Elomoas.Controllers
 {
@@ -61,11 +63,26 @@ namespace Elomoas.Controllers
                 if (result)
                 {
                     var course = await _mediator.Send(new GetCourseByIdQuery(courseId));
-                    return Json(new { 
-                        success = true,
-                        subscriptionPrice = course.SubscriptionInfo.SubscriptionPrice,
-                        expirationDate = course.SubscriptionInfo.ExpirationDate.ToString("dd.MM.yyyy")
-                    });
+                    if (course?.SubscriptionInfo != null)
+                    {
+                        _logger.LogInformation(
+                            "Subscription data: Price={Price}, ExpirationDate={ExpirationDate}, Duration={Duration}",
+                            course.SubscriptionInfo.SubscriptionPrice,
+                            course.SubscriptionInfo.ExpirationDate,
+                            course.SubscriptionInfo.DurationInMonths);
+
+                        var response = new { 
+                            success = true,
+                            subscriptionPrice = course.SubscriptionInfo.SubscriptionPrice.ToString("F2"),
+                            expirationDate = course.SubscriptionInfo.ExpirationDate.ToString("dd.MM.yyyy"),
+                            durationInMonths = course.SubscriptionInfo.DurationInMonths
+                        };
+
+                        _logger.LogInformation("Response JSON: {Response}", JsonSerializer.Serialize(response));
+
+                        return Json(response);
+                    }
+                    return Json(new { success = true });
                 }
 
                 return Json(new { success = false });
@@ -100,10 +117,8 @@ namespace Elomoas.Controllers
         {
             try
             {
-                var query = new CalculatePriceQuery(courseId, durationInMonths);
-                var price = await _mediator.Send(query);
-
-                return Json(new { success = true, price = price });
+                var price = await _mediator.Send(new CalculatePriceQuery(courseId, durationInMonths));
+                return Json(new { success = true, price = price.ToString("F2") });
             }
             catch (Exception ex)
             {

@@ -1,16 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MediatR;
-using Elomoas.Domain.Entities;
 using Elomoas.Domain.Entities.Enum;
 
-namespace Elomoas.Application.Features.Courses.Commands;
-
-public record CreateCourseCommand : IRequest<Course>
+namespace Elomoas.Application.Features.Courses.Commands
 {
-    public string Name { get; init; } = null!;
-    public string? Description { get; init; }
-    public string? Img { get; init; }
-    public decimal Price { get; init; }
-    public ProgramLanguage PL { get; init; }
-    public string? Video { get; init; }
-    public string? Learn { get; init; }
+    public class CreateCourseCommand : IRequest<bool>
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Img { get; set; }
+        public decimal Price { get; set; }
+        public ProgramLanguage PL { get; set; }
+        public string? Video { get; set; }
+        public string? Learn { get; set; }
+    }
 } 

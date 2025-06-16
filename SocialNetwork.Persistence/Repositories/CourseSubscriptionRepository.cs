@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Elomoas.Persistence.Repositories
 {
@@ -12,33 +14,43 @@ namespace Elomoas.Persistence.Repositories
         private readonly IGenericRepository<CourseSubscription> _repository;
         private readonly IGenericRepository<Course> _courseRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CourseSubscriptionRepository> _logger;
 
         public CourseSubscriptionRepository(
             IGenericRepository<CourseSubscription> repository,
             IGenericRepository<Course> courseRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<CourseSubscriptionRepository> logger)
         {
             _repository = repository;
             _courseRepository = courseRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<bool> IsSubscribed(int userId, int courseId)
         {
+            var now = DateTime.UtcNow;
             return await _repository.Entities
-                .AnyAsync(x => x.UserId == userId && x.CourseId == courseId);
+                .AnyAsync(x => x.UserId == userId && x.CourseId == courseId && x.ExpirationDate > now);
         }
 
         public async Task<CourseSubscription> GetSubscription(int userId, int courseId)
         {
+            var now = DateTime.UtcNow;
             return await _repository.Entities
-                .FirstOrDefaultAsync(x => x.UserId == userId && x.CourseId == courseId);
+                .Include(x => x.Course)
+                .Include(x => x.User)
+                .Where(x => x.UserId == userId && x.CourseId == courseId && x.ExpirationDate > now)
+                .OrderByDescending(x => x.ExpirationDate)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<CourseSubscription>> GetExpiredSubscriptions()
         {
             var now = DateTime.UtcNow;
             return await _repository.Entities
+                .Include(x => x.Course)
                 .Where(x => x.ExpirationDate <= now)
                 .ToListAsync();
         }
@@ -50,13 +62,19 @@ namespace Elomoas.Persistence.Repositories
 
         public async Task Subscribe(int userId, int courseId, int durationInMonths)
         {
+            _logger.LogInformation("Starting subscription process for user {UserId} to course {CourseId} for {Duration} months", 
+                userId, courseId, durationInMonths);
+
             if (!await IsSubscribed(userId, courseId))
             {
                 var course = await _courseRepository.Entities
                     .FirstOrDefaultAsync(c => c.Id == courseId);
 
                 if (course == null)
+                {
+                    _logger.LogError("Course {CourseId} not found", courseId);
                     throw new Exception("Course not found");
+                }
 
                 decimal discountPercent = 0;
                 switch (durationInMonths)
@@ -76,6 +94,10 @@ namespace Elomoas.Persistence.Repositories
                 var discount = basePrice * (discountPercent / 100m);
                 var finalPrice = (basePrice - discount) * durationInMonths;
 
+                _logger.LogInformation(
+                    "Calculated subscription details: BasePrice={BasePrice}, Discount={Discount}%, FinalPrice={FinalPrice}", 
+                    basePrice, discountPercent, finalPrice);
+
                 var subscription = new CourseSubscription
                 {
                     UserId = userId,
@@ -84,9 +106,21 @@ namespace Elomoas.Persistence.Repositories
                     DurationInMonths = durationInMonths,
                     ExpirationDate = DateTime.UtcNow.AddMonths(durationInMonths)
                 };
+
+                _logger.LogInformation(
+                    "Created subscription object: Price={Price}, Duration={Duration}, ExpirationDate={ExpirationDate}",
+                    subscription.SubscriptionPrice,
+                    subscription.DurationInMonths,
+                    subscription.ExpirationDate);
                 
                 await _repository.AddAsync(subscription);
                 await _unitOfWork.Save(CancellationToken.None);
+
+                _logger.LogInformation("Successfully saved subscription to database");
+            }
+            else
+            {
+                _logger.LogInformation("User {UserId} is already subscribed to course {CourseId}", userId, courseId);
             }
         }
 

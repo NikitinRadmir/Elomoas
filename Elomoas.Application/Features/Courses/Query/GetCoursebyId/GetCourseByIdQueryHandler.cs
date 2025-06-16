@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Elomoas.Application.Features.Courses.Query;
 using Elomoas.Application.Interfaces.Repositories;
@@ -6,7 +6,6 @@ using Elomoas.Application.Interfaces.Services;
 using MediatR;
 using System.Threading;
 using Elomoas.Application.Features.Courses;
-using Microsoft.Extensions.Logging;
 
 namespace Elomoas.Application.Features.Courses.Query.GetCourseById;
 
@@ -15,31 +14,23 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
     private readonly ICourseRepository _courseRepository;
     private readonly ICourseSubscriptionRepository _subscriptionRepository;
     private readonly ICurrentUserService _currentUserService;
-    private readonly ILogger<GetCourseByIdQueryHandler> _logger;
 
     public GetCourseByIdQueryHandler(
         ICourseRepository courseRepository,
         ICourseSubscriptionRepository subscriptionRepository,
-        ICurrentUserService currentUserService,
-        ILogger<GetCourseByIdQueryHandler> logger)
+        ICurrentUserService currentUserService)
     {
         _courseRepository = courseRepository;
         _subscriptionRepository = subscriptionRepository;
         _currentUserService = currentUserService;
-        _logger = logger;
     }
 
     public async Task<CourseDto> Handle(GetCourseByIdQuery query, CancellationToken ct)
     {
-        _logger.LogInformation("Getting course details for ID: {CourseId}", query.id);
-
         var data = await _courseRepository.GetCourseByIdAsync(query.id);
         
         if (data == null)
-        {
-            _logger.LogWarning("Course not found for ID: {CourseId}", query.id);
             return null;
-        }
 
         var result = new CourseDto
         {
@@ -57,22 +48,13 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
         var currentUser = await _currentUserService.GetCurrentAppUserAsync();
         if (currentUser != null)
         {
-            _logger.LogInformation("Checking subscription for user {UserId} and course {CourseId}", currentUser.Id, query.id);
-
             result.IsCurrentUserSubscribed = await _subscriptionRepository.IsSubscribed(currentUser.Id, query.id);
-            _logger.LogInformation("User subscription status: {IsSubscribed}", result.IsCurrentUserSubscribed);
 
             if (result.IsCurrentUserSubscribed)
             {
                 var subscription = await _subscriptionRepository.GetSubscription(currentUser.Id, query.id);
                 if (subscription != null)
                 {
-                    _logger.LogInformation(
-                        "Found subscription details: Price={Price}, Duration={Duration}, ExpirationDate={ExpirationDate}",
-                        subscription.SubscriptionPrice,
-                        subscription.DurationInMonths,
-                        subscription.ExpirationDate);
-
                     result.SubscriptionInfo = new SubscriptionInfoDto
                     {
                         DurationInMonths = subscription.DurationInMonths,
@@ -80,20 +62,9 @@ public class GetCourseByIdQueryHandler : IRequestHandler<GetCourseByIdQuery, Cou
                         ExpirationDate = subscription.ExpirationDate
                     };
                 }
-                else
-                {
-                    _logger.LogWarning(
-                        "User {UserId} is marked as subscribed to course {CourseId}, but no subscription details found",
-                        currentUser.Id,
-                        query.id);
-                }
             }
-        }
-        else
-        {
-            _logger.LogInformation("No current user found when getting course details");
         }
 
         return result;
     }
-}
+} 

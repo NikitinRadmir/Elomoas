@@ -35,8 +35,7 @@ namespace Elomoas.Infrastructure.Services
             if (currentIdentityUser == null)
                 return null;
 
-            var appUsers = await _userRepository.GetAllUsersAsync();
-            return appUsers.FirstOrDefault(u => u.IdentityId == currentIdentityUser.Id);
+            return await _userRepository.GetByIdentityIdAsync(currentIdentityUser.Id);
         }
 
         public int? UserId
