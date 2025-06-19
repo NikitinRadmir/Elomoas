@@ -556,9 +556,12 @@
                                 displayMessage(response.message, true);
                             } else {
                                 displayMessage({
+                                    id: response.id,
+                                    chatId: response.chatId,
                                     content: content,
                                     senderId: currentUserId,
-                                    createdDate: new Date()
+                                    isRead: false,
+                                    createdDate: response.createdDate || new Date()
                                 }, true);
                             }
 
@@ -657,7 +660,7 @@
         }
 
         function displayMessage(message, isSent) {
-            const messageDate = new Date(message.createdDate || new Date());
+            const messageDate = message.createdDate ? new Date(message.createdDate) : new Date();
             const messageTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dateDivId = `date-${messageDate.toDateString()}`;
 

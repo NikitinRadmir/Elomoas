@@ -1,12 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elomoas.Application.Interfaces.Services;
-using Elomoas.Domain.Entities;
 using MediatR;
+using Elomoas.Application.Features.Messenger.Queries.Dtos;
 
 namespace Elomoas.Application.Features.Messenger.Queries.GetMessageById;
 
-public class GetMessageByIdQueryHandler : IRequestHandler<GetMessageByIdQuery, Message>
+public class GetMessageByIdQueryHandler : IRequestHandler<GetMessageByIdQuery, MessageDto>
 {
     private readonly IChatService _chatService;
 
@@ -15,8 +15,18 @@ public class GetMessageByIdQueryHandler : IRequestHandler<GetMessageByIdQuery, M
         _chatService = chatService;
     }
 
-    public async Task<Message> Handle(GetMessageByIdQuery request, CancellationToken cancellationToken)
+    public async Task<MessageDto> Handle(GetMessageByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _chatService.GetMessageByIdAsync(request.Id);
+        var message = await _chatService.GetMessageByIdAsync(request.Id);
+        if (message == null) return null;
+        return new MessageDto
+        {
+            Id = message.Id,
+            ChatId = message.ChatId,
+            SenderId = message.SenderId,
+            Content = message.Content,
+            IsRead = message.IsRead,
+            CreatedDate = message.CreatedDate ?? DateTime.UtcNow
+        };
     }
 } 

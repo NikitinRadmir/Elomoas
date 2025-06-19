@@ -26,7 +26,7 @@ namespace Elomoas.Infrastructure.Hubs
                 chatId = chat.Id,
                 content = message,
                 senderId = senderId,
-                createdDate = newMessage.CreatedDate
+                sentAt = newMessage.CreatedDate
             };
 
             // Отправляем сообщение получателю

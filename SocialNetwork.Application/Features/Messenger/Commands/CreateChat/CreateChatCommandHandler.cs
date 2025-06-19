@@ -1,12 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elomoas.Application.Interfaces.Services;
-using Elomoas.Domain.Entities;
 using MediatR;
+using Elomoas.Application.Features.Messenger.Queries.Dtos;
 
 namespace Elomoas.Application.Features.Messenger.Commands.CreateChat;
 
-public class CreateChatCommandHandler : IRequestHandler<CreateChatCommand, Chat>
+public class CreateChatCommandHandler : IRequestHandler<CreateChatCommand, ChatDto>
 {
     private readonly IChatService _chatService;
 
@@ -15,14 +15,19 @@ public class CreateChatCommandHandler : IRequestHandler<CreateChatCommand, Chat>
         _chatService = chatService;
     }
 
-    public async Task<Chat> Handle(CreateChatCommand request, CancellationToken cancellationToken)
+    public async Task<ChatDto> Handle(CreateChatCommand request, CancellationToken cancellationToken)
     {
-        var chat = new Chat
+        var chat = new Elomoas.Domain.Entities.Chat
         {
             User1Id = request.User1Id,
             User2Id = request.User2Id,
         };
-
-        return await _chatService.CreateChatAsync(chat);
+        var created = await _chatService.CreateChatAsync(chat);
+        return new ChatDto
+        {
+            Id = created.Id,
+            User1Id = created.User1Id,
+            User2Id = created.User2Id
+        };
     }
 } 

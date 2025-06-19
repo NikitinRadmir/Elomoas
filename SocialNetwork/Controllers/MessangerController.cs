@@ -164,7 +164,6 @@ namespace Elomoas.Controllers
                         id = message.Id,
                         content = message.Content,
                         senderId = message.SenderId,
-                        createdDate = message.CreatedDate
                     }
                 });
             }
