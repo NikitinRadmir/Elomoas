@@ -14,17 +14,20 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
     private readonly IMediator _mediator;
     private readonly IAppUserRepository _appUserRepository;
     private readonly ILogger<UpdateUserCommandHandler> _logger;
+    private readonly UserManager<IdentityUser> _userManager;
 
     public UpdateUserCommandHandler(
         IUserService userService,
         IMediator mediator,
         IAppUserRepository appUserRepository,
-        ILogger<UpdateUserCommandHandler> logger)
+        ILogger<UpdateUserCommandHandler> logger,
+        UserManager<IdentityUser> userManager)
     {
         _userService = userService;
         _mediator = mediator;
         _appUserRepository = appUserRepository;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -48,6 +51,32 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
             {
                 _logger.LogError("IdentityUser not found for ID: {IdentityId}", appUser.IdentityId);
                 return false;
+            }
+
+            // Смена пароля, если задан новый
+            if (!string.IsNullOrEmpty(request.NewPassword))
+            {
+                var passwordValidator = new PasswordValidator<IdentityUser>();
+                var validationResult = await passwordValidator.ValidateAsync(_userManager, identityUser, request.NewPassword);
+                if (!validationResult.Succeeded)
+                {
+                    foreach (var error in validationResult.Errors)
+                    {
+                        _logger.LogWarning("Password validation failed: {Error}", error.Description);
+                    }
+                    return false;
+                }
+                identityUser.PasswordHash = _userManager.PasswordHasher.HashPassword(identityUser, request.NewPassword);
+                var updateIdentityResult = await _userManager.UpdateAsync(identityUser);
+                if (!updateIdentityResult.Succeeded)
+                {
+                    foreach (var error in updateIdentityResult.Errors)
+                    {
+                        _logger.LogError("Failed to update IdentityUser password: {Error}", error.Description);
+                    }
+                    return false;
+                }
+                appUser.Password = request.NewPassword;
             }
 
             var updateResult = await _userService.UpdateUserAsync(appUser);

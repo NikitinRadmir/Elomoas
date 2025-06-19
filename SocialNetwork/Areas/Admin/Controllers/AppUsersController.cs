@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using SocialNetwork.Application.Features.AppUsers.Query.GetAllAllUsers;
 using SocialNetwork.Application.Features.AppUsers.Command.DeleteUser;
 using SocialNetwork.Application.Features.AppUsers.Command.UpdateUser;
+using SocialNetwork.Application.Features.AppUsers.Command.CreateUser;
 using SocialNetwork.Areas.Admin.Models;
 
 namespace SocialNetwork.Areas.Admin.Controllers
@@ -45,15 +46,31 @@ namespace SocialNetwork.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var command = new RegisterCommand
+                try
                 {
-                    Name = model.Name,
-                    Email = model.Email,
-                    Password = model.Password,
-                };
+                    var command = new CreateUserCommand
+                    {
+                        Name = model.Name,
+                        Email = model.Email,
+                        Password = model.Password,
+                        Description = model.Description,
+                        Img = model.Img
+                    };
 
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                    var result = await _mediator.Send(command);
+                    if (result)
+                    {
+                        TempData["SuccessMessage"] = "User created successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    ModelState.AddModelError("", "Unable to create user. The email might already be in use.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error creating user with email {Email}", model.Email);
+                    ModelState.AddModelError("", "An error occurred while creating the user. Please try again.");
+                }
             }
             return View(model);
         }

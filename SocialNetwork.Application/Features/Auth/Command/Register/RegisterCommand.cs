@@ -12,5 +12,7 @@ namespace Elomoas.Application.Features.Auth.Query
         public required string Name { get; set; }
         public required string Email { get; set; }
         public required string Password { get; set; }
+        public string? Description { get; set; }
+        public string? Img { get; set; }
     }
 }
