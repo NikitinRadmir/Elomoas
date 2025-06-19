@@ -11,6 +11,7 @@ using Elomoas.Application.Features.Messenger.Commands.DeleteMessage;
 using Elomoas.Application.Features.AppUsers.Queries.GetAllUsers;
 using SocialNetwork.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace SocialNetwork.Areas.Admin.Controllers;
 
@@ -20,11 +21,16 @@ public class ChatsController : Controller
 {
     private readonly IMediator _mediator;
     private readonly ILogger<ChatsController> _logger;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public ChatsController(IMediator mediator, ILogger<ChatsController> logger)
+    public ChatsController(
+        IMediator mediator, 
+        ILogger<ChatsController> logger,
+        UserManager<IdentityUser> userManager)
     {
         _mediator = mediator;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
@@ -41,7 +47,32 @@ public class ChatsController : Controller
         {
             return NotFound();
         }
-        return View(chat);
+
+        var user1 = await _userManager.FindByIdAsync(chat.User1Id);
+        var user2 = await _userManager.FindByIdAsync(chat.User2Id);
+
+        var viewModel = new ChatDetailsViewModel
+        {
+            Id = chat.Id,
+            User1Id = chat.User1Id,
+            User1Email = user1?.Email,
+            User1Name = user1?.UserName,
+            User2Id = chat.User2Id,
+            User2Email = user2?.Email,
+            User2Name = user2?.UserName,
+            Messages = chat.Messages.OrderByDescending(m => m.CreatedDate).Select(m => new ChatMessageViewModel
+            {
+                Id = m.Id,
+                SenderId = m.SenderId,
+                SenderEmail = m.SenderId == chat.User1Id ? user1?.Email : user2?.Email,
+                SenderName = m.SenderId == chat.User1Id ? user1?.UserName : user2?.UserName,
+                Content = m.Content,
+                IsRead = m.IsRead,
+                CreatedDate = m.CreatedDate,
+            })
+        };
+
+        return View(viewModel);
     }
 
     public async Task<IActionResult> Create()
@@ -137,14 +168,23 @@ public class ChatsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateMessage(int messageId, int chatId, string content, bool isRead)
     {
-        var command = new UpdateMessageCommand
+        try
         {
-            Id = messageId,
-            Content = content,
-            IsRead = isRead
-        };
+            var command = new UpdateMessageCommand
+            {
+                Id = messageId,
+                Content = content,
+                IsRead = isRead
+            };
 
-        await _mediator.Send(command);
+            await _mediator.Send(command);
+            TempData["SuccessMessage"] = "Message updated successfully";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating message {MessageId}", messageId);
+            TempData["ErrorMessage"] = "Error updating message";
+        }
         return RedirectToAction(nameof(Details), new { id = chatId });
     }
 

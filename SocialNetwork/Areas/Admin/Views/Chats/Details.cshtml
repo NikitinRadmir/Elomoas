@@ -1,4 +1,4 @@
-@model Elomoas.Domain.Entities.Chat
+@model SocialNetwork.Areas.Admin.Models.ChatDetailsViewModel
 
 @{
     ViewData["Title"] = "Chat Details";
@@ -12,73 +12,126 @@
                     <h2>Chat Details Managing</h2>
                 </div>
                 <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-2">ID</dt>
-                        <dd class="col-sm-10">@Model.Id</dd>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>User 1 Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <dl class="row">
+                                        <dt class="col-sm-3">ID</dt>
+                                        <dd class="col-sm-9">@Model.User1Id</dd>
 
-                        <dt class="col-sm-2">User 1</dt>
-                        <dd class="col-sm-10">@Model.User1Id</dd>
+                                        <dt class="col-sm-3">Email</dt>
+                                        <dd class="col-sm-9">@Model.User1Email</dd>
 
-                        <dt class="col-sm-2">User 2</dt>
-                        <dd class="col-sm-10">@Model.User2Id</dd>
-                    </dl>
-
-                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <h6 class="mb-0">Messages</h6>
-                            <div class="input-group" style="width: 300px;">
-                                <span class="input-group-text bg-primary">
-                                    <i class="fas fa-search text-white"></i>
-                                </span>
-                                <input type="text" 
-                                       id="searchInput" 
-                                       class="form-control" 
-                                       placeholder="Search messages..." />
+                                        <dt class="col-sm-3">Name</dt>
+                                        <dd class="col-sm-9">@Model.User1Name</dd>
+                                    </dl>
+                                </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMessageModal">
-                            Add Message
-                        </button>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>User 2 Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <dl class="row">
+                                        <dt class="col-sm-3">ID</dt>
+                                        <dd class="col-sm-9">@Model.User2Id</dd>
+
+                                        <dt class="col-sm-3">Email</dt>
+                                        <dd class="col-sm-9">@Model.User2Email</dd>
+
+                                        <dt class="col-sm-3">Name</dt>
+                                        <dd class="col-sm-9">@Model.User2Name</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Sender</th>
-                                    <th>Content</th>
-                                    <th>Is Read</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var message in Model.Messages.OrderByDescending(m => m.Id))
-                                {
-                                    <tr class="message-row">
-                                        <td class="message-id">@message.Id</td>
-                                        <td class="message-sender">@message.SenderId</td>
-                                        <td class="message-content">@message.Content</td>
-                                        <td class="message-read">@message.IsRead</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-primary btn-sm" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#editMessageModal" 
-                                                        data-message-id="@message.Id"
-                                                        data-message-content="@message.Content"
-                                                        data-message-isread="@message.IsRead">
-                                                    Edit
-                                                </button>
-                                                <form asp-action="DeleteMessage" asp-route-id="@message.Id" method="post" class="d-inline">
-                                                    <input type="hidden" name="chatId" value="@Model.Id" />
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this message?');">Delete</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <h5 class="mb-0">Messages</h5>
+                                    <div class="input-group" style="width: 300px;">
+                                        <span class="input-group-text bg-primary">
+                                            <i class="fas fa-search text-white"></i>
+                                        </span>
+                                        <input type="text" 
+                                               id="searchInput" 
+                                               class="form-control" 
+                                               placeholder="Search messages..." />
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMessageModal">
+                                    Add Message
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Sender</th>
+                                            <th>Content</th>
+                                            <th>Is Read</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var message in Model.Messages)
+                                        {
+                                            <tr class="message-row">
+                                                <td class="message-id">@message.Id</td>
+                                                <td class="message-sender">
+                                                    <div>@message.SenderName</div>
+                                                    <small class="text-muted">@message.SenderEmail</small>
+                                                </td>
+                                                <td class="message-content">@message.Content</td>
+                                                <td class="message-read">
+                                                    @if (message.IsRead)
+                                                    {
+                                                        <span class="badge bg-success">Read</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-warning">Unread</span>
+                                                    }
+                                                </td>
+                                                <td>@message.CreatedDate.ToString()</td>
+                                              
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary btn-sm" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#editMessageModal" 
+                                                                data-message-id="@message.Id"
+                                                                data-message-content="@message.Content"
+                                                                data-message-isread="@message.IsRead">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <form asp-action="DeleteMessage" asp-route-id="@message.Id" method="post" class="d-inline">
+                                                            <input type="hidden" name="chatId" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this message?');">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-3">
@@ -104,8 +157,8 @@
                     <div class="mb-3">
                         <label class="form-label">Sender</label>
                         <select name="senderId" class="form-control" required>
-                            <option value="@Model.User1Id">User 1 (@Model.User1Id)</option>
-                            <option value="@Model.User2Id">User 2 (@Model.User2Id)</option>
+                            <option value="@Model.User1Id">@Model.User1Name (@Model.User1Email)</option>
+                            <option value="@Model.User2Id">@Model.User2Name (@Model.User2Email)</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -138,9 +191,10 @@
                         <textarea name="content" id="editMessageContent" class="form-control" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="isRead" id="editMessageIsRead">
-                            <label class="form-check-label">Is Read</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="isRead" id="editMessageIsRead" value="true">
+                            <input type="hidden" name="isRead" value="false" />
+                            <label class="form-check-label" for="editMessageIsRead">Is Read</label>
                         </div>
                     </div>
                 </div>
