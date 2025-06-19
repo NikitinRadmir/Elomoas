@@ -5,6 +5,7 @@ using Elomoas.Application.Features.Friends.Dtos;
 using Elomoas.Application.Interfaces.Services;
 using Elomoas.Domain.Entities;
 using MediatR;
+using System.Linq;
 
 namespace Elomoas.Application.Features.Friends.Queries.GetAllFriendships;
 
@@ -22,6 +23,7 @@ public class GetAllFriendshipsQueryHandler : IRequestHandler<GetAllFriendshipsQu
         var data = await _friendshipService.GetAllFriendshipsAsync();
         var result = data.Select(x => new FriendshipDto
         {
+            Id = x.Id,
             UserId = x.UserId,
             FriendId = x.FriendId,
             Status = x.Status,

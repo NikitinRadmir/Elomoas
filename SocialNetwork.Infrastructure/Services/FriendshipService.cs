@@ -242,19 +242,43 @@ namespace Elomoas.Infrastructure.Services
         {
             try
             {
+                // Проверяем существование пользователей
+                var user = await _userManager.FindByIdAsync(userId);
+                var friend = await _userManager.FindByIdAsync(friendId);
+
+                if (user == null || friend == null)
+                {
+                    _logger.LogWarning("User or friend not found. UserId: {UserId}, FriendId: {FriendId}", userId, friendId);
+                    return false;
+                }
+
+                if (userId == friendId)
+                {
+                    _logger.LogWarning("Cannot create friendship with self. UserId: {UserId}", userId);
+                    return false;
+                }
+
+                var existing = await _context.Friendships
+                    .FirstOrDefaultAsync(f => (f.UserId == userId && f.FriendId == friendId) ||
+                                            (f.UserId == friendId && f.FriendId == userId));
+
+                if (existing != null)
+                {
+                    _logger.LogWarning("Friendship already exists between users {UserId} and {FriendId}", userId, friendId);
+                    return false;
+                }
+
                 var friendship = new Friendship
                 {
                     UserId = userId,
                     FriendId = friendId,
-                    Status = status,
-                    AddedAt = DateTime.UtcNow,
-                    CreatedDate = DateTime.UtcNow
+                    Status = status
                 };
 
-                _context.Friendships.Add(friendship);
+                await _context.Friendships.AddAsync(friendship);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Created new friendship between {UserId} and {FriendId} with status {Status}", 
-                    userId, friendId, status);
+
+                _logger.LogInformation("Friendship created between {UserId} and {FriendId}", userId, friendId);
                 return true;
             }
             catch (Exception ex)
@@ -268,30 +292,49 @@ namespace Elomoas.Infrastructure.Services
         {
             try
             {
-                _logger.LogInformation("Attempting to update friendship {Id}", id);
+                // Проверяем существование пользователей
+                var user = await _userManager.FindByIdAsync(userId);
+                var friend = await _userManager.FindByIdAsync(friendId);
 
-                var existingFriendship = await _context.Friendships.FindAsync(id);
-                if (existingFriendship == null)
+                if (user == null || friend == null)
                 {
-                    _logger.LogWarning("Friendship {Id} not found for update", id);
+                    _logger.LogWarning("User or friend not found. UserId: {UserId}, FriendId: {FriendId}", userId, friendId);
                     return false;
                 }
 
-                existingFriendship.UserId = userId;
-                existingFriendship.FriendId = friendId;
-                existingFriendship.Status = status;
-                existingFriendship.UpdatedDate = DateTime.UtcNow;
+                if (userId == friendId)
+                {
+                    _logger.LogWarning("Cannot update friendship with self. UserId: {UserId}", userId);
+                    return false;
+                }
 
-                _context.Friendships.Update(existingFriendship);
-                await _context.SaveChangesAsync();
+                var friendship = await GetFriendshipByIdAsync(id);
+                if (friendship == null)
+                {
+                    _logger.LogWarning("Friendship not found with ID: {Id}", id);
+                    return false;
+                }
+
+                friendship.UserId = userId;
+                friendship.FriendId = friendId;
+                friendship.Status = status;
+
+                _context.Friendships.Update(friendship);
+                var result = await _context.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    _logger.LogInformation("Friendship updated. Id: {Id}, UserId: {UserId}, FriendId: {FriendId}, Status: {Status}",
+                        id, userId, friendId, status);
+                    return true;
+                }
                 
-                _logger.LogInformation("Successfully updated friendship {Id} between {UserId} and {FriendId} with status {Status}", 
-                    id, userId, friendId, status);
-                return true;
+                _logger.LogWarning("No changes were saved when updating friendship {Id}", id);
+                return false;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating friendship {Id} between {UserId} and {FriendId}", 
+                _logger.LogError(ex, "Error updating friendship. Id: {Id}, UserId: {UserId}, FriendId: {FriendId}",
                     id, userId, friendId);
                 return false;
             }
@@ -311,14 +354,19 @@ namespace Elomoas.Infrastructure.Services
                 _context.Friendships.Remove(friendship);
                 var result = await _context.SaveChangesAsync();
                 
-                _logger.LogInformation("Deletion affected {Count} records for friendship {Id}", result, id);
+                if (result > 0)
+                {
+                    _logger.LogInformation("Successfully deleted friendship {Id}", id);
+                    return true;
+                }
                 
-                return result > 0;
+                _logger.LogWarning("No changes were saved when deleting friendship {Id}", id);
+                return false;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting friendship {Id}", id);
-                throw;
+                return false;
             }
         }
     }
