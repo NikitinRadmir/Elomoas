@@ -31,7 +31,6 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
                 return false;
             }
 
-            // Update properties while preserving existing data
             existingCourse.Name = request.Name ?? existingCourse.Name;
             existingCourse.Description = request.Description;
             existingCourse.Img = request.Img;
@@ -39,7 +38,7 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             existingCourse.PL = request.PL;
             existingCourse.Video = request.Video;
             existingCourse.Learn = request.Learn;
-            existingCourse.UpdatedDate = DateTime.UtcNow;
+
 
             var success = await _courseService.UpdateCourseAsync(existingCourse);
             

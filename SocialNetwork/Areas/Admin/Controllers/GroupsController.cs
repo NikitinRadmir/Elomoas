@@ -51,17 +51,22 @@ public class GroupsController : Controller
 
         try
         {
-            var command = new CreateGroupCommand
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Img = model.Img,
-                PL = model.PL
-            };
+            var command = new CreateGroupCommand(
+                model.Name,
+                model.Description,
+                model.Img,
+                model.PL);
 
-            await _mediator.Send(command);
-            TempData["SuccessMessage"] = "Group created successfully";
-            return RedirectToAction(nameof(Index));
+            var result = await _mediator.Send(command);
+            
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Group created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["ErrorMessage"] = "Failed to create group. Please try again.";
+            return View(model);
         }
         catch (Exception ex)
         {

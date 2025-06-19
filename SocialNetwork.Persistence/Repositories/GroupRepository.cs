@@ -24,5 +24,10 @@ namespace Elomoas.Persistence.Repositories
         {
             return await _repository.Entities.ToListAsync();
         }
+
+        public async Task<Group?> GetByIdAsync(int id)
+        {
+            return await _repository.Entities.FirstOrDefaultAsync(g => g.Id == id);
+        }
     }
 }

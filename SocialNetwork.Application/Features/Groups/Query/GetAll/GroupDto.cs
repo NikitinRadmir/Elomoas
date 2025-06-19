@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Elomoas.Application.Features.Groups.Query.GetAll
 {
-    public class GetAllDto
+    public class GroupDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

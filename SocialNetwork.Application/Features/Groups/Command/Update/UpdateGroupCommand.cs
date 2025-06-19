@@ -19,9 +19,9 @@ public record UpdateGroupCommand : IRequest<bool>
 public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, bool>
 {
     private readonly IGroupService _groupService;
-    private readonly ILogger<UpdateCourseCommandHandler> _logger;
+    private readonly ILogger<UpdateGroupCommandHandler> _logger;
 
-    public UpdateGroupCommandHandler(IGroupService groupService, ILogger<UpdateCourseCommandHandler> logger)
+    public UpdateGroupCommandHandler(IGroupService groupService, ILogger<UpdateGroupCommandHandler> logger)
     {
         _groupService = groupService;
         _logger = logger;
@@ -31,39 +31,36 @@ public class UpdateGroupCommandHandler : IRequestHandler<UpdateGroupCommand, boo
     {
         try
         {
-            _logger.LogInformation("Starting update for course {Id}", request.Id);
+            _logger.LogInformation("Starting update for group {Id}", request.Id);
 
-            var existingCourse = await _groupService.GetGroupByIdAsync(request.Id);
-            if (existingCourse == null)
+            var existingGroup = await _groupService.GetGroupEntityByIdAsync(request.Id);
+            if (existingGroup == null)
             {
-                _logger.LogWarning("Course {Id} not found", request.Id);
+                _logger.LogWarning("Group {Id} not found", request.Id);
                 return false;
             }
 
-            // Update properties while preserving existing data
-            existingCourse.Name = request.Name ?? existingCourse.Name;
-            existingCourse.Description = request.Description;
-            existingCourse.Img = request.Img;
-  
-            existingCourse.PL = request.PL;
+            existingGroup.Name = request.Name ?? existingGroup.Name;
+            existingGroup.Description = request.Description ?? existingGroup.Description;
+            existingGroup.Img = request.Img ?? existingGroup.Img;
+            existingGroup.PL = request.PL;
 
-
-            var success = await _groupService.UpdateGroupAsync(existingCourse);
+            var success = await _groupService.UpdateGroupAsync(existingGroup);
 
             if (success)
             {
-                _logger.LogInformation("Successfully updated course {Id}", request.Id);
+                _logger.LogInformation("Successfully updated group {Id}", request.Id);
             }
             else
             {
-                _logger.LogWarning("Failed to update course {Id}", request.Id);
+                _logger.LogWarning("Failed to update group {Id}", request.Id);
             }
 
             return success;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating course {Id}", request.Id);
+            _logger.LogError(ex, "Error updating group {Id}", request.Id);
             throw;
         }
     }

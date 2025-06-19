@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Elomoas.Application.Features.Groups.Query.GetAll;
 
-public class GetAllQueryHandler : IRequestHandler<GetAllQuery, IEnumerable<GetAllDto>>
+public class GetAllQueryHandler : IRequestHandler<GetAllQuery, IEnumerable<GroupDto>>
 {
     private readonly IGroupRepository _groupRepository;
     private readonly IGroupSubscriptionRepository _subscriptionRepository;
@@ -25,17 +25,17 @@ public class GetAllQueryHandler : IRequestHandler<GetAllQuery, IEnumerable<GetAl
         _currentUserService = currentUserService;
     }
 
-    public async Task<IEnumerable<GetAllDto>> Handle(GetAllQuery query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GroupDto>> Handle(GetAllQuery query, CancellationToken cancellationToken)
     {
         var data = await _groupRepository.GetAllAsync();
         var userId = _currentUserService.UserId;
 
-        var result = new List<GetAllDto>();
+        var result = new List<GroupDto>();
         foreach (var group in data)
         {
             var isSubscribed = userId.HasValue && await _subscriptionRepository.IsSubscribed(userId.Value, group.Id);
 
-            result.Add(new GetAllDto
+            result.Add(new GroupDto
             {
                 Id = group.Id,
                 Name = group.Name,

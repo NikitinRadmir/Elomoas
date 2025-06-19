@@ -6,7 +6,7 @@ namespace SocialNetwork.Areas.Admin.Models;
 
 public class GroupsViewModel
 {
-    public IEnumerable<GetAllDto> Groups { get; set; }
+    public IEnumerable<GroupDto> Groups { get; set; }
 }
 
 public class CreateGroupViewModel

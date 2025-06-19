@@ -57,15 +57,20 @@ public class GroupSubscriptionsController : Controller
 
         try
         {
-            var command = new CreateGroupSubscriptionCommand
-            {
-                UserId = model.UserId,
-                GroupId = model.GroupId
-            };
+            var command = new CreateGroupSubscriptionCommand(model.UserId, model.GroupId);
+            var result = await _mediator.Send(command);
 
-            await _mediator.Send(command);
-            TempData["SuccessMessage"] = "Group subscription created successfully.";
-            return RedirectToAction(nameof(Index));
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Group subscription created successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to create subscription. Please try again.";
+                await PrepareViewBagForCreate();
+                return View(model);
+            }
         }
         catch (Exception ex)
         {
@@ -114,13 +119,7 @@ public class GroupSubscriptionsController : Controller
 
         try
         {
-            var command = new UpdateGroupSubscriptionCommand
-            {
-                Id = model.Id,
-                UserId = model.UserId,
-                GroupId = model.GroupId
-            };
-
+            var command = new UpdateGroupSubscriptionCommand(model.Id, model.UserId, model.GroupId);
             var result = await _mediator.Send(command);
 
             if (result)

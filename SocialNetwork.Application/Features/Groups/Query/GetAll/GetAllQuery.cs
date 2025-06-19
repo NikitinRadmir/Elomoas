@@ -7,4 +7,4 @@ using System.Threading.Tasks;
 
 namespace Elomoas.Application.Features.Groups.Query.GetAll;
 
-public record GetAllQuery() : IRequest<IEnumerable<GetAllDto>>;
+public record GetAllQuery() : IRequest<IEnumerable<GroupDto>>;

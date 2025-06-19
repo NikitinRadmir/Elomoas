@@ -44,7 +44,10 @@ public class GroupSubscriptionService : IGroupSubscriptionService
     {
         try
         {
-            return await _context.GroupSubscriptions.FindAsync(id);
+            return await _context.GroupSubscriptions
+                .Include(s => s.User)
+                .Include(s => s.Group)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
         catch (Exception ex)
         {
@@ -53,21 +56,46 @@ public class GroupSubscriptionService : IGroupSubscriptionService
         }
     }
 
-    public async Task<GroupSubscription> CreateSubscriptionAsync(GroupSubscription subscription)
+    public async Task<bool> CreateSubscriptionAsync(GroupSubscription subscription)
     {
         try
         {
+            _logger.LogInformation("Creating subscription for user {UserId} to group {GroupId}", 
+                subscription.UserId, subscription.GroupId);
+
             subscription.CreatedDate = DateTime.UtcNow;
             _context.GroupSubscriptions.Add(subscription);
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Created new group subscription with id {Id}", subscription.Id);
-            return subscription;
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                _logger.LogInformation("Successfully created subscription for user {UserId} to group {GroupId}", 
+                    subscription.UserId, subscription.GroupId);
+                return true;
+            }
+
+            _logger.LogWarning("Failed to create subscription for user {UserId} to group {GroupId}", 
+                subscription.UserId, subscription.GroupId);
+            return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating group subscription");
+            _logger.LogError(ex, "Error creating subscription for user {UserId} to group {GroupId}", 
+                subscription.UserId, subscription.GroupId);
             throw;
         }
+    }
+
+    public async Task<bool> CreateSubscriptionAsync(int userId, int groupId)
+    {
+        var subscription = new GroupSubscription
+        {
+            UserId = userId,
+            GroupId = groupId,
+            CreatedDate = DateTime.UtcNow
+        };
+
+        return await CreateSubscriptionAsync(subscription);
     }
 
     public async Task<bool> UpdateSubscriptionAsync(GroupSubscription subscription)
@@ -75,16 +103,45 @@ public class GroupSubscriptionService : IGroupSubscriptionService
         try
         {
             _logger.LogInformation("Attempting to update subscription {Id}", subscription.Id);
-            _context.GroupSubscriptions.Update(subscription);
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Successfully updated subscription {Id}", subscription.Id);
-            return true;
+
+            var existingSubscription = await _context.GroupSubscriptions.FindAsync(subscription.Id);
+            if (existingSubscription == null)
+            {
+                _logger.LogWarning("Subscription {Id} not found for update", subscription.Id);
+                return false;
+            }
+
+            existingSubscription.UserId = subscription.UserId;
+            existingSubscription.GroupId = subscription.GroupId;
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                _logger.LogInformation("Successfully updated subscription {Id}", subscription.Id);
+                return true;
+            }
+
+            _logger.LogWarning("Failed to update subscription {Id}", subscription.Id);
+            return false;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating subscription {Id}", subscription.Id);
             throw;
         }
+    }
+
+    public async Task<bool> UpdateSubscriptionAsync(int id, int userId, int groupId)
+    {
+        var subscription = new GroupSubscription
+        {
+            Id = id,
+            UserId = userId,
+            GroupId = groupId,
+        };
+
+        return await UpdateSubscriptionAsync(subscription);
     }
 
     public async Task<bool> DeleteSubscriptionAsync(int id)

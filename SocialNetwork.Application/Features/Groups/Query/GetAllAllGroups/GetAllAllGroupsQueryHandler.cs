@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups
 {
-    public class GetAllAllGroupsQueryHandler : IRequestHandler<GetAllAllGroupsQuery, IEnumerable<GetAllDto>>
+    public class GetAllAllGroupsQueryHandler : IRequestHandler<GetAllAllGroupsQuery, IEnumerable<GroupDto>>
     {
         private readonly IGroupRepository _groupRepository;
 
@@ -14,20 +14,20 @@ namespace SocialNetwork.Application.Features.Groups.Query.GetAllAllGroups
             _groupRepository = groupRepository;
         }
 
-        public async Task<IEnumerable<GetAllDto>> Handle(GetAllAllGroupsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<GroupDto>> Handle(GetAllAllGroupsQuery request, CancellationToken cancellationToken)
         {
             var groups = await _groupRepository.GetAllAsync();
             
             return groups
                 .OrderBy(g => g.Id)
-                .Select(group => new GetAllDto
+                .Select(group => new GroupDto
                 {
                     Id = group.Id,
                     Name = group.Name,
                     Description = group.Description,
                     Img = group.Img ?? "/images/default-icon.jpg",
                     PL = group.PL,
-                    IsCurrentUserSubscribed = false // В админке это поле не используется
+                    IsCurrentUserSubscribed = false 
                 });
         }
     }

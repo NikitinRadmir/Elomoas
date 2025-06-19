@@ -7,6 +7,7 @@ using Elomoas.mvc.Models.Groups;
 using Microsoft.AspNetCore.Authorization;
 using Elomoas.Application.Features.Groups.Commands.SubscribeToGroup;
 using Elomoas.Application.Features.Groups.Commands.UnsubscribeFromGroup;
+using Elomoas.Application.Features.Groups.Query;
 
 namespace Elomoas.Controllers
 {
@@ -39,8 +40,24 @@ namespace Elomoas.Controllers
             
             var viewModel = new GroupVM
             {
-                Groups = otherGroups,
-                SubscribedGroups = subscribedGroups,
+                Groups = otherGroups.Select(g => new GroupCardVM
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    Description = g.Description,
+                    Img = g.Img,
+                    PL = g.PL,
+                    IsCurrentUserSubscribed = g.IsCurrentUserSubscribed
+                }),
+                SubscribedGroups = subscribedGroups.Select(g => new GroupCardVM
+                {
+                    Id = g.Id,
+                    Name = g.Name,
+                    Description = g.Description,
+                    Img = g.Img,
+                    PL = g.PL,
+                    IsCurrentUserSubscribed = g.IsCurrentUserSubscribed
+                }),
                 SearchTerm = search
             };
             return View(viewModel);
