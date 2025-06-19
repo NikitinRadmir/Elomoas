@@ -48,7 +48,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>User ID</th>
-                                    <th>User Email</th>
+                                    <th>User Name</th>
                                     <th>Group ID</th>
                                     <th>Group Name</th>
                                     <th>Actions</th>
@@ -60,9 +60,9 @@
                                     <tr class="subscription-row">
                                         <td class="subscription-id">@subscription.Id</td>
                                         <td class="subscription-user-id">@subscription.UserId</td>
-                                        <td class="subscription-user">@(subscription.User?.Email ?? "-")</td>
+                                        <td class="subscription-user">@subscription.UserName</td>
                                         <td class="subscription-group-id">@subscription.GroupId</td>
-                                        <td class="subscription-group">@(subscription.Group?.Name ?? "-")</td>
+                                        <td class="subscription-group">@subscription.GroupName</td>
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <a asp-action="Edit" asp-route-id="@subscription.Id" class="btn btn-primary">

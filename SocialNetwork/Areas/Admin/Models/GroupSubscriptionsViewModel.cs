@@ -1,11 +1,13 @@
 using Elomoas.Domain.Entities;
 using System;
+using System.Collections.Generic;
+using Elomoas.Application.Features.Groups.Query.GetSubscriptions;
 
 namespace SocialNetwork.Areas.Admin.Models;
 
 public class GroupSubscriptionsViewModel
 {
-    public IEnumerable<GroupSubscription> Subscriptions { get; set; }
+    public IEnumerable<GroupSubscriptionDto> Subscriptions { get; set; }
 }
 
 public class CreateGroupSubscriptionViewModel

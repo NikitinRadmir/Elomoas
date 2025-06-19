@@ -98,7 +98,7 @@ public class GroupSubscriptionsController : Controller
             GroupId = subscription.GroupId
         };
 
-        await PrepareViewBagForEdit(subscription);
+        await PrepareViewBagForEdit(viewModel);
         return View(viewModel);
     }
 
@@ -176,7 +176,7 @@ public class GroupSubscriptionsController : Controller
         ViewBag.Groups = new SelectList(groups, "Id", "Name");
     }
 
-    private async Task PrepareViewBagForEdit(GroupSubscription subscription)
+    private async Task PrepareViewBagForEdit(UpdateGroupSubscriptionViewModel subscription)
     {
         var users = await _mediator.Send(new GetAllAllUsersQuery());
         var groups = await _mediator.Send(new GetAllAllGroupsQuery());
