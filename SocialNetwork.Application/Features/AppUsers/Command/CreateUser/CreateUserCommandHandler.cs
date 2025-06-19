@@ -48,7 +48,7 @@ namespace SocialNetwork.Application.Features.AppUsers.Command.CreateUser
                     Email = request.Email,
                     Password = request.Password,
                     Description = request.Description,
-                    Img = request.Img ?? "/uploads/profiles/default-icon.jpg"
+                    Img = request.Img ?? "/images/default-icon.jpg"
                 };
 
                 await _userRepository.UpdateAsync(appUser);
